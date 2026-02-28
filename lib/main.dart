@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,10 +39,12 @@ class LearningScreen extends StatefulWidget {
   State<LearningScreen> createState() => _LearningScreenState();
 }
 
-class _LearningScreenState extends State<LearningScreen> with SingleTickerProviderStateMixin {
-  int _currentIndex = 0; // 0: Home/Learning, 1: Vault, 2: (center streak), 3: Dashboard, 4: Menu
+class _LearningScreenState extends State<LearningScreen>
+    with SingleTickerProviderStateMixin {
+  int _currentIndex =
+      0; // 0: Home/Learning, 1: Vault, 2: (center streak), 3: Dashboard, 4: Menu
   int streak = 8;
-  int totalSecondsSpent = 3660; 
+  int totalSecondsSpent = 3660;
   bool isRevealed = false;
   String appLang = 'tr';
   int currentWordIndex = 0;
@@ -52,7 +53,7 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
   QuizQuestion? quizQuestion;
   int cardsSwipedSinceQuiz = 0;
   List<Word> learningWords = [];
-  Map<String, bool> _wordTranslationVisible = {};
+  final Map<String, bool> _wordTranslationVisible = {};
   Map<String, dynamic>? _hocaFeedback;
   bool _isEvaluating = false;
   bool _showCommunityHub = false;
@@ -88,7 +89,7 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
     if (!learningWords.contains(currentWord)) {
       learningWords.add(currentWord);
     }
-    
+
     setState(() {
       SM2Calculator.calculate(currentWord, quality, 'recall');
       cardsSwipedSinceQuiz++;
@@ -112,10 +113,11 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
   }
 
   void _generateQuiz() {
-    final target = learningWords[DateTime.now().millisecond % learningWords.length];
+    final target =
+        learningWords[DateTime.now().millisecond % learningWords.length];
     final types = ['mc', 'tf', 'sentence'];
     final type = types[DateTime.now().millisecond % 3];
-    
+
     List<Word>? options;
     if (type == 'mc') {
       options = [target];
@@ -129,7 +131,9 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
     String? displayedTrDef;
     if (type == 'tf') {
       isCorrectPair = DateTime.now().millisecond % 2 == 0;
-      final displayWord = isCorrectPair ? target : deck[DateTime.now().millisecond % deck.length];
+      final displayWord = isCorrectPair
+          ? target
+          : deck[DateTime.now().millisecond % deck.length];
       displayedEngDef = displayWord.engDef;
       displayedTrDef = displayWord.trDef;
     }
@@ -147,7 +151,7 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
         correctTokens: tokens,
         isCorrectPair: isCorrectPair,
         displayedEngDef: displayedEngDef,
-         displayedTrDef: displayedTrDef,
+        displayedTrDef: displayedTrDef,
       );
       appMode = 'quiz_$type';
       cardsSwipedSinceQuiz = 0;
@@ -229,20 +233,17 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             ],
           );
         }
-        return Stack(
-          children: [
-            _buildLearningScreen(),
-            _buildModeSelector(),
-          ],
-        );
-      case 1: return VaultWidget(
+        return Stack(children: [_buildLearningScreen(), _buildModeSelector()]);
+      case 1:
+        return VaultWidget(
           savedWords: savedWords,
           vaultFolders: vaultFolders,
           appLang: appLang,
           t: _t,
           isDark: true,
         );
-      case 3: return DashboardWidget(
+      case 3:
+        return DashboardWidget(
           streak: streak,
           totalReviews: 124,
           strongCount: 42,
@@ -251,8 +252,10 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
           t: _t,
           isDark: true,
         );
-      case 4: return _buildMenuScreen();
-      default: return _buildLearningScreen();
+      case 4:
+        return _buildMenuScreen();
+      default:
+        return _buildLearningScreen();
     }
   }
 
@@ -270,13 +273,21 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                 onTap: () => setState(() => _currentIndex = 0),
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  child: const Icon(LucideIcons.arrowLeft, size: 24, color: Colors.white70),
+                  child: const Icon(
+                    LucideIcons.arrowLeft,
+                    size: 24,
+                    color: Colors.white70,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
               Text(
                 _t('settings'),
-                style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                style: GoogleFonts.outfit(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
@@ -293,44 +304,74 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
               children: [
                 // Language Switcher
                 GestureDetector(
-                  onTap: () => setState(() => appLang = appLang == 'tr' ? 'en' : 'tr'),
+                  onTap: () =>
+                      setState(() => appLang = appLang == 'tr' ? 'en' : 'tr'),
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.white.withOpacity(0.05),
+                        ),
+                      ),
                     ),
                     child: Row(
                       children: [
                         Container(
-                          width: 48, height: 48,
+                          width: 48,
+                          height: 48,
                           decoration: BoxDecoration(
                             color: theme.primaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: Icon(LucideIcons.languages, size: 22, color: theme.primaryColor),
+                          child: Icon(
+                            LucideIcons.languages,
+                            size: 22,
+                            color: theme.primaryColor,
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(_t('appLanguage'), style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.85))),
+                              Text(
+                                _t('appLanguage'),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white.withOpacity(0.85),
+                                ),
+                              ),
                               Text(
                                 appLang == 'tr' ? 'Türkçe' : 'English',
-                                style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 1.5, color: Colors.white38),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.5,
+                                  color: Colors.white38,
+                                ),
                               ),
                             ],
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: theme.primaryColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             appLang.toUpperCase(),
-                            style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white),
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ],
@@ -344,28 +385,46 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                   child: Row(
                     children: [
                       Container(
-                        width: 48, height: 48,
+                        width: 48,
+                        height: 48,
                         decoration: BoxDecoration(
                           color: Colors.orange.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: const Icon(LucideIcons.moon, size: 22, color: Colors.orange),
+                        child: const Icon(
+                          LucideIcons.moon,
+                          size: 22,
+                          color: Colors.orange,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(_t('themeMode'), style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.85))),
+                            Text(
+                              _t('themeMode'),
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white.withOpacity(0.85),
+                              ),
+                            ),
                             Text(
                               'SİSTEM (kaydır)',
-                              style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 1.5, color: Colors.white38),
+                              style: GoogleFonts.outfit(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.5,
+                                color: Colors.white38,
+                              ),
                             ),
                           ],
                         ),
                       ),
                       Container(
-                        width: 56, height: 28,
+                        width: 56,
+                        height: 28,
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: theme.primaryColor,
@@ -374,13 +433,21 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                         child: Align(
                           alignment: Alignment.center,
                           child: Container(
-                            width: 20, height: 20,
+                            width: 20,
+                            height: 20,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Center(
-                              child: Container(width: 6, height: 6, decoration: BoxDecoration(color: theme.primaryColor, borderRadius: BorderRadius.circular(3))),
+                              child: Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: theme.primaryColor,
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -408,13 +475,18 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
               child: Row(
                 children: [
                   Container(
-                    width: 56, height: 56,
+                    width: 56,
+                    height: 56,
                     decoration: BoxDecoration(
                       color: theme.primaryColor.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: const Center(
-                      child: MascotWidget(isDark: true, size: MascotSize.sm, look: MascotLook.happy),
+                      child: MascotWidget(
+                        isDark: true,
+                        size: MascotSize.sm,
+                        look: MascotLook.happy,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -422,21 +494,44 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(_t('communityHub'), style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white)),
+                        Text(
+                          _t('communityHub'),
+                          style: GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
                         Text(
                           _t('feedbackRoadmap').toUpperCase(),
-                          style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: theme.primaryColor.withOpacity(0.6)),
+                          style: GoogleFonts.outfit(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                            color: theme.primaryColor.withOpacity(0.6),
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.primaryColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text('BETA', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: Colors.white)),
+                    child: Text(
+                      'BETA',
+                      style: GoogleFonts.outfit(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -478,15 +573,40 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
               children: [
                 Text(
                   'V1.0.2 (BETA)',
-                  style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.white24),
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                    color: Colors.white24,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Made with ', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.white24)),
-                    const Icon(LucideIcons.heart, size: 10, color: Colors.redAccent),
-                    Text(' in Türkiye', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.white24)),
+                    Text(
+                      'Made with ',
+                      style: GoogleFonts.outfit(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                        color: Colors.white24,
+                      ),
+                    ),
+                    const Icon(
+                      LucideIcons.heart,
+                      size: 10,
+                      color: Colors.redAccent,
+                    ),
+                    Text(
+                      ' in Türkiye',
+                      style: GoogleFonts.outfit(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                        color: Colors.white24,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -507,13 +627,18 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: hasBorder ? BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
-      ) : null,
+      decoration: hasBorder
+          ? BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
+              ),
+            )
+          : null,
       child: Row(
         children: [
           Container(
-            width: 48, height: 48,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
               color: iconColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(14),
@@ -525,12 +650,31 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.85))),
-                Text(subtitle, style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 1.5, color: Colors.white38)),
+                Text(
+                  title,
+                  style: GoogleFonts.outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white.withOpacity(0.85),
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.5,
+                    color: Colors.white38,
+                  ),
+                ),
               ],
             ),
           ),
-          Icon(LucideIcons.externalLink, size: 16, color: Colors.white.withOpacity(0.2)),
+          Icon(
+            LucideIcons.externalLink,
+            size: 16,
+            color: Colors.white.withOpacity(0.2),
+          ),
         ],
       ),
     );
@@ -556,9 +700,24 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildModeTab('words', LucideIcons.bookOpen, _t('modeWords'), theme),
-                _buildModeTab('phrasal', LucideIcons.layers, _t('modePhrasal'), theme),
-                _buildModeTab('chill', LucideIcons.coffee, _t('modeChill'), theme),
+                _buildModeTab(
+                  'words',
+                  LucideIcons.bookOpen,
+                  _t('modeWords'),
+                  theme,
+                ),
+                _buildModeTab(
+                  'phrasal',
+                  LucideIcons.layers,
+                  _t('modePhrasal'),
+                  theme,
+                ),
+                _buildModeTab(
+                  'chill',
+                  LucideIcons.coffee,
+                  _t('modeChill'),
+                  theme,
+                ),
               ],
             ),
           ),
@@ -567,7 +726,12 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildModeTab(String mode, IconData icon, String label, ThemeData theme) {
+  Widget _buildModeTab(
+    String mode,
+    IconData icon,
+    String label,
+    ThemeData theme,
+  ) {
     final isActive = vocabMode == mode;
     return GestureDetector(
       onTap: () => setState(() {
@@ -582,12 +746,23 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
         decoration: BoxDecoration(
           color: isActive ? theme.primaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: isActive ? [BoxShadow(color: theme.primaryColor.withOpacity(0.3), blurRadius: 8)] : [],
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: theme.primaryColor.withOpacity(0.3),
+                    blurRadius: 8,
+                  ),
+                ]
+              : [],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 12, color: isActive ? Colors.white : Colors.white38),
+            Icon(
+              icon,
+              size: 12,
+              color: isActive ? Colors.white : Colors.white38,
+            ),
             const SizedBox(width: 4),
             Text(
               label,
@@ -652,8 +827,13 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.amber,
                 foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                shape: RoundedRectangleEdges(borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 20,
+                ),
+                shape: RoundedRectangleEdges(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
               child: Text(
                 _t('continueTraining').toUpperCase(),
@@ -676,7 +856,11 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
         borderRadius: BorderRadius.circular(40),
         border: Border.all(color: Colors.white.withOpacity(0.05)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 30, offset: const Offset(0, 10))
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
+          ),
         ],
       ),
       child: Row(
@@ -703,20 +887,26 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isActive ? const Color(0xFF6366F1).withOpacity(0.1) : Colors.transparent,
+              color: isActive
+                  ? const Color(0xFF6366F1).withOpacity(0.1)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: isActive ? const Color(0xFF6366F1) : Colors.white24, size: 24),
+            child: Icon(
+              icon,
+              color: isActive ? const Color(0xFF6366F1) : Colors.white24,
+              size: 24,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
-            label.toUpperCase(), 
+            label.toUpperCase(),
             style: GoogleFonts.outfit(
-              fontSize: 8, 
-              fontWeight: FontWeight.w900, 
+              fontSize: 8,
+              fontWeight: FontWeight.w900,
               color: isActive ? const Color(0xFF6366F1) : Colors.white10,
               letterSpacing: 0.5,
-            )
+            ),
           ),
         ],
       ),
@@ -729,7 +919,9 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
       padding: const EdgeInsets.symmetric(horizontal: 40),
       margin: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
-        color: isLeft ? const Color(0xFF10B981).withOpacity(0.2) : const Color(0xFFF43F5E).withOpacity(0.2),
+        color: isLeft
+            ? const Color(0xFF10B981).withOpacity(0.2)
+            : const Color(0xFFF43F5E).withOpacity(0.2),
         borderRadius: BorderRadius.circular(44),
       ),
       child: Icon(
@@ -754,7 +946,10 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
         decoration: BoxDecoration(
           color: const Color(0xFF0F1012),
           shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFF14B8A6).withOpacity(0.3), width: 2),
+          border: Border.all(
+            color: const Color(0xFF14B8A6).withOpacity(0.3),
+            width: 2,
+          ),
         ),
         child: Container(
           width: 64,
@@ -768,10 +963,10 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF10B981).withOpacity(0.4), 
-                blurRadius: 20, 
+                color: const Color(0xFF10B981).withOpacity(0.4),
+                blurRadius: 20,
                 spreadRadius: 2,
-              )
+              ),
             ],
           ),
           child: Center(
@@ -780,13 +975,15 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
               children: [
                 const Icon(LucideIcons.moon, color: Colors.white, size: 32),
                 Text(
-                  "$streak", 
+                  "$streak",
                   style: GoogleFonts.outfit(
-                    fontWeight: FontWeight.w900, 
-                    color: Colors.white, 
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
                     fontSize: 16,
-                    shadows: [const Shadow(color: Colors.black26, blurRadius: 4)]
-                  )
+                    shadows: [
+                      const Shadow(color: Colors.black26, blurRadius: 4),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -795,7 +992,6 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
       ),
     );
   }
-
 
   Widget _buildLearningScreen() {
     final theme = Theme.of(context);
@@ -842,7 +1038,9 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                         children: [
                           _buildIconButton(LucideIcons.share2, () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Paylaşım yakında!')),
+                              const SnackBar(
+                                content: Text('Paylaşım yakında!'),
+                              ),
                             );
                           }, theme),
                           const SizedBox(width: 8),
@@ -858,20 +1056,34 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFF10B981).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: const Color(0xFF10B981).withOpacity(0.2)),
+                              border: Border.all(
+                                color: const Color(0xFF10B981).withOpacity(0.2),
+                              ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(LucideIcons.sparkles, size: 12, color: Color(0xFF10B981)),
+                                const Icon(
+                                  LucideIcons.sparkles,
+                                  size: 12,
+                                  color: Color(0xFF10B981),
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   _t('mastered').toUpperCase(),
-                                  style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: const Color(0xFF10B981)),
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.5,
+                                    color: const Color(0xFF10B981),
+                                  ),
                                 ),
                               ],
                             ),
@@ -885,14 +1097,22 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: theme.primaryColor.withOpacity(0.08),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: theme.primaryColor.withOpacity(0.2)),
+                            border: Border.all(
+                              color: theme.primaryColor.withOpacity(0.2),
+                            ),
                           ),
                           child: Text(
-                            (appLang == 'tr' ? currentWord.posTr : currentWord.pos).toUpperCase(),
+                            (appLang == 'tr'
+                                    ? currentWord.posTr
+                                    : currentWord.pos)
+                                .toUpperCase(),
                             style: GoogleFonts.outfit(
                               fontSize: 11,
                               fontWeight: FontWeight.w900,
@@ -908,7 +1128,10 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                     GestureDetector(
                       onTap: () => setState(() => isRevealed = false),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -931,7 +1154,11 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                const Icon(LucideIcons.volume2, size: 16, color: Colors.white38),
+                                const Icon(
+                                  LucideIcons.volume2,
+                                  size: 16,
+                                  color: Colors.white38,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   currentWord.phonetic,
@@ -980,12 +1207,21 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                             children: [
                               Transform.rotate(
                                 angle: 3.14159,
-                                child: const Icon(LucideIcons.chevronDown, size: 18, color: Colors.white24),
+                                child: const Icon(
+                                  LucideIcons.chevronDown,
+                                  size: 18,
+                                  color: Colors.white24,
+                                ),
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 _t('back').toUpperCase(),
-                                style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white24),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 2,
+                                  color: Colors.white24,
+                                ),
                               ),
                             ],
                           ),
@@ -1016,23 +1252,45 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                 color: const Color(0xFF0A0F1C).withOpacity(0.85),
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: Colors.white.withOpacity(0.08)),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.4), blurRadius: 20)],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.4),
+                    blurRadius: 20,
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(LucideIcons.bookOpen, size: 14, color: theme.primaryColor),
+                  Icon(
+                    LucideIcons.bookOpen,
+                    size: 14,
+                    color: theme.primaryColor,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     "${currentWordIndex + 1} / ${deck.length}",
-                    style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white),
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
                   ),
-                  Container(width: 1, height: 14, color: Colors.white.withOpacity(0.15), margin: const EdgeInsets.symmetric(horizontal: 12)),
+                  Container(
+                    width: 1,
+                    height: 14,
+                    color: Colors.white.withOpacity(0.15),
+                    margin: const EdgeInsets.symmetric(horizontal: 12),
+                  ),
                   const Icon(LucideIcons.clock, size: 14, color: Colors.amber),
                   const SizedBox(width: 6),
                   Text(
                     "$timeRemaining ${_t('minsShort')} ${_t('minsLeft')}",
-                    style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white),
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
               ),
@@ -1093,15 +1351,23 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                   onTap: () {
                     setState(() {
                       final key = 'def_${word.text}';
-                      _wordTranslationVisible[key] = !(_wordTranslationVisible[key] ?? false);
+                      _wordTranslationVisible[key] =
+                          !(_wordTranslationVisible[key] ?? false);
                     });
                   },
                   child: Row(
                     children: [
-                      Icon(LucideIcons.refreshCw, size: 14, color: theme.primaryColor),
+                      Icon(
+                        LucideIcons.refreshCw,
+                        size: 14,
+                        color: theme.primaryColor,
+                      ),
                       const SizedBox(width: 6),
                       Text(
-                        (_wordTranslationVisible['def_${word.text}'] == true ? _t('toEn') : _t('toTr')).toUpperCase(),
+                        (_wordTranslationVisible['def_${word.text}'] == true
+                                ? _t('toEn')
+                                : _t('toTr'))
+                            .toUpperCase(),
                         style: GoogleFonts.outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
@@ -1141,10 +1407,16 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
           const SizedBox(height: 12),
           if (!isExTrVisible)
             GestureDetector(
-              onTap: () => setState(() => _wordTranslationVisible['ex_${word.text}'] = true),
+              onTap: () => setState(
+                () => _wordTranslationVisible['ex_${word.text}'] = true,
+              ),
               child: Row(
                 children: [
-                  const Icon(LucideIcons.refreshCw, size: 14, color: Colors.amber),
+                  const Icon(
+                    LucideIcons.refreshCw,
+                    size: 14,
+                    color: Colors.amber,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     (_t('showTranslation')).toUpperCase(),
@@ -1160,18 +1432,22 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             )
           else
             GestureDetector(
-              onTap: () => setState(() => _wordTranslationVisible['ex_${word.text}'] = false),
+              onTap: () => setState(
+                () => _wordTranslationVisible['ex_${word.text}'] = false,
+              ),
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.03),
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.fromBorderSide(BorderSide(
-                    color: theme.primaryColor.withOpacity(0.3),
-                    width: 0,
-                    style: BorderStyle.solid,
-                  )),
+                  border: Border.fromBorderSide(
+                    BorderSide(
+                      color: theme.primaryColor.withOpacity(0.3),
+                      width: 0,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
                 ),
                 child: Text(
                   word.trExample,
@@ -1263,17 +1539,25 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isActive ? activeColor.withOpacity(0.1) : Colors.white.withOpacity(0.03),
+          color: isActive
+              ? activeColor.withOpacity(0.1)
+              : Colors.white.withOpacity(0.03),
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
-            color: isActive ? activeColor.withOpacity(0.4) : Colors.white.withOpacity(0.06),
+            color: isActive
+                ? activeColor.withOpacity(0.4)
+                : Colors.white.withOpacity(0.06),
             width: 2,
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 24, color: isActive ? activeColor : Colors.white38),
+            Icon(
+              icon,
+              size: 24,
+              color: isActive ? activeColor : Colors.white38,
+            ),
             const SizedBox(height: 8),
             Text(
               label.length > 10 ? label.substring(0, 10) : label,
@@ -1315,7 +1599,10 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
           borderRadius: BorderRadius.circular(32),
           border: Border.all(color: const Color(0xFF10B981).withOpacity(0.2)),
         ),
-        child: Text(_t('noDetails'), style: GoogleFonts.outfit(color: Colors.white38)),
+        child: Text(
+          _t('noDetails'),
+          style: GoogleFonts.outfit(color: Colors.white38),
+        ),
       );
     }
     final d = word.details!;
@@ -1331,9 +1618,21 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
         children: [
           Row(
             children: [
-              const Icon(LucideIcons.bookOpen, size: 16, color: Color(0xFF10B981)),
+              const Icon(
+                LucideIcons.bookOpen,
+                size: 16,
+                color: Color(0xFF10B981),
+              ),
               const SizedBox(width: 8),
-              Text(_t('wordDetails').toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: const Color(0xFF10B981))),
+              Text(
+                _t('wordDetails').toUpperCase(),
+                style: GoogleFonts.outfit(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  color: const Color(0xFF10B981),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -1349,16 +1648,33 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
               decoration: BoxDecoration(
                 color: theme.primaryColor.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: theme.primaryColor.withOpacity(0.15), style: BorderStyle.solid),
+                border: Border.all(
+                  color: theme.primaryColor.withOpacity(0.15),
+                  style: BorderStyle.solid,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(_t('mnemonic').toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: theme.primaryColor, letterSpacing: 2)),
+                  Text(
+                    _t('mnemonic').toUpperCase(),
+                    style: GoogleFonts.outfit(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      color: theme.primaryColor,
+                      letterSpacing: 2,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
-                    appLang == 'tr' ? (d.trMnemonic ?? d.mnemonic!) : d.mnemonic!,
-                    style: GoogleFonts.outfit(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white70),
+                    appLang == 'tr'
+                        ? (d.trMnemonic ?? d.mnemonic!)
+                        : d.mnemonic!,
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white70,
+                    ),
                   ),
                 ],
               ),
@@ -1382,9 +1698,24 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label.toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: const Color(0xFF10B981))),
+            Text(
+              label.toUpperCase(),
+              style: GoogleFonts.outfit(
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+                color: const Color(0xFF10B981),
+              ),
+            ),
             const SizedBox(height: 4),
-            Text(value, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70)),
+            Text(
+              value,
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white70,
+              ),
+            ),
           ],
         ),
       ),
@@ -1406,18 +1737,36 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             children: [
               const Icon(LucideIcons.sparkles, size: 16, color: Colors.blue),
               const SizedBox(width: 8),
-              Text('AI ANALYSIS', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.blue)),
+              Text(
+                'AI ANALYSIS',
+                style: GoogleFonts.outfit(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  color: Colors.blue,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 20),
           Center(
             child: Column(
               children: [
-                MascotWidget(isDark: true, size: MascotSize.lg, animated: false, glow: false),
+                MascotWidget(
+                  isDark: true,
+                  size: MascotSize.lg,
+                  animated: false,
+                  glow: false,
+                ),
                 const SizedBox(height: 12),
                 Text(
                   _t('comingSoon').toUpperCase(),
-                  style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.blue.withOpacity(0.5)),
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    color: Colors.blue.withOpacity(0.5),
+                  ),
                 ),
               ],
             ),
@@ -1442,38 +1791,67 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             children: [
               Icon(LucideIcons.layers, size: 16, color: theme.primaryColor),
               const SizedBox(width: 8),
-              Text((_t('wordForms')).toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: theme.primaryColor)),
+              Text(
+                (_t('wordForms')).toUpperCase(),
+                style: GoogleFonts.outfit(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  color: theme.primaryColor,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 20),
           if (word.wordForms.isEmpty)
-            Text(_t('noForms'), style: GoogleFonts.outfit(color: Colors.white38))
+            Text(
+              _t('noForms'),
+              style: GoogleFonts.outfit(color: Colors.white38),
+            )
           else
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: word.wordForms.map((wf) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: theme.primaryColor.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: theme.primaryColor.withOpacity(0.15)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      (appLang == 'tr' ? wf.posTr : wf.pos).toUpperCase(),
-                      style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: Colors.white30),
+              children: word.wordForms
+                  .map(
+                    (wf) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.primaryColor.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: theme.primaryColor.withOpacity(0.15),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            (appLang == 'tr' ? wf.posTr : wf.pos).toUpperCase(),
+                            style: GoogleFonts.outfit(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.5,
+                              color: Colors.white30,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            wf.form,
+                            style: GoogleFonts.outfit(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900,
+                              color: theme.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      wf.form,
-                      style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w900, color: theme.primaryColor),
-                    ),
-                  ],
-                ),
-              )).toList(),
+                  )
+                  .toList(),
             ),
         ],
       ),
@@ -1612,28 +1990,40 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
 
   Widget _buildWordFormsGrid(Word word) {
     return Column(
-      children: word.wordForms.map((f) => Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF161618),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withOpacity(0.03)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              f.form,
-              style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w600),
+      children: word.wordForms
+          .map(
+            (f) => Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF161618),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withOpacity(0.03)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    f.form,
+                    style: GoogleFonts.outfit(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    (appLang == 'tr' ? f.posTr : f.pos).toUpperCase(),
+                    style: GoogleFonts.outfit(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white38,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              (appLang == 'tr' ? f.posTr : f.pos).toUpperCase(),
-              style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white38, letterSpacing: 1),
-            ),
-          ],
-        ),
-      )).toList(),
+          )
+          .toList(),
     );
   }
 
@@ -1649,10 +2039,26 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (details.root != null) _buildOriginItem(LucideIcons.anchor, _t('root'), details.root!),
-          if (details.prefix != null) _buildOriginItem(LucideIcons.arrowLeft, _t('prefix'), details.prefix!),
-          if (details.suffix != null) _buildOriginItem(LucideIcons.arrowRight, _t('suffix'), details.suffix!),
-          if (details.synonyms.isNotEmpty) _buildOriginItem(LucideIcons.copy, _t('similarWords'), details.synonyms.join(", ")),
+          if (details.root != null)
+            _buildOriginItem(LucideIcons.anchor, _t('root'), details.root!),
+          if (details.prefix != null)
+            _buildOriginItem(
+              LucideIcons.arrowLeft,
+              _t('prefix'),
+              details.prefix!,
+            ),
+          if (details.suffix != null)
+            _buildOriginItem(
+              LucideIcons.arrowRight,
+              _t('suffix'),
+              details.suffix!,
+            ),
+          if (details.synonyms.isNotEmpty)
+            _buildOriginItem(
+              LucideIcons.copy,
+              _t('similarWords'),
+              details.synonyms.join(", "),
+            ),
         ],
       ),
     );
@@ -1670,9 +2076,20 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label.toUpperCase(), style: const TextStyle(fontSize: 10, color: Colors.white30, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                Text(
+                  label.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.white30,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(content, style: const TextStyle(fontSize: 14, color: Colors.white70)),
+                Text(
+                  content,
+                  style: const TextStyle(fontSize: 14, color: Colors.white70),
+                ),
               ],
             ),
           ),
@@ -1748,7 +2165,11 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             children: [
               Row(
                 children: [
-                  const Icon(LucideIcons.messageCircle, size: 14, color: Colors.amber),
+                  const Icon(
+                    LucideIcons.messageCircle,
+                    size: 14,
+                    color: Colors.amber,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     _t('ex'),
@@ -1762,9 +2183,13 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                 ],
               ),
               GestureDetector(
-                onTap: () => setState(() => _wordTranslationVisible[word.text] = !isVisible),
+                onTap: () => setState(
+                  () => _wordTranslationVisible[word.text] = !isVisible,
+                ),
                 child: Text(
-                  isVisible ? _t('toEn').toUpperCase() : _t('toTr').toUpperCase(),
+                  isVisible
+                      ? _t('toEn').toUpperCase()
+                      : _t('toTr').toUpperCase(),
                   style: GoogleFonts.outfit(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
@@ -1803,7 +2228,10 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: theme.primaryColor.withOpacity(0.2)),
         boxShadow: [
-          BoxShadow(color: theme.primaryColor.withOpacity(0.05), blurRadius: 40),
+          BoxShadow(
+            color: theme.primaryColor.withOpacity(0.05),
+            blurRadius: 40,
+          ),
         ],
       ),
       child: Column(
@@ -1811,18 +2239,40 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
         children: [
           Row(
             children: [
-              const MascotWidget(isDark: true, size: MascotSize.sm, look: MascotLook.happy),
+              const MascotWidget(
+                isDark: true,
+                size: MascotSize.sm,
+                look: MascotLook.happy,
+              ),
               const SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(_t('teacherNotes').toUpperCase(), style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: theme.primaryColor)),
+                  Text(
+                    _t('teacherNotes').toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.5,
+                      color: theme.primaryColor,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(LucideIcons.star, size: 12, color: Colors.amber),
+                      const Icon(
+                        LucideIcons.star,
+                        size: 12,
+                        color: Colors.amber,
+                      ),
                       const SizedBox(width: 6),
-                      Text("${_t('teacherScore')} $score/10", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      Text(
+                        "${_t('teacherScore')} $score/10",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -1830,12 +2280,33 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             ],
           ),
           const SizedBox(height: 24),
-          Text(_t('teacherComment'), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white38)),
+          Text(
+            _t('teacherComment'),
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Colors.white38,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text(comment, style: GoogleFonts.outfit(fontSize: 15, height: 1.5, fontWeight: FontWeight.w500)),
+          Text(
+            comment,
+            style: GoogleFonts.outfit(
+              fontSize: 15,
+              height: 1.5,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: 24),
           if (corrected.isNotEmpty) ...[
-            Text(_t('betterVersion'), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.amber)),
+            Text(
+              _t('betterVersion'),
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.amber,
+              ),
+            ),
             const SizedBox(height: 8),
             Container(
               width: double.infinity,
@@ -1845,7 +2316,14 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.amber.withOpacity(0.1)),
               ),
-              child: Text(corrected, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic)),
+              child: Text(
+                corrected,
+                style: GoogleFonts.outfit(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
             ),
           ],
           const SizedBox(height: 24),
@@ -1857,7 +2335,9 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
               label: Text(_t('rewrite').toUpperCase()),
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.all(16),
-                shape: RoundedRectangleEdges(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleEdges(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
             ),
           ),
@@ -1868,7 +2348,7 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
 
   void _handleSendToTeacher() async {
     if (_writingController.text.isEmpty || _isEvaluating) return;
-    
+
     setState(() => _isEvaluating = true);
 
     // Mock response for now, should call LLM later
@@ -1878,8 +2358,9 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
       _isEvaluating = false;
       _hocaFeedback = {
         'score': 8,
-        'feedback': "Harika bir deneme! Özne ve yüklem uyumun çok iyi. Sadece 'a' yerine 'an' kullanmalıydın.",
-        'correctedSentence': "She has an unwavering support for her children."
+        'feedback':
+            "Harika bir deneme! Özne ve yüklem uyumun çok iyi. Sadece 'a' yerine 'an' kullanmalıydın.",
+        'correctedSentence': "She has an unwavering support for her children.",
       };
     });
   }
@@ -1898,7 +2379,11 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
         children: [
           Row(
             children: [
-              const Icon(LucideIcons.pencil, size: 14, color: Color(0xFF10B981)),
+              const Icon(
+                LucideIcons.pencil,
+                size: 14,
+                color: Color(0xFF10B981),
+              ),
               const SizedBox(width: 8),
               Text(
                 _t('writeSentence').toUpperCase(),
@@ -1918,7 +2403,10 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
               hintText: _t('typeHere'),
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.1), fontSize: 13),
+              hintStyle: TextStyle(
+                color: Colors.white.withOpacity(0.1),
+                fontSize: 13,
+              ),
               filled: true,
               fillColor: Colors.black.withOpacity(0.15),
               border: OutlineInputBorder(
@@ -1933,15 +2421,28 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: _handleSendToTeacher,
-              icon: _isEvaluating 
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              icon: _isEvaluating
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
                   : const Icon(LucideIcons.sparkles, size: 16),
-              label: Text(_isEvaluating ? _t('teacherReading').toUpperCase() : _t('sendToTeacher').toUpperCase()),
+              label: Text(
+                _isEvaluating
+                    ? _t('teacherReading').toUpperCase()
+                    : _t('sendToTeacher').toUpperCase(),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.primaryColor,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.all(18),
-                shape: RoundedRectangleEdges(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleEdges(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
             ),
           ),
@@ -1971,14 +2472,18 @@ class _BookmarkButtonState extends State<_BookmarkButton> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: widget.word.isSaved ? const Color(0xFFF43F5E) : Colors.white.withOpacity(0.05),
+          color: widget.word.isSaved
+              ? const Color(0xFFF43F5E)
+              : Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.white.withOpacity(0.08)),
         ),
         child: Icon(
           LucideIcons.bookmark,
           size: 20,
-          color: widget.word.isSaved ? Colors.white : Colors.white.withOpacity(0.4),
+          color: widget.word.isSaved
+              ? Colors.white
+              : Colors.white.withOpacity(0.4),
         ),
       ),
     );
@@ -2010,54 +2515,102 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
 
   final List<Map<String, dynamic>> _logs = [
     {
-      'id': 3, 'date': '2026-02-27',
-      'tr': {'title': 'Mobil Optimizasyon & Jestler', 'items': [
-        'Sürükleme (swipe) ve kaydırma (scroll) çakışmaları giderildi.',
-        'Mod seçici ve istatistik kapsüllerindeki yerleşim hataları düzeltildi.',
-        'Admin paneli mobil cihazlar için optimize edildi.',
-        'Sürükleme hassasiyeti ve tepkiselliği artırıldı.'
-      ]},
-      'en': {'title': 'Mobile Optimization & Gestures', 'items': [
-        'Resolved conflicts between swiping and vertical scrolling.',
-        'Fixed layout issues with mode selector and stats capsules.',
-        'Optimized Admin Panel for mobile devices.',
-        'Improved swipe sensitivity and responsiveness.'
-      ]},
+      'id': 3,
+      'date': '2026-02-27',
+      'tr': {
+        'title': 'Mobil Optimizasyon & Jestler',
+        'items': [
+          'Sürükleme (swipe) ve kaydırma (scroll) çakışmaları giderildi.',
+          'Mod seçici ve istatistik kapsüllerindeki yerleşim hataları düzeltildi.',
+          'Admin paneli mobil cihazlar için optimize edildi.',
+          'Sürükleme hassasiyeti ve tepkiselliği artırıldı.',
+        ],
+      },
+      'en': {
+        'title': 'Mobile Optimization & Gestures',
+        'items': [
+          'Resolved conflicts between swiping and vertical scrolling.',
+          'Fixed layout issues with mode selector and stats capsules.',
+          'Optimized Admin Panel for mobile devices.',
+          'Improved swipe sensitivity and responsiveness.',
+        ],
+      },
     },
     {
-      'id': 1, 'date': '2026-02-26',
-      'tr': {'title': 'Yaşam Kalitesi & İstikrar', 'items': [
-        'Uzun kartlar için "Ön Yüze Dön" butonu eklendi.',
-        'Chill Mod ve Kelime Modu bilgi yapıları birleştirildi.',
-        'Tap to Reveal modundaki kritik çökme giderildi.',
-        'Tüm arayüz metinleri yerelleştirildi.'
-      ]},
-      'en': {'title': 'Quality of Life & Consistency', 'items': [
-        'Added "Return to Front" button for long cards.',
-        'Fused Chill Mode and Vocabulary Mode info structures.',
-        'Fixed critical crash in Tap to Reveal mode.',
-        'Localized all hardcoded UI strings.'
-      ]},
+      'id': 1,
+      'date': '2026-02-26',
+      'tr': {
+        'title': 'Yaşam Kalitesi & İstikrar',
+        'items': [
+          'Uzun kartlar için "Ön Yüze Dön" butonu eklendi.',
+          'Chill Mod ve Kelime Modu bilgi yapıları birleştirildi.',
+          'Tap to Reveal modundaki kritik çökme giderildi.',
+          'Tüm arayüz metinleri yerelleştirildi.',
+        ],
+      },
+      'en': {
+        'title': 'Quality of Life & Consistency',
+        'items': [
+          'Added "Return to Front" button for long cards.',
+          'Fused Chill Mode and Vocabulary Mode info structures.',
+          'Fixed critical crash in Tap to Reveal mode.',
+          'Localized all hardcoded UI strings.',
+        ],
+      },
     },
     {
-      'id': 2, 'date': '2026-02-24',
-      'tr': {'title': 'Chill Mod Alfa', 'items': [
-        'Bismillah',
-        'SM2 dışı çalışma için Chill Mod eklendi.',
-        'Kartların içine istatistik kapsülü eklendi.'
-      ]},
-      'en': {'title': 'Chill Mode Alpha', 'items': [
-        'Bismillah',
-        'Introduced Chill Mode for non-SM2 studying.',
-        'Added embedded stats capsule inside cards.'
-      ]},
+      'id': 2,
+      'date': '2026-02-24',
+      'tr': {
+        'title': 'Chill Mod Alfa',
+        'items': [
+          'Bismillah',
+          'SM2 dışı çalışma için Chill Mod eklendi.',
+          'Kartların içine istatistik kapsülü eklendi.',
+        ],
+      },
+      'en': {
+        'title': 'Chill Mode Alpha',
+        'items': [
+          'Bismillah',
+          'Introduced Chill Mode for non-SM2 studying.',
+          'Added embedded stats capsule inside cards.',
+        ],
+      },
     },
   ];
 
   final List<Map<String, dynamic>> _tickets = [
-    {'id': 1, 'type': 'feedback', 'title': 'Dark Mode Improvement', 'desc': 'Add more contrast to the dark theme buttons.', 'upvotes': 12, 'status': 'inProgress', 'author': 'EliteUser', 'upvoted': false},
-    {'id': 2, 'type': 'bug', 'title': 'Sound Lag on iOS', 'desc': 'Audio phonetics sometimes takes 2 seconds to play on Safari.', 'upvotes': 5, 'status': 'pending', 'author': 'BetaTester', 'upvoted': false},
-    {'id': 3, 'type': 'feedback', 'title': 'More Statistics', 'desc': 'I want to see my weekly learning graph.', 'upvotes': 45, 'status': 'resolved', 'author': 'DataLover', 'upvoted': false},
+    {
+      'id': 1,
+      'type': 'feedback',
+      'title': 'Dark Mode Improvement',
+      'desc': 'Add more contrast to the dark theme buttons.',
+      'upvotes': 12,
+      'status': 'inProgress',
+      'author': 'EliteUser',
+      'upvoted': false,
+    },
+    {
+      'id': 2,
+      'type': 'bug',
+      'title': 'Sound Lag on iOS',
+      'desc': 'Audio phonetics sometimes takes 2 seconds to play on Safari.',
+      'upvotes': 5,
+      'status': 'pending',
+      'author': 'BetaTester',
+      'upvoted': false,
+    },
+    {
+      'id': 3,
+      'type': 'feedback',
+      'title': 'More Statistics',
+      'desc': 'I want to see my weekly learning graph.',
+      'upvotes': 45,
+      'status': 'resolved',
+      'author': 'DataLover',
+      'upvoted': false,
+    },
   ];
 
   @override
@@ -2072,7 +2625,9 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
                 color: const Color(0xFF121212),
-                border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
+                border: Border(
+                  bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
+                ),
               ),
               child: Row(
                 children: [
@@ -2084,7 +2639,11 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
                         shape: BoxShape.circle,
                         color: Colors.white.withOpacity(0.05),
                       ),
-                      child: const Icon(LucideIcons.arrowLeft, size: 24, color: Colors.white),
+                      child: const Icon(
+                        LucideIcons.arrowLeft,
+                        size: 24,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -2092,12 +2651,31 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.t('communityHub'), style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white)),
-                        Text(widget.t('feedbackRoadmap').toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white24)),
+                        Text(
+                          widget.t('communityHub'),
+                          style: GoogleFonts.outfit(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          widget.t('feedbackRoadmap').toUpperCase(),
+                          style: GoogleFonts.outfit(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                            color: Colors.white24,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  const MascotWidget(isDark: true, size: MascotSize.sm, look: MascotLook.happy),
+                  const MascotWidget(
+                    isDark: true,
+                    size: MascotSize.sm,
+                    look: MascotLook.happy,
+                  ),
                 ],
               ),
             ),
@@ -2107,12 +2685,22 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: const Color(0xFF121212),
-                border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
+                border: Border(
+                  bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
+                ),
               ),
               child: Row(
                 children: [
-                  _buildHubTab('changelog', LucideIcons.history, widget.t('changelog')),
-                  _buildHubTab('feedback', LucideIcons.messageSquare, widget.t('feedback')),
+                  _buildHubTab(
+                    'changelog',
+                    LucideIcons.history,
+                    widget.t('changelog'),
+                  ),
+                  _buildHubTab(
+                    'feedback',
+                    LucideIcons.messageSquare,
+                    widget.t('feedback'),
+                  ),
                   _buildHubTab('bugs', LucideIcons.bug, widget.t('bugs')),
                 ],
               ),
@@ -2120,7 +2708,9 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
 
             // Content
             Expanded(
-              child: _activeTab == 'changelog' ? _buildChangelog() : _buildTickets(),
+              child: _activeTab == 'changelog'
+                  ? _buildChangelog()
+                  : _buildTickets(),
             ),
           ],
         ),
@@ -2140,14 +2730,33 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
           decoration: BoxDecoration(
             color: isActive ? const Color(0xFF6366F1) : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: isActive ? [BoxShadow(color: const Color(0xFF6366F1).withOpacity(0.3), blurRadius: 8)] : [],
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF6366F1).withOpacity(0.3),
+                      blurRadius: 8,
+                    ),
+                  ]
+                : [],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 14, color: isActive ? Colors.white : Colors.white38),
+              Icon(
+                icon,
+                size: 14,
+                color: isActive ? Colors.white : Colors.white38,
+              ),
               const SizedBox(width: 6),
-              Text(label, style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1, color: isActive ? Colors.white : Colors.white38)),
+              Text(
+                label,
+                style: GoogleFonts.outfit(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                  color: isActive ? Colors.white : Colors.white38,
+                ),
+              ),
             ],
           ),
         ),
@@ -2176,38 +2785,71 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: Colors.white12),
                       ),
-                      child: Text(log['date'], style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: Colors.white30)),
+                      child: Text(
+                        log['date'],
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                          color: Colors.white30,
+                        ),
+                      ),
                     ),
-                    const Icon(LucideIcons.sparkles, size: 16, color: Colors.amber),
+                    const Icon(
+                      LucideIcons.sparkles,
+                      size: 16,
+                      color: Colors.amber,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(content['title'], style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white)),
-                const SizedBox(height: 16),
-                ...((content['items'] as List<String>).map((item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 6, height: 6,
-                        margin: const EdgeInsets.only(top: 6, right: 12),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF6366F1),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(item, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70, height: 1.5)),
-                      ),
-                    ],
+                Text(
+                  content['title'],
+                  style: GoogleFonts.outfit(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
                   ),
-                ))),
+                ),
+                const SizedBox(height: 16),
+                ...((content['items'] as List<String>).map(
+                  (item) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          margin: const EdgeInsets.only(top: 6, right: 12),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF6366F1),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            item,
+                            style: GoogleFonts.outfit(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white70,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )),
               ],
             ),
           );
@@ -2217,8 +2859,12 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
   }
 
   Widget _buildTickets() {
-    final filtered = _tickets.where((t) => t['type'] == (_activeTab == 'bugs' ? 'bug' : 'feedback')).toList();
-    filtered.sort((a, b) => (b['upvotes'] as int).compareTo(a['upvotes'] as int));
+    final filtered = _tickets
+        .where((t) => t['type'] == (_activeTab == 'bugs' ? 'bug' : 'feedback'))
+        .toList();
+    filtered.sort(
+      (a, b) => (b['upvotes'] as int).compareTo(a['upvotes'] as int),
+    );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -2230,7 +2876,12 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
             children: [
               Text(
                 '${_activeTab == 'bugs' ? widget.t('bugs') : widget.t('feedback')} (${filtered.length})',
-                style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white24),
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  color: Colors.white24,
+                ),
               ),
               GestureDetector(
                 onTap: () {
@@ -2239,7 +2890,10 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
                   );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -2247,9 +2901,21 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(LucideIcons.plus, size: 14, color: Colors.black),
+                      const Icon(
+                        LucideIcons.plus,
+                        size: 14,
+                        color: Colors.black,
+                      ),
                       const SizedBox(width: 4),
-                      Text(widget.t('addTicket'), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: Colors.black)),
+                      Text(
+                        widget.t('addTicket'),
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                          color: Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -2257,74 +2923,130 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
             ],
           ),
           const SizedBox(height: 16),
-          ...filtered.map((ticket) => Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF161616),
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(ticket['status']),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(widget.t(ticket['status']), style: GoogleFonts.outfit(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: Colors.white)),
-                          ),
-                          const SizedBox(width: 8),
-                          Text('by ${ticket['author']}', style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: Colors.white24)),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(ticket['title'], style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white)),
-                      const SizedBox(height: 4),
-                      Text(ticket['desc'], style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white54, height: 1.4)),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      ticket['upvoted'] = !(ticket['upvoted'] as bool);
-                      ticket['upvotes'] = (ticket['upvotes'] as int) + (ticket['upvoted'] as bool ? 1 : -1);
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: (ticket['upvoted'] as bool)
-                          ? const Color(0xFF6366F1).withOpacity(0.2)
-                          : Colors.white.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: (ticket['upvoted'] as bool)
-                            ? const Color(0xFF6366F1)
-                            : Colors.white12,
-                      ),
-                    ),
+          ...filtered.map(
+            (ticket) => Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFF161616),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: Colors.white.withOpacity(0.05)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(LucideIcons.chevronUp, size: 20, color: (ticket['upvoted'] as bool) ? const Color(0xFF6366F1) : Colors.white38),
-                        Text('${ticket['upvotes']}', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, color: (ticket['upvoted'] as bool) ? const Color(0xFF6366F1) : Colors.white38)),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _getStatusColor(ticket['status']),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                widget.t(ticket['status']),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.5,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'by ${ticket['author']}',
+                              style: GoogleFonts.outfit(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.5,
+                                color: Colors.white24,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          ticket['title'],
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          ticket['desc'],
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54,
+                            height: 1.4,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        ticket['upvoted'] = !(ticket['upvoted'] as bool);
+                        ticket['upvotes'] =
+                            (ticket['upvotes'] as int) +
+                            (ticket['upvoted'] as bool ? 1 : -1);
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: (ticket['upvoted'] as bool)
+                            ? const Color(0xFF6366F1).withOpacity(0.2)
+                            : Colors.white.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: (ticket['upvoted'] as bool)
+                              ? const Color(0xFF6366F1)
+                              : Colors.white12,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            LucideIcons.chevronUp,
+                            size: 20,
+                            color: (ticket['upvoted'] as bool)
+                                ? const Color(0xFF6366F1)
+                                : Colors.white38,
+                          ),
+                          Text(
+                            '${ticket['upvotes']}',
+                            style: GoogleFonts.outfit(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              color: (ticket['upvoted'] as bool)
+                                  ? const Color(0xFF6366F1)
+                                  : Colors.white38,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -2332,9 +3054,12 @@ class _CommunityHubWidgetState extends State<_CommunityHubWidget> {
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'resolved': return const Color(0xFF10B981);
-      case 'inProgress': return const Color(0xFF6366F1);
-      default: return Colors.white24;
+      case 'resolved':
+        return const Color(0xFF10B981);
+      case 'inProgress':
+        return const Color(0xFF6366F1);
+      default:
+        return Colors.white24;
     }
   }
 }

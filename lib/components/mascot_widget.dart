@@ -40,7 +40,7 @@ class MascotWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: _sizeDimension,
       height: _sizeDimension,
       child: Stack(

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/painting.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../data/vocabulary.dart';
@@ -37,7 +35,9 @@ class _ChillModeWidgetState extends State<ChillModeWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.isDark ? const Color(0xFF0A0A0C) : const Color(0xFFF8F9FA),
+      backgroundColor: widget.isDark
+          ? const Color(0xFF0A0A0C)
+          : const Color(0xFFF8F9FA),
       body: Stack(
         children: [
           // Background Glow
@@ -48,7 +48,7 @@ class _ChillModeWidgetState extends State<ChillModeWidget> {
               width: 400,
               height: 400,
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1).withOpacity(0.05),
+                color: const Color(0xFF6366F1).withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
             ),
@@ -60,13 +60,10 @@ class _ChillModeWidgetState extends State<ChillModeWidget> {
             right: -50,
             child: Opacity(
               opacity: 0.03,
-              child: MascotWidget(
-                isDark: widget.isDark,
-                size: MascotSize.logo,
-              ),
+              child: MascotWidget(isDark: widget.isDark, size: MascotSize.logo),
             ),
           ),
-          
+
           PageView.builder(
             controller: _pageController,
             scrollDirection: Axis.vertical,
@@ -83,7 +80,7 @@ class _ChillModeWidgetState extends State<ChillModeWidget> {
               );
             },
           ),
-          
+
           // Stats Overlay (Floating at bottom center)
           Positioned(
             bottom: 40,
@@ -91,16 +88,25 @@ class _ChillModeWidgetState extends State<ChillModeWidget> {
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(LucideIcons.bookOpen, color: Color(0xFF6366F1), size: 16),
+                    const Icon(
+                      LucideIcons.bookOpen,
+                      color: Color(0xFF6366F1),
+                      size: 16,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       "${_currentIndex + 1} / ${widget.vocab.length}",
@@ -111,7 +117,11 @@ class _ChillModeWidgetState extends State<ChillModeWidget> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    const Icon(LucideIcons.clock, color: Colors.amber, size: 16),
+                    const Icon(
+                      LucideIcons.clock,
+                      color: Colors.amber,
+                      size: 16,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       "${(widget.vocab.length - _currentIndex) * 0.25.ceil()} ${widget.t('minsShort')}",
@@ -180,7 +190,7 @@ class _ChillCardState extends State<_ChillCard> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withOpacity(0.1),
+            color: const Color(0xFF6366F1).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -240,63 +250,99 @@ class _ChillCardState extends State<_ChillCard> {
       constraints: const BoxConstraints(maxWidth: 400),
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: widget.isDark ? const Color(0xFF161618).withOpacity(0.8) : Colors.white,
+        color: widget.isDark
+            ? const Color(0xFF161618).withValues(alpha: 0.8)
+            : Colors.white,
         borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: SingleChildScrollView(
         child: Column(
           children: [
             Text(
               widget.word.text,
-              style: GoogleFonts.outfit(fontSize: 32, fontWeight: FontWeight.w900),
+              style: GoogleFonts.outfit(
+                fontSize: 32,
+                fontWeight: FontWeight.w900,
+              ),
             ),
             Text(
               widget.word.trWord,
-              style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF6366F1)),
+              style: GoogleFonts.outfit(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF6366F1),
+              ),
             ),
             const SizedBox(height: 24),
-            
+
             _buildInfoCard(
               title: widget.t('def'),
-              content: widget.appLang == 'tr' ? widget.word.trDef : widget.word.engDef,
+              content: widget.appLang == 'tr'
+                  ? widget.word.trDef
+                  : widget.word.engDef,
               color: Colors.indigo,
             ),
-            
+
             _buildInfoCard(
               title: "EXAMPLE",
-              content: showTranslation ? widget.word.trExample : widget.word.engExample,
+              content: showTranslation
+                  ? widget.word.trExample
+                  : widget.word.engExample,
               color: Colors.amber,
               isExample: true,
-              onToggleTranslate: () => setState(() => showTranslation = !showTranslation),
+              onToggleTranslate: () =>
+                  setState(() => showTranslation = !showTranslation),
               isTranslated: showTranslation,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             if (widget.word.wordForms.isNotEmpty)
               _buildDetailSection(
                 title: widget.t('wordForms'),
-                children: widget.word.wordForms.map((wf) => Container(
-                  margin: const EdgeInsets.only(right: 8, bottom: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF6366F1).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFF6366F1).withOpacity(0.2)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(wf.form, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold)),
-                      const SizedBox(width: 8),
-                      Text(
-                        (widget.appLang == 'tr' ? wf.posTr : wf.pos).toUpperCase(), 
-                        style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white24)
+                children: widget.word.wordForms
+                    .map(
+                      (wf) => Container(
+                        margin: const EdgeInsets.only(right: 8, bottom: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(
+                              0xFF6366F1,
+                            ).withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              wf.form,
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              (widget.appLang == 'tr' ? wf.posTr : wf.pos)
+                                  .toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white24,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                )).toList(),
+                    )
+                    .toList(),
               ),
           ],
         ),
@@ -305,10 +351,10 @@ class _ChillCardState extends State<_ChillCard> {
   }
 
   Widget _buildInfoCard({
-    required String title, 
-    required String content, 
-    String? subContent, 
-    required Color color, 
+    required String title,
+    required String content,
+    String? subContent,
+    required Color color,
     bool isExample = false,
     VoidCallback? onToggleTranslate,
     bool isTranslated = false,
@@ -317,7 +363,9 @@ class _ChillCardState extends State<_ChillCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: widget.isDark ? Colors.black.withOpacity(0.3) : const Color(0xFFF8FAFC),
+        color: widget.isDark
+            ? Colors.black.withValues(alpha: 0.3)
+            : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -325,43 +373,72 @@ class _ChillCardState extends State<_ChillCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(title.toUpperCase(), style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: color.withOpacity(0.6), letterSpacing: 1.5)),
+              Text(
+                title.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  color: color.withValues(alpha: 0.6),
+                  letterSpacing: 1.5,
+                ),
+              ),
               if (onToggleTranslate != null) ...[
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: onToggleTranslate,
-                  child: Icon(LucideIcons.languages, size: 12, color: color.withOpacity(0.4)),
+                  child: Icon(
+                    LucideIcons.languages,
+                    size: 12,
+                    color: color.withValues(alpha: 0.4),
+                  ),
                 ),
               ],
             ],
           ),
           const SizedBox(height: 8),
           Text(
-            content, 
-            textAlign: TextAlign.center, 
+            content,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: isExample ? 18 : 14, 
-              fontWeight: isExample ? FontWeight.bold : FontWeight.normal, 
-              fontStyle: isExample && !isTranslated ? FontStyle.italic : FontStyle.normal, 
-              color: isExample ? Colors.amber[600] : Colors.white70
-            )
+              fontSize: isExample ? 18 : 14,
+              fontWeight: isExample ? FontWeight.bold : FontWeight.normal,
+              fontStyle: isExample && !isTranslated
+                  ? FontStyle.italic
+                  : FontStyle.normal,
+              color: isExample ? Colors.amber[600] : Colors.white70,
+            ),
           ),
           if (subContent != null) ...[
             const SizedBox(height: 8),
-            Text(subContent, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, color: Colors.white38)),
-          ]
+            Text(
+              subContent,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 11, color: Colors.white38),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildDetailSection({required String title, required List<Widget> children}) {
+  Widget _buildDetailSection({
+    required String title,
+    required List<Widget> children,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 8, bottom: 8),
-          child: Text(title.toUpperCase(), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white38, letterSpacing: 1.5)),
+          child: Text(
+            title.toUpperCase(),
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Colors.white38,
+              letterSpacing: 1.5,
+            ),
+          ),
         ),
         Wrap(children: children),
       ],
