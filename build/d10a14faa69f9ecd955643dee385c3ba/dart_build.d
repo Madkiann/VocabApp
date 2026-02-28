@@ -1,0 +1,1 @@
+ C:\\Games\\vocabapp_mobile_flutter\\build\\d10a14faa69f9ecd955643dee385c3ba\\dart_build_result.json:  C:\\Games\\vocabapp_mobile_flutter\\.dart_tool\\package_config.json C:\\Games\\vocabapp_mobile_flutter\\pubspec.yaml C:\\Users\\omerm\\Develop\\flutter\\bin\\cache\\dart-sdk\\version c:\\games\\vocabapp_mobile_flutter\\.dart_tool\\package_config.json
