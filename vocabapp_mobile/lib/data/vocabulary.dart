@@ -70,6 +70,8 @@ class Word {
   final WordMode mode;
   bool isSaved;
   SM2Data sm2;
+  String? folder; // Folder field for Vault
+  bool isCreatedByUser;
 
   Word({
     required this.id,
@@ -87,6 +89,8 @@ class Word {
     this.mode = WordMode.vocabulary,
     this.isSaved = false,
     required this.sm2,
+    this.folder,
+    this.isCreatedByUser = false,
   });
 }
 

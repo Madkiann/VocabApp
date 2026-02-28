@@ -26,13 +26,30 @@ class VaultWidget extends StatefulWidget {
 class _VaultWidgetState extends State<VaultWidget> {
   String? activeFolder; // null = overview, String = folder list
   String searchQuery = '';
+  String innerSearchQuery = '';
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _innerSearchController = TextEditingController();
+  final TextEditingController _newFolderController = TextEditingController();
   int _activeTab = 0; // 0: All, 1: Saved, 2: Created
+  bool isAdding = false;
+  String sortMode = 'alpha'; // alpha, count_desc, count_asc
 
   @override
   void dispose() {
     _searchController.dispose();
+    _innerSearchController.dispose();
+    _newFolderController.dispose();
     super.dispose();
+  }
+
+  void _addFolder() {
+    if (_newFolderController.text.trim().isNotEmpty) {
+      setState(() {
+        widget.vaultFolders.add(_newFolderController.text.trim());
+        _newFolderController.clear();
+        isAdding = false;
+      });
+    }
   }
 
   @override
@@ -61,11 +78,55 @@ class _VaultWidgetState extends State<VaultWidget> {
                   color: widget.isDark ? Colors.white : Colors.black,
                 ),
               ),
-              const Icon(LucideIcons.search, color: Colors.white24, size: 24),
+              Row(
+                children: [
+                  const Icon(
+                    LucideIcons.search,
+                    color: Colors.white24,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 16),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (sortMode == 'alpha') {
+                          sortMode = 'count_desc';
+                        } else if (sortMode == 'count_desc')
+                          sortMode = 'count_asc';
+                        else
+                          sortMode = 'alpha';
+                      });
+                    },
+                    child: Icon(
+                      LucideIcons.arrowDownUp,
+                      color: sortMode == 'alpha'
+                          ? Colors.white24
+                          : const Color(0xFF6366F1),
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
+          const SizedBox(height: 12),
+
+          // Filter Tabs
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildFilterTab(widget.t('all'), 0),
+                const SizedBox(width: 8),
+                _buildFilterTab(widget.t('savedWordsTab'), 1),
+                const SizedBox(width: 8),
+                _buildFilterTab(widget.t('created'), 2),
+              ],
+            ),
+          ),
+
           const SizedBox(height: 32),
-          
+
           // Folder Grid
           ListView.builder(
             shrinkWrap: true,
@@ -73,39 +134,77 @@ class _VaultWidgetState extends State<VaultWidget> {
             itemCount: widget.vaultFolders.length,
             itemBuilder: (context, index) {
               final folder = widget.vaultFolders[index];
-              final count = widget.savedWords.where((w) => (w.isSaved)).length; // Simplified for now
+              final count = widget.savedWords
+                  .where((w) => (w.folder ?? 'General') == folder)
+                  .length;
               return _buildFolderItem(folder, count, index);
             },
           ),
-          
+
           const SizedBox(height: 24),
-          
-          // Add Folder Button
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(widget.t('comingSoon') ?? 'Coming Soon!'), duration: const Duration(seconds: 1)),
-                );
-              },
-              child: Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF6366F1).withOpacity(0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+
+          // Add Folder Interaction
+          if (isAdding)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF161618),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: const Color(0xFF6366F1).withOpacity(0.3),
                 ),
-                child: const Icon(LucideIcons.plus, color: Colors.white, size: 28),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _newFolderController,
+                      autofocus: true,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        hintText: "Folder Name...",
+                        hintStyle: TextStyle(color: Colors.white24),
+                        border: InputBorder.none,
+                      ),
+                      onSubmitted: (_) => _addFolder(),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _addFolder,
+                    icon: const Icon(
+                      LucideIcons.plus,
+                      color: Color(0xFF6366F1),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            Center(
+              child: GestureDetector(
+                onTap: () => setState(() => isAdding = true),
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF6366F1),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF6366F1).withOpacity(0.3),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    LucideIcons.plus,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
               ),
             ),
-          ),
           const SizedBox(height: 40),
         ],
       ),
@@ -113,9 +212,15 @@ class _VaultWidgetState extends State<VaultWidget> {
   }
 
   Widget _buildFolderItem(String name, int count, int index) {
-    final colors = [Colors.blue, Colors.purple, const Color(0xFFF43F5E), const Color(0xFF10B981), Colors.amber];
+    final colors = [
+      Colors.blue,
+      Colors.purple,
+      const Color(0xFFF43F5E),
+      const Color(0xFF10B981),
+      Colors.amber,
+    ];
     final color = colors[index % colors.length];
-    
+
     return GestureDetector(
       onTap: () => setState(() => activeFolder = name),
       child: Container(
@@ -128,14 +233,42 @@ class _VaultWidgetState extends State<VaultWidget> {
         ),
         child: Row(
           children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(LucideIcons.archive, color: color, size: 24),
+            // Multi-layered card look
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 54,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                Positioned(
+                  top: 4,
+                  child: Container(
+                    width: 48,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withOpacity(0.4),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      LucideIcons.history,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -161,7 +294,11 @@ class _VaultWidgetState extends State<VaultWidget> {
                 ],
               ),
             ),
-            const Icon(LucideIcons.chevronRight, color: Colors.white12, size: 20),
+            const Icon(
+              LucideIcons.chevronRight,
+              color: Colors.white12,
+              size: 20,
+            ),
           ],
         ),
       ),
@@ -169,8 +306,10 @@ class _VaultWidgetState extends State<VaultWidget> {
   }
 
   Widget _buildFolderView() {
-    final list = widget.savedWords; // Simplified filter
-    
+    final list = widget.savedWords
+        .where((w) => (w.folder ?? 'General') == activeFolder)
+        .toList();
+
     return Column(
       children: [
         // Header & Search
@@ -182,15 +321,36 @@ class _VaultWidgetState extends State<VaultWidget> {
                 children: [
                   GestureDetector(
                     onTap: () => setState(() => activeFolder = null),
-                    child: const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 24),
+                    child: const Icon(
+                      LucideIcons.arrowLeft,
+                      color: Colors.white,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 20),
                   Expanded(
                     child: Text(
-                      activeFolder == 'General' ? widget.t('generalFolder') : activeFolder!,
+                      activeFolder == 'General'
+                          ? widget.t('generalFolder')
+                          : activeFolder!,
                       style: GoogleFonts.outfit(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => _showAddWordDialog(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6366F1).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        LucideIcons.plus,
+                        color: Color(0xFF6366F1),
+                        size: 20,
                       ),
                     ),
                   ),
@@ -205,51 +365,49 @@ class _VaultWidgetState extends State<VaultWidget> {
                   border: Border.all(color: Colors.white.withOpacity(0.1)),
                 ),
                 child: TextField(
-                  controller: _searchController,
-                  onChanged: (val) => setState(() => searchQuery = val),
+                  controller: _innerSearchController,
+                  onChanged: (val) => setState(() => innerSearchQuery = val),
                   style: const TextStyle(color: Colors.white, fontSize: 14),
                   decoration: InputDecoration(
                     hintText: widget.t('search'),
                     hintStyle: const TextStyle(color: Colors.white24),
                     border: InputBorder.none,
-                    icon: const Icon(LucideIcons.search, color: Colors.white24, size: 18),
+                    icon: const Icon(
+                      LucideIcons.search,
+                      color: Colors.white24,
+                      size: 18,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ),
-        
-        // Tabs (All, Saved, Created)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-          child: Row(
-            children: [
-              _buildFilterTab(widget.t('all'), 0),
-              const SizedBox(width: 12),
-              _buildFilterTab(widget.t('savedWordsTab'), 1),
-              const SizedBox(width: 12),
-              _buildFilterTab(widget.t('created'), 2),
-            ],
-          ),
-        ),
-        
-        const SizedBox(height: 20),
-        
+
+        const SizedBox(height: 10),
+
         // Word List
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             itemCount: list.where((w) {
-              if (searchQuery.isNotEmpty && !w.text.toLowerCase().contains(searchQuery.toLowerCase())) return false;
+              if (innerSearchQuery.isNotEmpty &&
+                  !w.text.toLowerCase().contains(
+                    innerSearchQuery.toLowerCase(),
+                  ))
+                return false;
               if (_activeTab == 1 && !w.isSaved) return false;
-              // if (_activeTab == 2 && !w.isCreated) return false; // Future property
               return true;
             }).length,
             itemBuilder: (context, index) {
               final filteredList = list.where((w) {
-                if (searchQuery.isNotEmpty && !w.text.toLowerCase().contains(searchQuery.toLowerCase())) return false;
+                if (innerSearchQuery.isNotEmpty &&
+                    !w.text.toLowerCase().contains(
+                      innerSearchQuery.toLowerCase(),
+                    ))
+                  return false;
                 if (_activeTab == 1 && !w.isSaved) return false;
+                if (_activeTab == 2 && !w.isCreatedByUser) return false;
                 return true;
               }).toList();
               final w = filteredList[index];
@@ -270,7 +428,11 @@ class _VaultWidgetState extends State<VaultWidget> {
         decoration: BoxDecoration(
           color: isActive ? const Color(0xFF6366F1) : const Color(0xFF161618),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isActive ? Colors.transparent : Colors.white.withOpacity(0.05)),
+          border: Border.all(
+            color: isActive
+                ? Colors.transparent
+                : Colors.white.withOpacity(0.05),
+          ),
         ),
         child: Text(
           label.toUpperCase(),
@@ -286,72 +448,166 @@ class _VaultWidgetState extends State<VaultWidget> {
   }
 
   Widget _buildWordListItem(Word w) {
-    return GestureDetector(
-      onTap: () {
-        // Show detail or something?
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: const Color(0xFF161618),
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: Colors.white.withOpacity(0.03)),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF161618),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Colors.white.withOpacity(0.03)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      w.text,
+                      style: GoogleFonts.outfit(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: const Color(0xFF6366F1),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        (widget.appLang == 'tr' ? w.posTr : w.pos)
+                            .toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white24,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.appLang == 'tr' ? w.trWord : w.engDef,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12, color: Colors.white38),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            children: [
+              // Folder Selector (Simplistic for now)
+              PopupMenuButton<String>(
+                icon: const Icon(
+                  LucideIcons.move,
+                  color: Colors.white24,
+                  size: 16,
+                ),
+                onSelected: (String folder) {
+                  setState(() {
+                    w.folder = folder;
+                  });
+                },
+                itemBuilder: (BuildContext context) {
+                  return widget.vaultFolders.map((String f) {
+                    return PopupMenuItem<String>(
+                      value: f,
+                      child: Text(f, style: const TextStyle(fontSize: 12)),
+                    );
+                  }).toList();
+                },
+              ),
+              GestureDetector(
+                onTap: () => setState(() => w.isSaved = !w.isSaved),
+                child: Icon(
+                  LucideIcons.trash2,
+                  color: const Color(0xFFF43F5E),
+                  size: 16,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddWordDialog(BuildContext context) {
+    String text = "";
+    String tr = "";
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF161618),
+        title: Text(
+          widget.t('addWord'),
+          style: GoogleFonts.outfit(color: Colors.white),
         ),
-        child: Row(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        w.text,
-                        style: GoogleFonts.outfit(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                          color: const Color(0xFF6366F1),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          (widget.appLang == 'tr' ? w.posTr : w.pos).toUpperCase(),
-                          style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white24),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.appLang == 'tr' ? w.trWord : w.engDef,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12, color: Colors.white38),
-                  ),
-                ],
+            TextField(
+              onChanged: (val) => text = val,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: widget.t('word'),
+                hintStyle: const TextStyle(color: Colors.white24),
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  w.isSaved = !w.isSaved;
-                });
-              },
-              child: Icon(
-                LucideIcons.bookmark, 
-                color: w.isSaved ? const Color(0xFFF43F5E) : Colors.white10, 
-                size: 24
+            TextField(
+              onChanged: (val) => tr = val,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: widget.t('toTr'),
+                hintStyle: const TextStyle(color: Colors.white24),
               ),
             ),
           ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(widget.t('cancel')),
+          ),
+          TextButton(
+            onPressed: () {
+              if (text.isNotEmpty && tr.isNotEmpty) {
+                setState(() {
+                  widget.savedWords.add(
+                    Word(
+                      id: DateTime.now().millisecondsSinceEpoch.toString(),
+                      text: text,
+                      trWord: tr,
+                      phonetic: "",
+                      pos: "noun",
+                      posTr: "isim",
+                      engDef: "",
+                      trDef: "",
+                      engExample: "",
+                      trExample: "",
+                      sm2: SM2Data(),
+                      isSaved: true,
+                      isCreatedByUser: true,
+                      folder: activeFolder,
+                    ),
+                  );
+                });
+                Navigator.pop(context);
+              }
+            },
+            child: Text(widget.t('addText')),
+          ),
+        ],
       ),
     );
   }

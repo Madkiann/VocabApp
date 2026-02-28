@@ -23,7 +23,8 @@ export const Dashboard = ({
     totalSecondsSpent,
     setQuickTx,
     vocabMode,
-    setVocabMode
+    setVocabMode,
+    onLevelTestClick
 }) => {
     const [sortMode, setSortMode] = useState('name');
     const [achievementsExpanded, setAchievementsExpanded] = useState(false);
@@ -193,7 +194,7 @@ export const Dashboard = ({
                 </div>
 
                 {/* Level Test card */}
-                <div className={`p-6 rounded-[2.5rem] mb-6 border-2 border-dashed relative overflow-hidden group transition-all duration-500 hover:border-indigo-500/50 hover:scale-[1.02] active:scale-[0.98] ${isDark ? 'bg-indigo-950/10 border-slate-800' : 'bg-indigo-50/30 border-slate-200'}`}>
+                <div className={`p-6 rounded-[2.5rem] mb-6 border-2 border-dashed relative overflow-hidden group transition-all duration-500 hover:border-indigo-500/50 hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${isDark ? 'bg-indigo-950/10 border-slate-800' : 'bg-indigo-50/30 border-slate-200'}`} onClick={onLevelTestClick}>
                     <div className="absolute -right-6 -top-6 w-32 h-32 bg-indigo-500 opacity-5 blur-2xl group-hover:opacity-10 transition-opacity rounded-full"></div>
                     <div className="flex items-center gap-5 relative z-10">
                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:rotate-12 ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white text-indigo-500 shadow-sm border border-indigo-100/50'}`}>
@@ -206,7 +207,7 @@ export const Dashboard = ({
                             </div>
                             <p className={`text-xs font-bold opacity-60`}>{t.levelTestDesc || "Kelime dağarcığını ölç ve seviyeni öğren!"}</p>
                             <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mt-2 flex items-center gap-1.5 transition-all group-hover:translate-x-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping"></span> {t.comingSoon || "Çok Yakında"} <ArrowRight size={12} className="opacity-60" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping"></span> {t.startNow || "Hemen Başla"} <ArrowRight size={12} className="opacity-60" />
                             </p>
                         </div>
                     </div>

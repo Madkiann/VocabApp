@@ -12,6 +12,7 @@ class DashboardWidget extends StatelessWidget {
   final String appLang;
   final Function(String) t;
   final bool isDark;
+  final VoidCallback onLevelTestTap;
 
   const DashboardWidget({
     super.key,
@@ -22,6 +23,7 @@ class DashboardWidget extends StatelessWidget {
     required this.appLang,
     required this.t,
     required this.isDark,
+    required this.onLevelTestTap,
   });
 
   @override
@@ -395,51 +397,54 @@ class DashboardWidget extends StatelessWidget {
   }
 
   Widget _buildLevelTestCTA(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.indigo.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(36),
-        border: Border.all(color: Colors.indigo.withOpacity(0.1), style: BorderStyle.none),
-      ),
-      child: Row(
-        children: [
-          const Icon(LucideIcons.barChart3, color: Colors.indigo, size: 40),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      t('levelTestTitle').toUpperCase(),
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.indigo,
-                        letterSpacing: 1.5,
+    return GestureDetector(
+      onTap: onLevelTestTap,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.indigo.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(36),
+          border: Border.all(color: Colors.indigo.withOpacity(0.1), style: BorderStyle.none),
+        ),
+        child: Row(
+          children: [
+            const Icon(LucideIcons.barChart3, color: Colors.indigo, size: 40),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        t('levelTestTitle').toUpperCase(),
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.indigo,
+                          letterSpacing: 1.5,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.indigo,
-                        borderRadius: BorderRadius.circular(4),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.indigo,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text("BETA", style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white)),
                       ),
-                      child: const Text("BETA", style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white)),
-                    ),
-                  ],
-                ),
-                Text(
-                  t('levelTestDesc'),
-                  style: const TextStyle(fontSize: 11, color: Colors.white38),
-                ),
-              ],
+                    ],
+                  ),
+                  Text(
+                    t('levelTestDesc'),
+                    style: const TextStyle(fontSize: 11, color: Colors.white38),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

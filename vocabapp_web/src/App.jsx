@@ -19,6 +19,7 @@ import { AchievementPopup } from './components/AchievementPopup';
 import { Mascot } from './components/Mascot';
 import { SwipeableCard } from './components/SwipeableCard';
 import { AdminPanel } from './components/AdminPanel';
+import { LevelTestModal } from './components/LevelTestModal';
 
 // Hooks
 import { useAdmin } from './hooks/useAdmin';
@@ -321,6 +322,7 @@ export default function App() {
   const [showForms, setShowForms] = useState(false);
   const [showVault, setShowVault] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showLevelTest, setShowLevelTest] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedVaultWord, setSelectedVaultWord] = useState(null);
 
@@ -885,6 +887,13 @@ export default function App() {
         verifyMasterKey={verifyMasterKey}
         setShowAdminPanel={setShowAdminPanel}
       />
+      <LevelTestModal
+        isOpen={showLevelTest}
+        onClose={() => setShowLevelTest(false)}
+        t={t}
+        isDark={isDark}
+        streak={streak}
+      />
       {showAdminPanel && (
         <AdminPanel
           isDark={isDark}
@@ -986,6 +995,7 @@ export default function App() {
           setQuickTx={setQuickTx}
           vocabMode={vocabMode}
           setVocabMode={setVocabMode}
+          onLevelTestClick={() => setShowLevelTest(true)}
         />
         {bottomNavigation}
       </>
