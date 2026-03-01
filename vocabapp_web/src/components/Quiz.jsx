@@ -28,7 +28,8 @@ export const Quiz = ({
     cardBg,
     bgMain,
     textMain,
-    isAdmin = false
+    isAdmin = false,
+    isQuizReview = false
 }) => {
     const renderQuizFeedback = () => (
         <div className="mt-8 space-y-6 animate-fade-in w-full">
@@ -102,7 +103,14 @@ export const Quiz = ({
                         {appMode === 'quiz_tf' && <AlertCircle size={28} />}
                         {appMode === 'quiz_sentence' && <Target size={28} />}
                     </div>
-                    <h2 className="text-xl font-black uppercase tracking-tight">{appMode === 'quiz_mc' ? t.meaning : appMode === 'quiz_tf' ? t.trueFalse : t.buildSentence}</h2>
+                    <div>
+                        <h2 className="text-xl font-black uppercase tracking-tight">{appMode === 'quiz_mc' ? t.meaning : appMode === 'quiz_tf' ? t.trueFalse : t.buildSentence}</h2>
+                        {isQuizReview && (
+                            <div className={`mt-1 px-2 py-0.5 rounded-md text-[7px] font-black uppercase tracking-widest flex items-center gap-1 w-max ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
+                                <RefreshCw size={8} /> Review Mode
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <button onClick={() => setIsTranslated(!isTranslated)} className={`p-3 rounded-2xl transition-all hover:scale-110 active:scale-95 shadow-sm ${isDark ? 'bg-slate-800 text-amber-400' : 'bg-slate-100 text-amber-600'}`}>
                     <RefreshCw size={22} className={isTranslated ? "rotate-180 transition-transform duration-500" : "transition-transform duration-500"} />

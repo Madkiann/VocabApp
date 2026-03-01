@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart3, Moon, Clock, Brain, RefreshCw, Zap, Hourglass, Share2, MoreHorizontal, Target, TrendingUp, Copy, ArrowRight, Trophy, Lock, ChevronDown } from 'lucide-react'; // RAMADAN UPDATE: Replaced Flame with Moon
+import { BarChart3, Moon, Clock, Brain, RefreshCw, Zap, Hourglass, Share2, MoreHorizontal, Target, TrendingUp, Copy, ArrowRight, Trophy, Lock, ChevronDown, Award, FileText, Check, X, Languages, ChevronRight } from 'lucide-react';
 import { Mascot } from './Mascot';
 import AbstractIcon from './AchievementIcons';
 
@@ -24,14 +24,28 @@ export const Dashboard = ({
     setQuickTx,
     vocabMode,
     setVocabMode,
-    onLevelTestClick
+    onLevelTestClick,
+    maxStreak = 0,
+    quizLog = { total: 0, correct: 0, history: [] },
+    onVaultClick,
+    onRetryQuiz,
+    showQuizHistory,
+    setShowQuizHistory,
+    dailyStats = {},
+    isAdmin = false,
+    advanceTime
 }) => {
     const [sortMode, setSortMode] = useState('name');
     const [achievementsExpanded, setAchievementsExpanded] = useState(false);
     const [achFilter, setAchFilter] = useState('all'); // all, locked, unlocked
-    const [showOptions, setShowOptions] = useState(false);
+    const [showStreakMenu, setShowStreakMenu] = useState(false);
+    const [quizHistoryTab, setQuizHistoryTab] = useState('all'); // 'all', 'correct', 'wrong', 'reviewed'
+    const [selectedDayStats, setSelectedDayStats] = useState(null);
+    const [showFocusHistory, setShowFocusHistory] = useState(false);
+    const [detailedFocusDay, setDetailedFocusDay] = useState(null);
 
-    const currentDate = new Date().setHours(0, 0, 0, 0); const hours = Math.floor(totalSecondsSpent / 3600);
+    const currentDate = new Date().setHours(0, 0, 0, 0);
+    const hours = Math.floor(totalSecondsSpent / 3600);
     const mins = Math.floor((totalSecondsSpent % 3600) / 60);
 
     const handleShare = async () => {
@@ -43,28 +57,31 @@ export const Dashboard = ({
                     text: textToShare,
                     url: 'https://ferhathocaingilizce.com',
                 });
+                if (setQuickTx) setQuickTx({ visible: true, text: 'Harika! Başarıyla paylaşıldı. 🚀', x: window.innerWidth / 2, y: window.innerHeight - 100 });
+                setTimeout(() => setQuickTx(prev => ({ ...prev, visible: false })), 3000);
                 return;
             } catch (err) {
-                console.log('Share canceled or failed', err);
+                if (err.name === 'AbortError') return;
             }
         }
-
-        // Fallback to clipboard
         try {
             await navigator.clipboard.writeText(textToShare);
-            if (setQuickTx) setQuickTx({ visible: true, text: 'Panoya kopyalandı! 🎉', x: window.innerWidth / 2, y: window.innerHeight - 100 });
+            if (setQuickTx) setQuickTx({ visible: true, text: 'Bağlantı kopyalandı! 🎉', x: window.innerWidth / 2, y: window.innerHeight - 100 });
         } catch (e) {
-            if (setQuickTx) setQuickTx({ visible: true, text: 'Kopyalanamadı :(', x: window.innerWidth / 2, y: window.innerHeight - 100 });
+            const textArea = document.createElement("textarea");
+            textArea.value = textToShare;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            if (setQuickTx) setQuickTx({ visible: true, text: 'Kopyalandı! 🎉', x: window.innerWidth / 2, y: window.innerHeight - 100 });
         }
-
-        setTimeout(() => {
-            if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false }));
-        }, 3000);
+        setTimeout(() => { if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }, 3000);
     };
 
     return (
-        <div className={`min-h-[100dvh] flex flex-col items-center p-4 font-sans transition-all duration-500 pb-32 overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { setShowOptions(false); if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
-            {/* Background Glows for Premium Feel - RAMADAN UPDATE: Emerald/Teal glows */}
+        <div className={`min-h-[100dvh] flex flex-col items-center p-4 font-sans transition-all duration-500 pb-32 overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
+
             <div className="fixed inset-0 pointer-events-none -z-0 overflow-hidden">
                 <div className={`absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] opacity-[0.15] ${isDark ? 'bg-indigo-600' : 'bg-indigo-400'}`}></div>
                 <div className={`absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] rounded-full blur-[100px] opacity-[0.1] ${isDark ? 'bg-emerald-600' : 'bg-emerald-400'}`}></div>
@@ -72,13 +89,8 @@ export const Dashboard = ({
 
             <div className="w-full max-w-md mt-6 animate-fade-in mb-8 relative z-10">
 
-                <div className="flex flex-col items-center justify-center mb-0 px-2 w-full">
-                    {/* Mode Tabs moved to App.jsx */}
-                </div>
-
-                {/* Unique Fluid Streak Banner - RAMADAN UPDATE */}
+                {/* Unique Fluid Streak Banner */}
                 <div className={`relative p-6 rounded-[2.5rem] mb-6 overflow-hidden ${isDark ? 'bg-gradient-to-br from-slate-900 to-[#1e1e24] border border-slate-800 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]' : 'bg-gradient-to-br from-white to-slate-50 border border-slate-200 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]'}`}>
-                    {/* Background decoration */}
                     <div className={`absolute -right-10 -top-10 w-40 h-40 blur-3xl opacity-30 pointer-events-none rounded-full ${isDark ? 'bg-emerald-600' : 'bg-emerald-400'}`}></div>
 
                     <div className="flex justify-between items-start mb-8 relative z-10">
@@ -91,41 +103,57 @@ export const Dashboard = ({
                             </div>
                             <div className="flex flex-col">
                                 <h3 className={`text-2xl font-black tracking-tight flex items-baseline gap-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                                    {streak} <span className="text-xl font-black mt-2 opacity-60">{t.dayWord || "Gün"}</span>
+                                    {streak} <span className="text-xl opacity-60 font-medium">{t.dayWord || "Gün"}</span>
                                 </h3>
                                 <p className={`text-[11px] font-bold uppercase tracking-widest opacity-60`}>{t.continuousStreak || "Aralıksız Seri"}</p>
-                                <div className="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-max">
-                                    <Moon size={10} className="inline" />
-                                    <span className="text-[9px] font-black uppercase tracking-wider">{t.ramadanUpdate || "Hayırlı Ramazanlar"}</span>
+                                <div className="mt-1 flex gap-2">
+                                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-max">
+                                        <Award size={10} className="inline" />
+                                        <span className="text-[9px] font-black uppercase tracking-wider">{t.maxStreak || "En İyi"}: {maxStreak}</span>
+                                    </div>
+                                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-max">
+                                        <Moon size={10} className="inline" />
+                                        <span className="text-[9px] font-black uppercase tracking-wider">{t.ramadanUpdate || "Hayırlı Ramazanlar"}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4 relative">
-
-                            <button onClick={(e) => { e.stopPropagation(); handleShare(); }} className={`p-2.5 rounded-full transition-all hover:scale-110 active:scale-95 ${isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'}`}>
-                                <Share2 size={18} />
+                        <div className="flex items-center gap-3 relative">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); handleShare(); }}
+                                className={`flex items-center gap-2 pl-3 pr-4 py-2 rounded-full transition-all hover:scale-105 active:scale-95 ${isDark ? 'bg-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]' : 'bg-indigo-600 text-white shadow-lg'}`}
+                            >
+                                <Share2 size={14} strokeWidth={3} />
+                                <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">{t.share || "Paylaş"}</span>
                             </button>
-                            <button onClick={(e) => { e.stopPropagation(); setShowOptions(!showOptions); }} className={`p-2.5 rounded-full transition-all hover:scale-110 active:scale-95 ${isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'}`}>
+                            <button onClick={(e) => { e.stopPropagation(); setShowStreakMenu(!showStreakMenu); }} className={`p-2.5 rounded-full transition-all hover:scale-110 active:scale-95 ${isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'}`}>
                                 <MoreHorizontal size={18} />
                             </button>
 
-                            {/* Options Dropdown */}
-                            {showOptions && (
+                            {showStreakMenu && (
                                 <div className={`absolute top-full right-0 mt-2 w-48 rounded-2xl shadow-xl border p-2 z-50 animate-fade-in ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`} onClick={e => e.stopPropagation()}>
                                     <button onClick={handleShare} className={`w-full flex items-center justify-between px-3 py-2 text-sm font-bold rounded-xl transition-colors ${isDark ? 'text-slate-200 hover:bg-slate-700' : 'text-slate-700 hover:bg-slate-100'}`}>
                                         {t.share || "Paylaş"} <Copy size={16} className="opacity-50" />
                                     </button>
                                     <div className={`h-px w-full my-1 opacity-50 ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`}></div>
-                                    <button onClick={() => { setShowOptions(false); if (setQuickTx) setQuickTx({ visible: true, text: (t.comingSoon || 'Çok Yakında'), x: window.innerWidth / 2, y: window.innerHeight - 100 }); setTimeout(() => setQuickTx(prev => ({ ...prev, visible: false })), 2000); }} className={`w-full flex items-center justify-between px-3 py-2 text-sm font-bold rounded-xl transition-colors ${isDark ? 'text-emerald-400 hover:bg-slate-700' : 'text-emerald-600 hover:bg-slate-100'}`}>
+                                    <button onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx({ visible: true, text: (t.comingSoon || 'Çok Yakında'), x: window.innerWidth / 2, y: window.innerHeight - 100 }); setTimeout(() => setQuickTx(prev => ({ ...prev, visible: false })), 2000); }} className={`w-full flex items-center justify-between px-3 py-2 text-sm font-bold rounded-xl transition-colors ${isDark ? 'text-emerald-400 hover:bg-slate-700' : 'text-emerald-600 hover:bg-slate-100'}`}>
                                         {t.protectStreak || "Seriyi Koru"} <Target size={16} className="opacity-50" />
                                     </button>
+                                    {isAdmin && (
+                                        <button onClick={(e) => { e.stopPropagation(); setShowStreakMenu(false); advanceTime(); }} className={`w-full flex items-center justify-between px-3 py-2 mt-1 text-[11px] font-black uppercase tracking-tighter rounded-xl transition-all bg-amber-400 text-black hover:bg-amber-500`}>
+                                            +1 GÜN İLERİ (PASS) <Zap size={14} fill="currentColor" />
+                                        </button>
+                                    )}
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {/* Timeline Flow (Alternative to the basic pills) - RAMADAN UPDATE */}
+                    <div className="flex justify-between items-center mb-4 opacity-30">
+                        <h4 className={`text-[9px] font-black uppercase tracking-[0.15em]`}>{t.weeklyActivity || "Haftalık Aktivite"}</h4>
+                        <TrendingUp size={11} />
+                    </div>
                     <div className="relative pt-6">
                         <div className={`absolute bottom-2 left-0 w-full h-1 rounded-full ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`}></div>
                         <div className={`absolute bottom-2 left-0 h-1 rounded-full transition-all duration-1000 ${isDark ? 'bg-gradient-to-r from-emerald-600 to-teal-400' : 'bg-gradient-to-r from-emerald-400 to-teal-400'}`} style={{ width: `${Math.min(100, (streak % 7 === 0 && streak > 0 ? 100 : (streak % 7) / 6 * 100))}%` }}></div>
@@ -134,10 +162,28 @@ export const Dashboard = ({
                             {(t.days || ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']).map((day, i) => {
                                 const isCurrentDay = i === (streak % 7);
                                 const isDone = i < (streak % 7);
+                                const dayDiff = i - (streak % 7);
+                                const targetDate = new Date();
+                                targetDate.setDate(targetDate.getDate() + dayDiff);
+                                const targetDateStr = targetDate.toDateString();
+                                const stats = dailyStats[targetDateStr] || { swiped: 0, correct: 0, wrong: 0, quiz: 0, hourlyActions: new Array(24).fill(0) };
+
                                 return (
-                                    <div key={i} className="flex flex-col items-center gap-1.5 h-12 justify-between">
-                                        <span className={`text-[9px] font-black uppercase transition-all duration-500 bg-transparent px-1 rounded ${isDark ? (isDone || isCurrentDay ? 'text-teal-400' : 'text-slate-500') : (isDone || isCurrentDay ? 'text-emerald-600' : 'text-slate-400')} ${isCurrentDay ? 'animate-bounce' : ''}`}>{day}</span>
-                                        <div className={`w-4 h-4 rounded-full border-2 transition-all duration-700 flex-shrink-0 relative z-20 ${isDone ? 'bg-emerald-500 border-emerald-500 scale-100 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : isCurrentDay ? 'bg-slate-900 border-emerald-500 scale-[1.3] animate-pulse shadow-[0_0_20px_rgba(16,185,129,0.8)]' : (isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-300')}`}></div>
+                                    <div
+                                        key={i}
+                                        onClick={(e) => { e.stopPropagation(); setSelectedDayStats({ day, date: targetDateStr, stats }); }}
+                                        className="flex flex-col items-center gap-2 relative group cursor-pointer"
+                                    >
+                                        <div className={`text-[9px] font-black uppercase tracking-widest transition-opacity ${isCurrentDay ? 'opacity-100 text-emerald-500' : 'opacity-30 group-hover:opacity-60'}`}>{day}</div>
+                                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 relative ${isCurrentDay ? 'bg-emerald-500 text-white shadow-glow-emerald scale-110' : isDone ? (isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-600') : (isDark ? 'bg-slate-800 text-slate-600' : 'bg-slate-100 text-slate-400')}`}>
+                                            {isDone || isCurrentDay ? <Check size={14} strokeWidth={4} /> : <div className="w-1 h-1 rounded-full bg-current opacity-30"></div>}
+                                            {(stats.correct > 0 || stats.wrong > 0) && (
+                                                <div className="absolute -bottom-1 -right-1 flex gap-0.5">
+                                                    {stats.correct > 0 && <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 border border-white dark:border-slate-900" title={`${stats.correct} Doğru`} />}
+                                                    {stats.wrong > 0 && <div className="w-1.5 h-1.5 rounded-full bg-rose-500 border border-white dark:border-slate-900" title={`${stats.wrong} Yanlış`} />}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -147,169 +193,123 @@ export const Dashboard = ({
 
                 {/* Metro Layout Stats */}
                 <div className="flex flex-col gap-4 mb-6">
-                    {/* Horizontal Big Stat */}
-                    <div className={`w-full p-6 rounded-[2rem] flex justify-between items-center relative overflow-hidden shadow-sm border ${isDark ? 'bg-indigo-900/20 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}>
-                        <div className="absolute right-0 bottom-0 opacity-10 blur-[2px] transform translate-y-4">
+                    <div
+                        onClick={() => setShowFocusHistory(true)}
+                        className={`w-full p-6 rounded-[2rem] flex justify-between items-center relative overflow-hidden shadow-sm border cursor-pointer transition-all hover:scale-[1.02] active:scale-95 group ${isDark ? 'bg-indigo-900/20 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}
+                    >
+                        <div className="absolute right-0 bottom-0 opacity-10 blur-[2px] transform translate-y-4 group-hover:scale-110 transition-transform">
                             <svg width="200" height="100" viewBox="0 0 200 100" fill="none">
                                 <path d="M0,50 Q50,0 100,50 T200,50" stroke={isDark ? "white" : "currentColor"} strokeWidth="15" fill="none" className="text-indigo-500" />
                             </svg>
                         </div>
                         <div className="relative z-10">
-                            <h4 className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1 opacity-70 ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}>{t.focusTime || "Odaklanılan Süre"}</h4>
-                            <div className={`text-4xl font-extrabold tracking-tight ${isDark ? 'text-indigo-100' : 'text-indigo-900'}`}>{hours}<span className="text-xl opacity-60">{t.hoursShort || "s"}</span> {mins}<span className="text-xl opacity-60">{t.minsShort || "d"}</span></div>
+                            <h4 className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1 opacity-70 flex items-center gap-2 ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}>
+                                {t.focusTime || "Odaklanılan Süre"} <TrendingUp size={10} />
+                            </h4>
+                            <div className={`text-4xl font-extrabold tracking-tight ${isDark ? 'text-indigo-100' : 'text-indigo-900'}`}>{hours}<span className="text-xl opacity-60 font-medium">{t.hoursShort || "s"}</span> {mins}<span className="text-xl opacity-60 font-medium">{t.minsShort || "d"}</span></div>
+                            <div className="text-[8px] font-bold opacity-40 uppercase tracking-widest mt-1 flex items-center gap-1">Geçmiş Analizi İçin Tıkla <ChevronRight size={8} /></div>
                         </div>
-                        <div className={`w-14 h-14 rounded-full flex items-center justify-center relative z-10 ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white text-indigo-500 shadow-sm'}`}>
+                        <div className={`w-14 h-14 rounded-full flex items-center justify-center relative z-10 transition-all group-hover:rotate-12 ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white text-indigo-500 shadow-sm'}`}>
                             <Hourglass size={24} />
                         </div>
                     </div>
 
-                    {/* Horizontal 50/50 Split */}
-                    <div className="flex gap-4">
-                        <div className={`flex-1 p-5 rounded-[2rem] flex flex-col justify-between aspect-[4/3] shadow-sm border ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
-                            <div className="flex justify-between items-start">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-600'}`}>
-                                    <Brain size={20} />
-                                </div>
-                                <span className={`text-[10px] uppercase font-black tracking-widest px-2 py-1 rounded-full ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>Bilinen</span>
+                    <div className="grid grid-cols-3 gap-3">
+                        <div className={`p-4 rounded-[1.8rem] flex flex-col justify-between aspect-square shadow-sm border cursor-pointer transition-all hover:scale-[1.05] active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`} onClick={() => onVaultClick && onVaultClick('Mastered')}>
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-600'}`}>
+                                <Brain size={18} />
                             </div>
                             <div>
-                                <div className={`text-3xl font-black leading-none mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>{strongCount}</div>
-                                <p className={`text-[11px] font-bold opacity-50`}>{t.mastered || "Kalıcı hafızada"}</p>
+                                <div className="text-xl font-black">{strongCount}</div>
+                                <div className="text-[8px] font-bold uppercase opacity-40 tracking-widest">{t.mastered || "Mastered"}</div>
                             </div>
                         </div>
 
-                        <div className={`flex-1 p-5 rounded-[2rem] flex flex-col justify-between aspect-[4/3] shadow-sm border ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
-                            <div className="flex justify-between items-start">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
-                                    <TrendingUp size={20} />
-                                </div>
-                                <span className={`text-[10px] uppercase font-black tracking-widest px-2 py-1 rounded-full ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>Tekrar</span>
+                        <div className={`p-4 rounded-[1.8rem] flex flex-col justify-between aspect-square shadow-sm border cursor-pointer transition-all hover:scale-[1.05] active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`} onClick={() => onVaultClick && onVaultClick('Learning')}>
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-amber-500/10 text-amber-400' : 'bg-amber-50 text-amber-600'}`}>
+                                <Zap size={18} />
                             </div>
                             <div>
-                                <div className={`text-3xl font-black leading-none mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>{totalReviewsAll}</div>
-                                <p className={`text-[11px] font-bold opacity-50`}>{t.progress || "Başarıyla Tamamlandı"}</p>
+                                <div className="text-xl font-black">{learnedCount}</div>
+                                <div className="text-[8px] font-bold uppercase opacity-40 tracking-widest">{t.learningSection || "Learning"}</div>
+                            </div>
+                        </div>
+
+                        <div className={`p-4 rounded-[1.8rem] flex flex-col justify-between aspect-square shadow-sm border cursor-pointer transition-all hover:scale-[1.05] active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`} onClick={() => setShowQuizHistory(true)}>
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
+                                <Trophy size={18} />
+                            </div>
+                            <div>
+                                <div className="text-xl font-black">{quizLog.total}</div>
+                                <div className="text-[8px] font-bold uppercase opacity-40 tracking-widest">Quiz ({Math.round((quizLog.correct / (quizLog.total || 1)) * 100)}%)</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Level Test card */}
-                <div className={`p-6 rounded-[2.5rem] mb-6 border-2 border-dashed relative overflow-hidden group transition-all duration-500 hover:border-indigo-500/50 hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${isDark ? 'bg-indigo-950/10 border-slate-800' : 'bg-indigo-50/30 border-slate-200'}`} onClick={onLevelTestClick}>
-                    <div className="absolute -right-6 -top-6 w-32 h-32 bg-indigo-500 opacity-5 blur-2xl group-hover:opacity-10 transition-opacity rounded-full"></div>
-                    <div className="flex items-center gap-5 relative z-10">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:rotate-12 ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white text-indigo-500 shadow-sm border border-indigo-100/50'}`}>
-                            <BarChart3 size={28} />
+                <div className="mb-0">
+                    <div className="flex flex-col mb-4 px-2">
+                        <div className="flex justify-between items-center mb-4">
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.25em] opacity-40 flex items-center gap-2">
+                                {t.achievementsTitle || "Başarımlar"} <Trophy size={11} />
+                            </h4>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setAchievementsExpanded(!achievementsExpanded); }}
+                                className={`p-2 rounded-xl transition-all hover:scale-110 active:scale-95 ${isDark ? 'bg-slate-800/50 text-slate-400' : 'bg-slate-100 text-slate-500'}`}
+                            >
+                                <ChevronDown size={14} className={`transition-transform duration-300 ${achievementsExpanded ? 'rotate-180' : ''}`} />
+                            </button>
                         </div>
-                        <div>
-                            <div className="flex items-center gap-2 mb-0.5">
-                                <h4 className={`text-base font-black uppercase tracking-widest ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}>{t.levelTestTitle || "Seviye Tespit"}</h4>
-                                <span className="px-2 py-0.5 text-[8px] font-black bg-indigo-500 text-white rounded-full animate-pulse">BETA</span>
-                            </div>
-                            <p className={`text-xs font-bold opacity-60`}>{t.levelTestDesc || "Kelime dağarcığını ölç ve seviyeni öğren!"}</p>
-                            <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mt-2 flex items-center gap-1.5 transition-all group-hover:translate-x-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping"></span> {t.startNow || "Hemen Başla"} <ArrowRight size={12} className="opacity-60" />
-                            </p>
-                        </div>
-                    </div>
-                </div>
 
-                {/* Weak Words Horizontal Scroller */}
-                {weakWordsArray.length > 0 && (
-                    <div className="mb-8">
-                        <div className="flex items-center gap-2 mb-4 px-2">
-                            <Zap className="text-rose-500 fill-rose-500/20" size={18} />
-                            <h3 className={`text-base font-bold uppercase tracking-widest ${isDark ? 'text-white' : 'text-slate-900'}`}>{t.wordsToFocus || "Odaklanılacaklar"}</h3>
-                        </div>
-                        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-2 pb-4 pt-1">
-                            {weakWordsArray.slice(0, 10).map((w, i) => (
-                                <div key={w.id} className={`flex-shrink-0 w-36 p-4 rounded-3xl flex flex-col justify-between aspect-square relative shadow-lg ${isDark ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-slate-200'}`}>
-                                    <div className={`absolute top-0 right-0 w-16 h-16 rounded-bl-full -mr-2 -mt-2 bg-rose-500 opacity-5`}></div>
-                                    <span className="text-xs font-black px-2.5 py-1 bg-rose-500/10 text-rose-500 rounded-full w-max border border-rose-500/20">
-                                        {(t.successRate || "%{rate} Başarı").replace('{rate}', Math.round((w.sm2.correctReviews / w.sm2.totalReviews) * 100))}
-                                    </span>
-                                    <div>
-                                        <div className={`font-black text-xl mb-0.5 capitalize truncate ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>{w.word}</div>
-                                        <div className={`text-[10px] font-bold truncate opacity-60 uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{w.trWord || (t.noTranslation || "Çeviri Yok")}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Achievements Section */}
-                <div className="mb-8 mt-2">
-                    <div className="flex items-center justify-between gap-2 mb-4 px-2">
-                        <div className="flex items-center gap-2">
-                            <Trophy className="text-amber-500 fill-amber-500/20" size={18} />
-                            <h3 className={`text-base font-bold uppercase tracking-widest ${isDark ? 'text-white' : 'text-slate-900'}`}>{t.achievementsTitle || "Başarımlar"}</h3>
-                        </div>
-                        <button
-                            onClick={() => setAchievementsExpanded(!achievementsExpanded)}
-                            className={`p-1.5 rounded-full bg-transparent transition-all ${isDark ? 'text-slate-400 hover:bg-slate-800' : 'text-slate-500 hover:bg-slate-200'}`}
-                        >
-                            <ChevronDown size={18} className={`transition-transform duration-300 ${achievementsExpanded ? 'rotate-180' : ''}`} />
-                        </button>
-                    </div>
-
-                    {achievementsExpanded && (
-                        <div className="flex px-2 mt-2 gap-2 mb-4 w-full">
-                            {['all', 'unlocked', 'locked'].map((f) => (
+                        <div className={`flex p-1 rounded-2xl border transition-all ${isDark ? 'bg-[#1a1a20]/60 border-slate-800/50' : 'bg-slate-100/80 border-slate-200'}`}>
+                            {[
+                                { id: 'all', label: t.achFilterAll || 'Tümü' },
+                                { id: 'unlocked', label: t.achFilterUnlocked || 'Açılan' },
+                                { id: 'locked', label: t.achFilterLocked || 'Kilitli' }
+                            ].map(btn => (
                                 <button
-                                    key={f}
-                                    onClick={() => setAchFilter(f)}
-                                    className={`flex-1 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${achFilter === f ? (isDark ? 'bg-indigo-500 text-white' : 'bg-indigo-600 text-white') : (isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-200 text-slate-500')}`}
+                                    key={btn.id}
+                                    onClick={(e) => { e.stopPropagation(); setAchFilter(btn.id); }}
+                                    className={`flex-1 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300 ${achFilter === btn.id ? (isDark ? 'bg-indigo-500 text-white shadow-lg' : 'bg-white text-indigo-600 shadow-sm') : 'opacity-40 hover:opacity-100'}`}
                                 >
-                                    {f === 'all' ? t.achFilterAll : f === 'unlocked' ? t.achFilterUnlocked : t.achFilterLocked}
+                                    {btn.label}
                                 </button>
                             ))}
                         </div>
-                    )}
+                    </div>
 
-                    <div className={`flex gap-3 px-2 pb-4 pt-1 transition-all duration-500 ${achievementsExpanded ? 'flex-wrap' : 'overflow-x-auto scrollbar-hide'}`}>
+                    <div className={`flex gap-3 overflow-x-auto pb-6 scrollbar-hide -mx-4 px-4 ${achievementsExpanded ? 'flex-wrap' : ''}`}>
                         {[
-                            {
-                                id: 'first_word', title: t.ach_first_word_title, desc: t.ach_first_word_desc, requirement: 1, progress: learnedCount,
-                                barColor: 'bg-blue-500'
-                            },
-                            {
-                                id: 'consistent_3', title: t.ach_consistent_3_title, desc: t.ach_consistent_3_desc, requirement: 3, progress: streak,
-                                barColor: 'bg-orange-500'
-                            },
-                            {
-                                id: 'hard_worker', title: t.ach_hard_worker_title, desc: t.ach_hard_worker_desc, requirement: 50, progress: totalReviewsAll,
-                                barColor: 'bg-indigo-500'
-                            },
-                            {
-                                id: 'consistent_7', title: t.ach_consistent_7_title, desc: t.ach_consistent_7_desc, requirement: 7, progress: streak,
-                                barColor: 'bg-amber-500'
-                            },
-                            {
-                                id: 'master_1', title: t.ach_master_1_title, desc: t.ach_master_1_desc, requirement: 10, progress: strongCount,
-                                barColor: 'bg-emerald-500'
-                            }
+                            { id: 'first_word', title: t.ach_first_word_title, desc: t.ach_first_word_desc, requirement: 1, progress: learnedCount, barColor: 'bg-emerald-500' },
+                            { id: 'consistent_3', title: t.ach_consistent_3_title, desc: t.ach_consistent_3_desc, requirement: 3, progress: streak, barColor: 'bg-orange-500' },
+                            { id: 'hard_worker', title: t.ach_hard_worker_title, desc: t.ach_hard_worker_desc, requirement: 50, progress: totalReviewsAll, barColor: 'bg-indigo-500' },
+                            { id: 'consistent_7', title: t.ach_consistent_7_title, desc: t.ach_consistent_7_desc, requirement: 7, progress: streak, barColor: 'bg-amber-500' },
+                            { id: 'master_1', title: t.ach_master_1_title, desc: t.ach_master_1_desc, requirement: 10, progress: strongCount, barColor: 'bg-emerald-500' },
+                            { id: 'consistent_15', title: t.ach_consistent_15_title, desc: t.ach_consistent_15_desc, requirement: 15, progress: streak, barColor: 'bg-rose-500' },
+                            { id: 'quiz_expert', title: t.ach_quiz_expert_title, desc: t.ach_quiz_expert_desc, requirement: 10, progress: quizLog.total, barColor: 'bg-indigo-500' },
+                            { id: 'mastery_focus', title: t.ach_mastery_focus_title, desc: t.ach_mastery_focus_desc, requirement: 50, progress: strongCount, barColor: 'bg-emerald-500' },
+                            { id: 'focus_guru', title: t.ach_focus_guru_title, desc: t.ach_focus_guru_desc, requirement: 10800, progress: totalSecondsSpent, barColor: 'bg-amber-400' },
                         ].filter(ach => {
-                            const isUnlocked = ach.progress >= ach.requirement;
-                            if (achFilter === 'unlocked' && !isUnlocked) return false;
-                            if (achFilter === 'locked' && isUnlocked) return false;
+                            if (achFilter === 'unlocked' && ach.progress < ach.requirement) return false;
+                            if (achFilter === 'locked' && ach.progress >= ach.requirement) return false;
                             return true;
                         }).map((ach) => {
                             const isUnlocked = ach.progress >= ach.requirement;
                             return (
-                                <div key={ach.id} className={`${achievementsExpanded ? 'w-[calc(50%-0.375rem)]' : 'w-36 flex-shrink-0'} p-4 rounded-3xl flex flex-col justify-between aspect-square relative shadow-[0_4px_20px_rgba(0,0,0,0.03)] border transition-all ${isUnlocked ? (isDark ? 'bg-slate-800/80 border-slate-700/50 hover:border-indigo-500/30' : 'bg-white border-slate-200/50 hover:border-indigo-200 shadow-md') : (isDark ? 'bg-slate-900 border-slate-800/50 opacity-60' : 'bg-slate-50 border-slate-200/50 opacity-70 grayscale')}`}>
+                                <div key={ach.id} className={`${achievementsExpanded ? 'w-[calc(50%-0.375rem)]' : 'w-36 flex-shrink-0'} p-4 rounded-3xl flex flex-col justify-between aspect-square relative shadow-sm border transition-all ${isUnlocked ? (isDark ? 'bg-slate-800/80 border-slate-700/50' : 'bg-white border-slate-200') : (isDark ? 'bg-slate-900 border-slate-800 opacity-60' : 'bg-slate-50 border-slate-100 opacity-70 grayscale')}`}>
                                     <div className="flex justify-between items-start mb-2">
                                         <AbstractIcon type={ach.id} isLocked={!isUnlocked} className="w-10 h-10" />
                                         {!isUnlocked && <Lock size={14} className={isDark ? 'text-slate-600' : 'text-slate-400'} />}
                                     </div>
                                     <div>
                                         <div className={`font-black text-[13px] leading-tight mb-0.5 ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>{ach.title}</div>
-                                        <div className={`text-[9.5px] font-bold leading-snug opacity-70 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{ach.desc}</div>
+                                        <div className={`text-[9.5px] font-bold opacity-70 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{ach.desc}</div>
                                     </div>
                                     <div className="mt-3">
                                         <div className={`w-full h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-slate-700/50' : 'bg-slate-200'}`}>
-                                            <div className={`h-full ${isUnlocked ? ach.barColor : 'bg-slate-400'} transition-all duration-1000`} style={{ width: `${Math.min(100, (ach.progress / ach.requirement) * 100)}%` }}></div>
+                                            <div className={`h-full ${isUnlocked ? ach.barColor : 'bg-slate-400'} transition-all`} style={{ width: `${Math.min(100, (ach.progress / ach.requirement) * 100)}%` }}></div>
                                         </div>
-                                        <div className={`text-[8px] font-black uppercase tracking-widest text-right mt-1 opacity-50`}>{Math.min(ach.progress, ach.requirement)} / {ach.requirement}</div>
+                                        <div className="text-[8px] font-black text-right mt-1 opacity-50">{Math.min(ach.progress, ach.requirement)}/{ach.requirement}</div>
                                     </div>
                                 </div>
                             );
@@ -317,6 +317,184 @@ export const Dashboard = ({
                     </div>
                 </div>
             </div>
+
+            {/* MODALS */}
+            {selectedDayStats && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setSelectedDayStats(null)}>
+                    <div className={`w-full max-w-[280px] p-6 rounded-[2.5rem] border shadow-2xl animate-scale-in ${isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-100 text-slate-900'}`} onClick={e => e.stopPropagation()}>
+                        <div className="flex justify-between items-center mb-6">
+                            <div>
+                                <h4 className="text-xl font-black tracking-tight">{selectedDayStats.day} Günü</h4>
+                                <p className="text-[10px] font-black opacity-40 uppercase tracking-widest">{new Date(selectedDayStats.date).toLocaleDateString()}</p>
+                            </div>
+                            <button onClick={() => setSelectedDayStats(null)} className={`p-2 rounded-full ${isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-50 text-slate-600'}`}>
+                                <X size={16} />
+                            </button>
+                        </div>
+                        <div className="space-y-4 mb-6">
+                            <div className="flex flex-col gap-2">
+                                <div className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40 ml-1">Aktivite</div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className={`p-5 rounded-[1.8rem] border ${isDark ? 'bg-slate-800/40 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
+                                        <div className="text-2xl font-black text-indigo-500">{selectedDayStats.stats.swiped}</div>
+                                        <div className="text-[9px] font-bold uppercase opacity-50 tracking-wider">Kart Kaydı</div>
+                                    </div>
+                                    <div className={`p-5 rounded-[1.8rem] border ${isDark ? 'bg-slate-800/40 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
+                                        <div className="text-2xl font-black text-amber-500">{selectedDayStats.stats.quiz}</div>
+                                        <div className="text-[9px] font-bold uppercase opacity-50 tracking-wider">Quiz Soru</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <div className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40 ml-1">Genel Performans ({selectedDayStats.stats.swiped + selectedDayStats.stats.quiz} İşlem)</div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className={`p-5 rounded-[1.8rem] border ${isDark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/30 border-emerald-100'}`}>
+                                        <div className="text-2xl font-black text-emerald-500">{selectedDayStats.stats.correct}</div>
+                                        <div className="text-[9px] font-bold uppercase opacity-60 tracking-wider">Doğru Karar</div>
+                                    </div>
+                                    <div className={`p-5 rounded-[1.8rem] border ${isDark ? 'bg-rose-500/5 border-rose-500/10' : 'bg-rose-50/30 border-rose-100'}`}>
+                                        <div className="text-2xl font-black text-rose-500">{selectedDayStats.stats.wrong}</div>
+                                        <div className="text-[9px] font-bold uppercase opacity-60 tracking-wider">Yanlış Karar</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mb-6">
+                            <div className="text-[8px] font-black uppercase tracking-[0.2em] opacity-40 mb-3">Günlük Aktivite Yoğunluğu</div>
+                            <div className="flex items-end justify-between h-20 gap-1 px-1 mb-2">
+                                {(selectedDayStats.stats.hourlyActions || new Array(24).fill(0)).map((val, i) => {
+                                    const mVal = Math.max(...(selectedDayStats.stats.hourlyActions || [1]));
+                                    const h = val === 0 ? 4 : (val / mVal) * 60;
+                                    return (
+                                        <div key={i} className="flex-1 flex flex-col items-center group/chart relative">
+                                            {/* Tooltip */}
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[7px] font-black rounded pointer-events-none opacity-0 group-hover/chart:opacity-100 transition-opacity z-10 whitespace-nowrap shadow-xl">
+                                                {i.toString().padStart(2, '0')}:00 - {val} işlem
+                                            </div>
+                                            <div className={`w-full rounded-t-sm transition-all group-hover/chart:opacity-80 ${val > 0 ? 'bg-indigo-500' : 'bg-slate-500/10'}`} style={{ height: `${h}px` }} />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div className="flex justify-between px-1 opacity-30 text-[7px] font-black border-t border-slate-500/10 pt-1 uppercase tracking-widest">
+                                <span>00:00</span>
+                                <span>06:00</span>
+                                <span>12:00</span>
+                                <span>18:00</span>
+                                <span>23:00</span>
+                            </div>
+                        </div>
+                        <button onClick={() => setSelectedDayStats(null)} className="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black text-xs uppercase tracking-widest shadow-lg">Kapat</button>
+                    </div>
+                </div>
+            )}
+
+            {showFocusHistory && (
+                <div className="fixed inset-0 z-[200] flex flex-col animate-fade-in bg-black/60 backdrop-blur-md" onClick={() => setShowFocusHistory(false)}>
+                    <div className={`w-full max-w-md mx-auto h-[85vh] mt-auto rounded-t-[3rem] p-6 flex flex-col shadow-2xl animate-slide-up ${isDark ? 'bg-slate-900 border-t border-slate-800 text-white' : 'bg-white border-t border-slate-100 text-slate-900'}`} onClick={e => e.stopPropagation()}>
+                        <div className="w-12 h-1.5 bg-slate-500/20 rounded-full mx-auto mb-6 flex-shrink-0" />
+                        <div className="flex justify-between items-center mb-8">
+                            <div><h2 className="text-3xl font-black tracking-tighter">Odak İstatistikleri</h2></div>
+                            <button onClick={() => setShowFocusHistory(false)} className={`p-3 rounded-2xl ${isDark ? 'bg-slate-800' : 'bg-slate-50'}`}><X size={20} /></button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto space-y-4 pb-10 scrollbar-hide">
+                            {Object.entries(dailyStats).sort((a, b) => new Date(b[0]) - new Date(a[0])).map(([dateStr, data]) => {
+                                const h = Math.floor((data.time || 0) / 3600);
+                                const m = Math.floor(((data.time || 0) % 3600) / 60);
+                                const active = detailedFocusDay === dateStr;
+                                return (
+                                    <div key={dateStr} className={`p-5 rounded-[2.5rem] border transition-all ${active ? (isDark ? 'bg-indigo-500/5' : 'bg-indigo-50') : ''} ${isDark ? 'border-slate-800 bg-slate-800/30' : 'border-slate-100 bg-slate-50'}`} onClick={() => setDetailedFocusDay(active ? null : dateStr)}>
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <div className="text-sm font-black">{new Date(dateStr).toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
+                                                <div className="text-[10px] opacity-40 uppercase font-black">Aktivite: {data.swiped + data.quiz} işlem</div>
+                                            </div>
+                                            <div className="text-right"><div className="text-lg font-black text-indigo-500">{h}s {m}d</div></div>
+                                        </div>
+                                        {active && (
+                                            <div className="mt-6">
+                                                <div className="flex items-end justify-between h-20 gap-1 px-2 animate-fade-in mb-2">
+                                                    {(data.hourlyTime || new Array(24).fill(0)).map((v, i) => {
+                                                        const mv = Math.max(...(data.hourlyTime || [1]));
+                                                        const ht = v === 0 ? 4 : (v / mv) * 60;
+                                                        const mm = Math.floor(v / 60);
+                                                        const ss = v % 60;
+                                                        return (
+                                                            <div key={i} className="flex-1 flex flex-col items-center group/focus-chart relative">
+                                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[7px] font-black rounded pointer-events-none opacity-0 group-hover/focus-chart:opacity-100 transition-opacity z-10 whitespace-nowrap shadow-xl">
+                                                                    {i.toString().padStart(2, '0')}:00 - {mm}dk {ss}sn
+                                                                </div>
+                                                                <div className={`w-full rounded-full transition-all group-hover/focus-chart:opacity-80 ${v > 0 ? 'bg-indigo-500' : 'bg-slate-500/10'}`} style={{ height: `${ht}px` }} />
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                                <div className="flex justify-between px-4 opacity-30 text-[7px] font-black border-t border-slate-500/10 pt-1 uppercase tracking-widest">
+                                                    <span>00:00</span>
+                                                    <span>06:00</span>
+                                                    <span>12:00</span>
+                                                    <span>18:00</span>
+                                                    <span>23:00</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <button onClick={() => setShowFocusHistory(false)} className="w-full py-5 rounded-[2.5rem] bg-indigo-600 text-white font-black uppercase text-sm">Anladım</button>
+                    </div>
+                </div>
+            )}
+
+            {showQuizHistory && (
+                <div className={`fixed inset-0 z-[100] flex flex-col animate-fade-in ${isDark ? 'bg-[#0a0a0c]' : 'bg-[#fcfcfd]'}`}>
+                    <div className="w-full max-w-md mx-auto p-4 flex flex-col h-full">
+                        <div className="flex items-center justify-between mb-8 pt-4">
+                            <h2 className="text-3xl font-black tracking-tighter">Quiz Geçmişi</h2>
+                            <button onClick={() => setShowQuizHistory(false)} className={`p-3 rounded-2xl ${isDark ? 'bg-slate-800 text-white' : 'bg-white text-slate-900 shadow-lg'}`}><X size={24} /></button>
+                        </div>
+
+                        <div className="flex items-center gap-8 mb-8 px-4">
+                            <div><div className="text-xl font-black">{quizLog.total}</div><div className="text-[8px] font-bold uppercase opacity-40">Total</div></div>
+                            <div><div className="text-xl font-black text-emerald-500">{quizLog.correct}</div><div className="text-[8px] font-bold uppercase opacity-40">Doğru</div></div>
+                            <div><div className="text-xl font-black text-rose-500">{quizLog.total - quizLog.correct}</div><div className="text-[8px] font-bold uppercase opacity-40">Yanlış</div></div>
+                        </div>
+
+                        <div className={`p-1 rounded-2xl mb-4 grid grid-cols-4 gap-1 ${isDark ? 'bg-slate-900/50' : 'bg-slate-100'}`}>
+                            {['all', 'correct', 'wrong', 'reviewed'].map(tab => (
+                                <button key={tab} onClick={() => setQuizHistoryTab(tab)} className={`py-2 rounded-xl text-[7px] font-black uppercase tracking-widest transition-all ${quizHistoryTab === tab ? 'bg-indigo-500 text-white shadow-lg' : 'opacity-40'}`}>
+                                    {tab === 'all' ? t.all : tab === 'correct' ? 'DOĞRU' : tab === 'wrong' ? 'YANLIŞ' : t.reviewedTab}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto space-y-3 pb-32 scrollbar-hide">
+                            {quizLog.history.filter(h => {
+                                if (quizHistoryTab === 'correct') return h.isCorrect;
+                                if (quizHistoryTab === 'wrong') return !h.isCorrect;
+                                if (quizHistoryTab === 'reviewed') return h.reviewed;
+                                return true;
+                            }).map(entry => (
+                                <div key={entry.id} className={`p-4 rounded-3xl flex items-center justify-between border ${isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
+                                    <div className="flex items-center gap-4">
+                                        <div className={`p-2 rounded-xl ${entry.isCorrect ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                                            {entry.isCorrect ? <Check size={18} /> : <X size={18} />}
+                                        </div>
+                                        <div>
+                                            <div className="font-bold capitalize flex items-center gap-1">{entry.word} {entry.reviewed && <Check size={12} />}</div>
+                                            <div className="text-[10px] opacity-40 uppercase font-black">{entry.type}</div>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => { onRetryQuiz && onRetryQuiz(entry); setShowQuizHistory(false); setShowDashboard(false); }} className={`p-2 rounded-xl ${isDark ? 'bg-slate-800 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}><RefreshCw size={16} /></button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

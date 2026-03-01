@@ -1,1409 +1,831 @@
 export const rawVocabulary = [
     {
         "id": 1,
-        "word": "Resilience",
-        "trWord": "Dayanıklılık",
-        "phonetic": "/rɪˈzɪliəns/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The capacity to recover quickly from difficulties; toughness.",
-        "trDef": "Zorluklardan çabuk kurtulma kapasitesi; dayanıklılık.",
-        "engExample": "His resilience helped him overcome the crisis.",
-        "altExamples": [
-            "His resilience helped overcome the crisis",
-            "The crisis was overcome helped by his resilience"
-        ],
-        "trExample": "Dayanıklılığı krizi atlatmasına yardımcı oldu.",
-        "wordForms": [
-            {
-                "form": "Resilient",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Resiliently",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Subtle",
+        "trWord": "Hafif / İnce / Kurnaz",
+        "phonetic": "/ˈsʌt.əl/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Delicate or precise as to be difficult to analyze or describe; or clever and indirect.",
+        "trDef": "Analiz etmesi veya tanımlaması zor olacak kadar hassas veya kesin; veya kurnaz ve dolaylı.",
+        "engExample": "The painting has subtle changes in color that are hard to notice.",
+        "trExample": "Tabloda fark edilmesi zor olan ince renk değişimleri var.",
         "details": {
-            "root": "From Latin resilire (to rebound, recoil).",
-            "prefix": "re- (back, again)",
-            "suffix": "-ence (state or quality)",
-            "synonyms": [
-                "toughness",
-                "flexibility",
-                "endurance"
-            ],
-            "antonyms": [
-                "vulnerability",
-                "weakness",
-                "fragility"
-            ],
-            "moreExamples": [
-                "Her resilience in the face of tragedy was inspiring.",
-                "Children often show great resilience."
+            "synonyms": ["delicate", "clever", "understated"],
+            "antonyms": ["obvious", "crude"],
+            "root": "subtilis",
+            "origin": { "root": "subtilis (finely woven)", "prefix": "sub- (under)", "suffix": "-ilis" },
+            "caseExamples": [
+                { "tr": "Parfümün o kadar hafif bir kokusu var ki neredeyse fark edilmiyor.", "en": "The perfume has such a subtle scent that it's almost unnoticeable." },
+                { "tr": "Davranışlarındaki ince değişiklikleri sadece en yakın arkadaşları fark edebildi.", "en": "Only her closest friends could notice the subtle changes in her behavior." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "subtlety", "adverb": "subtly" }
     },
     {
         "id": 2,
-        "word": "Compassion",
-        "trWord": "Şefkat",
-        "phonetic": "/kəmˈpæʃ.ən/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "Sympathetic pity and concern for the sufferings or misfortunes of others.",
-        "trDef": "Başkalarının acılarına veya talihsizliklerine duyulan şefkat ve merhamet.",
-        "engExample": "She showed great compassion for the poor.",
-        "altExamples": [
-            "For the poor she showed great compassion",
-            "She showed the poor great compassion",
-            "Great compassion was showed by her for the poor"
-        ],
-        "trExample": "Yoksullara büyük şefkat gösterdi.",
-        "wordForms": [
-            {
-                "form": "Compassionate",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Compassionately",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Ambiguous",
+        "trWord": "Muğlak / Belirsiz",
+        "phonetic": "/æmˈbɪɡ.ju.əs/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Open to more than one interpretation; not having one obvious meaning.",
+        "trDef": "Birden fazla yoruma açık; tek bir bariz anlamı olmayan.",
+        "engExample": "His ambiguous reply left us all confused.",
+        "trExample": "Muğlak cevabı hepimizin kafasını karıştırdı.",
         "details": {
-            "root": "From Latin compati (to suffer with).",
-            "prefix": "com- (together with)",
-            "suffix": "-ion (action, condition)",
-            "synonyms": [
-                "empathy",
-                "sympathy",
-                "kindness"
-            ],
-            "antonyms": [
-                "cruelty",
-                "indifference",
-                "apathy"
-            ],
-            "moreExamples": [
-                "She had compassion for the lost stray dogs.",
-                "We must treat everyone with compassion."
+            "synonyms": ["equivocal", "unclear"],
+            "antonyms": ["clear", "explicit"],
+            "root": "ambigere",
+            "origin": { "root": "ambigere (to wander/doubt)", "prefix": "ambi- (both ways)" },
+            "caseExamples": [
+                { "tr": "Yönergeler çok muğlaktı, bu yüzden herkes farklı bir hata yaptı.", "en": "The instructions were so ambiguous that everyone made a different mistake." },
+                { "tr": "Yazarın mesajı bilerek belirsiz bırakılmış gibi görünüyor.", "en": "It seems like the author's message was left ambiguous on purpose." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "ambiguity", "adverb": "ambiguously" }
     },
     {
         "id": 3,
-        "word": "Diligent",
-        "trWord": "Çalışkan",
-        "phonetic": "/ˈdɪl.ɪ.dʒənt/",
+        "word": "Assertive",
+        "trWord": "Özgüvenli / Dayatmacı",
+        "phonetic": "/əˈsɜː.tɪv/",
         "pos": "adjective",
         "posTr": "sıfat",
-        "engDef": "Having or showing care and conscientiousness in one's work or duties.",
-        "trDef": "İşinde veya görevlerinde özen ve vicdanlılık gösteren; çalışkan.",
-        "engExample": "He was a diligent student who always finished his homework.",
-        "altExamples": [
-            "He always was a diligent student who finished his homework",
-            "He was always a diligent student who finished his homework",
-            "As a diligent student he always finished his homework"
-        ],
-        "trExample": "Her zaman ödevlerini bitiren çalışkan bir öğrenciydi.",
-        "wordForms": [
-            {
-                "form": "Diligence",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Diligently",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "engDef": "Having or showing a confident and forceful personality.",
+        "trDef": "Kendinden emin ve etkili bir kişiliğe sahip olma veya bunu gösterme.",
+        "engExample": "You need to be more assertive if you want to be promoted.",
+        "trExample": "Terfi almak istiyorsan daha girişken/özgüvenli olmalısın.",
         "details": {
-            "root": "From Latin diligere (to value highly, love, choose).",
-            "prefix": "di- (apart)",
-            "suffix": "-ent (performing an action)",
-            "synonyms": [
-                "hardworking",
-                "industrious",
-                "meticulous"
-            ],
-            "antonyms": [
-                "lazy",
-                "careless",
-                "negligent"
-            ],
-            "moreExamples": [
-                "The investigators were extremely diligent.",
-                "Success requires diligent effort."
+            "synonyms": ["confident", "forceful", "decisive"],
+            "antonyms": ["passive", "timid"],
+            "root": "assert",
+            "origin": { "root": "assere", "prefix": "ad-", "suffix": "-ive" },
+            "caseExamples": [
+                { "tr": "Fikirlerini savunurken daha özgüvenli olmalısın.", "en": "You should be more assertive when defending your ideas." },
+                { "tr": "Yöneticilik özelliklerinden biri de nazik ama kararlı olmaktır.", "en": "One of the management traits is being polite but assertive." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "assert", "noun": "assertion", "adverb": "assertively" }
     },
     {
         "id": 4,
-        "word": "Implement",
-        "trWord": "Uygulamak",
-        "phonetic": "/ˈɪm.plɪ.ment/",
-        "pos": "verb",
-        "posTr": "fiil",
-        "engDef": "Put a decision, plan, agreement, etc. into effect.",
-        "trDef": "Bir kararı, planı, anlaşmayı vb. yürürlüğe koymak; uygulamak.",
-        "engExample": "The government decided to implement new traffic rules.",
-        "altExamples": [
-            "To implement new traffic rules was decided by the government",
-            "The government decided to implement traffic rules new"
-        ],
-        "trExample": "Hükümet yeni trafik kurallarını uygulamaya karar verdi.",
-        "wordForms": [
-            {
-                "form": "Implementation",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Implementer",
-                "pos": "noun",
-                "posTr": "isim"
-            }
-        ],
+        "word": "Articulate",
+        "trWord": "Kendini İyi İfade Eden",
+        "phonetic": "/ɑːˈtɪk.jə.lət/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Having or showing the ability to speak fluently and coherently.",
+        "trDef": "Akıcı ve tutarlı konuşma yeteneğine sahip olma veya bunu gösterme.",
+        "engExample": "She is an articulate speaker who can explain complex ideas clearly.",
+        "trExample": "O, karmaşık fikirleri net bir şekilde açıklayabilen, kendini iyi ifade eden bir konuşmacıdır.",
         "details": {
-            "root": "From Latin implere (to fill up, complete).",
-            "prefix": "im- (in, upon)",
-            "suffix": "-ment (result or product of an action)",
-            "synonyms": [
-                "execute",
-                "apply",
-                "enforce"
-            ],
-            "antonyms": [
-                "cancel",
-                "halt",
-                "prevent"
-            ],
-            "moreExamples": [
-                "The new rules will be implemented next month.",
-                "They failed to implement the strategy."
+            "synonyms": ["eloquent", "fluent"],
+            "antonyms": ["inarticulate", "mumbled"],
+            "root": "articulus",
+            "origin": { "root": "articulus (joint)", "suffix": "-ate" },
+            "caseExamples": [
+                { "tr": "Duygularını ifade etmekte çok başarılıdır.", "en": "She is very articulate in expressing her feelings." },
+                { "tr": "Rapor, projenin amaçlarını açık bir şekilde ortaya koyuyor.", "en": "The report provides an articulate description of the project's goals." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "articulate", "noun": "articulation", "adverb": "articulately" }
     },
     {
         "id": 5,
-        "word": "Abundant",
-        "trWord": "Bol",
-        "phonetic": "/əˈbʌn.dənt/",
+        "word": "Candid",
+        "trWord": "Samimi / İçten / Açık Sözlü",
+        "phonetic": "/ˈkæn.dɪd/",
         "pos": "adjective",
         "posTr": "sıfat",
-        "engDef": "Existing or available in large quantities; plentiful.",
-        "trDef": "Büyük miktarlarda bulunan veya mevcut olan; bol.",
-        "engExample": "There is abundant evidence to support the theory.",
-        "altExamples": [
-            "To support the theory there is abundant evidence",
-            "Abundant evidence is there to support the theory"
-        ],
-        "trExample": "Teoriyi destekleyecek bol miktarda kanıt var.",
-        "wordForms": [
-            {
-                "form": "Abundance",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Abundantly",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "engDef": "Truthful and straightforward; frank.",
+        "trDef": "Dürüst ve doğrudan; açık sözlü.",
+        "engExample": "To be candid, I don't think his plan will work.",
+        "trExample": "Açık konuşmak gerekirse, planının işe yarayacağını düşünmüyorum.",
         "details": {
-            "root": "From Latin abundare (to overflow).",
-            "prefix": "ab- (away, from)",
-            "suffix": "-ant (characterized by)",
-            "synonyms": [
-                "plentiful",
-                "copious",
-                "ample"
-            ],
-            "antonyms": [
-                "scarce",
-                "rare",
-                "lacking"
-            ],
-            "moreExamples": [
-                "The region has an abundant supply of fresh water.",
-                "We enjoyed an abundant harvest this year."
+            "synonyms": ["frank", "honest", "blunt"],
+            "antonyms": ["guarded", "insincere"],
+            "root": "candidus",
+            "origin": { "root": "candidus (white/pure)" },
+            "caseExamples": [
+                { "tr": "Onun samimi tavrı herkesin güvenini kazandı.", "en": "His candid attitude won everyone's trust." },
+                { "tr": "Sorunlarımız hakkında samimi bir tartışma yaptık.", "en": "We had a candid discussion about our problems." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "candor", "adverb": "candidly" }
     },
     {
         "id": 6,
-        "word": "Persist",
-        "trWord": "Israr Etmek",
-        "phonetic": "/pəˈsɪst/",
-        "pos": "verb",
-        "posTr": "fiil",
-        "engDef": "Continue firmly or obstinately in an opinion or a course of action in spite of difficulty.",
-        "trDef": "Zorluklara rağmen bir fikirde veya hareket tarzında kararlılıkla devam etmek.",
-        "engExample": "If you persist, you will eventually succeed.",
-        "altExamples": [
-            "You will eventually succeed if you persist",
-            "Eventually you will succeed if you persist",
-            "If you persist eventually you will succeed",
-            "You will succeed eventually if you persist"
-        ],
-        "trExample": "Israr edersen, sonunda başarırsın.",
-        "wordForms": [
-            {
-                "form": "Persistence",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Persistent",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Persistently",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Compromise",
+        "trWord": "Uzlaşmak / Taviz Vermek",
+        "phonetic": "/ˈkɒm.prə.maɪz/",
+        "pos": "verb / noun",
+        "posTr": "fiil / isim",
+        "engDef": "An agreement reached by each side making concessions; or to accept standards that are lower than is desirable.",
+        "trDef": "Her iki tarafın taviz vererek vardığı bir anlaşma; veya istenenden daha düşük standartları kabul etmek.",
+        "engExample": "We had to compromise on the price to reach an agreement.",
+        "trExample": "Anlaşmaya varmak için fiyatta uzlaşmak/taviz vermek zorunda kaldık.",
         "details": {
-            "root": "From Latin persistere (to continue steadfastly).",
-            "prefix": "per- (thoroughly)",
-            "suffix": "null",
-            "synonyms": [
-                "continue",
-                "persevere",
-                "endure"
-            ],
-            "antonyms": [
-                "quit",
-                "cease",
-                "give up"
-            ],
-            "moreExamples": [
-                "She persisted in her studies despite the noise.",
-                "The symptoms persisted for a week."
+            "synonyms": ["agreement", "settlement", "concession"],
+            "antonyms": ["dispute", "intransigence"],
+            "root": "promittere",
+            "origin": { "root": "promittere", "prefix": "com-" },
+            "caseExamples": [
+                { "tr": "Maaş konusunda orta bir yolda uzlaştık.", "en": "We reached a compromise regarding the salary." },
+                { "tr": "Kaliteden asla ödün vermemeliyiz.", "en": "We should never compromise on quality." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "compromise" }
     },
     {
         "id": 7,
-        "word": "Clarify",
-        "trWord": "Açıklamak",
-        "phonetic": "/ˈklær.ɪ.faɪ/",
-        "pos": "verb",
-        "posTr": "fiil",
-        "engDef": "Make a statement or situation less confused and more comprehensible.",
-        "trDef": "Bir ifadeyi veya durumu daha az kafa karıştırıcı ve daha anlaşılır hale getirmek.",
-        "engExample": "Could you clarify your point, please?",
-        "altExamples": [
-            "Please could you clarify your point",
-            "Could you please clarify your point",
-            "Please clarify your point could you"
-        ],
-        "trExample": "Lütfen ne demek istediğinizi açıklar mısınız?",
-        "wordForms": [
-            {
-                "form": "Clarification",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Clarity",
-                "pos": "noun",
-                "posTr": "isim"
-            }
-        ],
+        "word": "Detached",
+        "trWord": "Ayrık / Tarafsız / Kopuk",
+        "phonetic": "/dɪˈtætʃt/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Separate or disconnected; or aloof and objective.",
+        "trDef": "Ayrı veya bağlantısız; veya mesafeli ve tarafsız.",
+        "engExample": "He tried to remain detached from the argument.",
+        "trExample": "Tartışmanın dışında/tarafsız kalmaya çalıştı.",
         "details": {
-            "root": "From Latin clarificare (to make clear).",
-            "prefix": "null",
-            "suffix": "-ify (to make or cause to be)",
-            "synonyms": [
-                "explain",
-                "elucidate",
-                "simplify"
-            ],
-            "antonyms": [
-                "confuse",
-                "obscure",
-                "complicate"
-            ],
-            "moreExamples": [
-                "The teacher clarified the complex topic.",
-                "I need you to clarify your instructions."
+            "synonyms": ["objective", "disinterested", "separate"],
+            "antonyms": ["involved", "attached"],
+            "root": "tach",
+            "origin": { "root": "tach (nail)", "prefix": "de-" },
+            "caseExamples": [
+                { "tr": "Olaylara tarafsız bir gözle bakmaya çalışıyor.", "en": "He tries to look at things with a detached eye." },
+                { "tr": "Eklenti ana dosyadan tamamen ayrılmıştır.", "en": "The attachment is completely detached from the main file." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "detach", "noun": "detachment", "adjective": "detachable" }
     },
     {
         "id": 8,
-        "word": "Sincere",
-        "trWord": "İçten",
-        "phonetic": "/sɪnˈsɪər/",
+        "word": "Discreet",
+        "trWord": "Ketum / Tedbirli / Ağzı Sıkı",
+        "phonetic": "/dɪˈskriːt/",
         "pos": "adjective",
         "posTr": "sıfat",
-        "engDef": "Free from pretense or deceit; proceeding from genuine feelings.",
-        "trDef": "Gösterişten veya yalandan uzak; içten duygulardan gelen.",
-        "engExample": "He offered a sincere apology for his mistake.",
-        "altExamples": [
-            "For his mistake he offered a sincere apology",
-            "A sincere apology was offered by him for his mistake"
-        ],
-        "trExample": "Hatası için içten bir özür diledi.",
-        "wordForms": [
-            {
-                "form": "Sincerity",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Sincerely",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "engDef": "Careful and circumspect in one's speech or actions, especially in order to avoid causing offense or to gain an advantage.",
+        "trDef": "Özellikle birini gücendirmemek veya avantaj sağlamak için konuşmalarında veya eylemlerinde dikkatli ve tedbirli olan.",
+        "engExample": "She made a discreet inquiry about the job.",
+        "trExample": "İş hakkında ketum/göze batmayan bir araştırma yaptı.",
         "details": {
-            "root": "From Latin sincerus (clean, pure, sound).",
-            "prefix": "null",
-            "suffix": "null",
-            "synonyms": [
-                "genuine",
-                "honest",
-                "heartfelt"
-            ],
-            "antonyms": [
-                "fake",
-                "insincere",
-                "deceitful"
-            ],
-            "moreExamples": [
-                "He gave a sincere smile.",
-                "Please accept my sincere condolences."
+            "synonyms": ["tactful", "circumspect", "cautious"],
+            "antonyms": ["indiscreet", "rash"],
+            "root": "discernere",
+            "origin": { "root": "discernere (to separate)" },
+            "caseExamples": [
+                { "tr": "Bu konuyu gizli tutacağına dair ona güveniyorum.", "en": "I trust him to be discreet about this matter." },
+                { "tr": "Giriş kısmında göze batmayan bir tabela vardı.", "en": "There was a discreet sign at the entrance." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "discretion", "adverb": "discreetly" }
     },
     {
         "id": 9,
-        "word": "Gratitude",
-        "trWord": "Şükran",
-        "phonetic": "/ˈɡræt.ɪ.tʃuːd/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The quality of being thankful; readiness to show appreciation.",
-        "trDef": "Şükretme hali; minnettarlık ve takdir gösterme isteği.",
-        "engExample": "He expressed his gratitude to everyone who helped him.",
-        "altExamples": [
-            "To everyone who helped him he expressed his gratitude",
-            "He expressed gratitude to everyone who helped him"
-        ],
-        "trExample": "Ona yardım eden herkese minnettarlığını ifade etti.",
-        "wordForms": [
-            {
-                "form": "Grateful",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Gratefully",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Eccentric",
+        "trWord": "Sıra Dışı / Eksantrik / Garip",
+        "phonetic": "/ɪkˈsen.trɪk/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Unconventional and slightly strange.",
+        "trDef": "Geleneksel olmayan ve biraz tuhaf.",
+        "engExample": "My neighbor is an eccentric old man who talks to his plants.",
+        "trExample": "Komşum, bitkileriyle konuşan sıra dışı/garip yaşlı bir adamdır.",
         "details": {
-            "root": "From Latin gratus (pleasing, thankful).",
-            "prefix": "null",
-            "suffix": "-tude (state or condition)",
-            "synonyms": [
-                "thankfulness",
-                "appreciation",
-                "recognition"
-            ],
-            "antonyms": [
-                "ingratitude",
-                "unthankfulness",
-                "resentment"
-            ],
-            "moreExamples": [
-                "She showed her gratitude by baking a cake.",
-                "Words cannot express my gratitude."
+            "synonyms": ["unconventional", "odd", "quirky"],
+            "antonyms": ["conventional", "normal"],
+            "root": "kentron",
+            "origin": { "root": "kentron (center)", "prefix": "ek- (out of)" },
+            "caseExamples": [
+                { "tr": "Giyim tarzı her zaman biraz sıra dışı olmuştur.", "en": "Her style of dress has always been a bit eccentric." },
+                { "tr": "Milyarder iş adamı tuhaf alışkanlıklarıyla tanınıyor.", "en": "The billionaire businessman is known for his eccentric habits." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "eccentricity", "adverb": "eccentrically" }
     },
     {
         "id": 10,
-        "word": "Intention",
-        "trWord": "Niyet",
-        "phonetic": "/ɪnˈten.ʃən/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "A thing intended; an aim or plan.",
-        "trDef": "Hedeflenen şey; bir amaç, maksat veya niyet.",
-        "engExample": "Actions are judged by their intentions.",
-        "altExamples": [
-            "By their intentions actions are judged",
-            "Are judged by their intentions actions"
-        ],
-        "trExample": "Ameller niyetlere göre değerlendirilir.",
-        "wordForms": [
-            {
-                "form": "Intend",
-                "pos": "verb",
-                "posTr": "fiil"
-            },
-            {
-                "form": "Intentional",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Intentionally",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Eloquent",
+        "trWord": "İkna Edici / Dokunaklı Konuşan",
+        "phonetic": "/ˈel.ə.kwənt/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Fluent or persuasive in speaking or writing.",
+        "trDef": "Konuşmada veya yazmada akıcı veya ikna edici.",
+        "engExample": "He gave an eloquent speech that moved the audience to tears.",
+        "trExample": "Dinleyicileri gözyaşlarına boğan dokunaklı/ikna edici bir konuşma yaptı.",
         "details": {
-            "root": "From Latin intendere (to turn one's attention to, stretch out).",
-            "prefix": "in- (towards)",
-            "suffix": "-tion (action or state)",
-            "synonyms": [
-                "purpose",
-                "aim",
-                "goal"
-            ],
-            "antonyms": [
-                "accident",
-                "chance",
-                "coincidence"
-            ],
-            "moreExamples": [
-                "I had no intention of offending you.",
-                "Her intention was to help."
+            "synonyms": ["persuasive", "articulate", "expressive"],
+            "antonyms": ["inarticulate", "clumsy"],
+            "root": "loqui",
+            "origin": { "root": "loqui (to speak)", "prefix": "e-" },
+            "caseExamples": [
+                { "tr": "Mülteci kampındaki durumu dokunaklı bir şekilde anlattı.", "en": "He described the situation in the refugee camp eloquently." },
+                { "tr": "Savunması son derece ikna edici ve akıcıydı.", "en": "His defense was extremely eloquent and persuasive." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "eloquence", "adverb": "eloquently" }
     },
     {
         "id": 11,
-        "word": "Modesty",
-        "trWord": "Tevazu",
-        "phonetic": "/ˈmɒd.ɪ.sti/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The quality or state of being unassuming or moderate in the estimation of one's abilities.",
-        "trDef": "Kişinin yeteneklerini değerlendirirken gösterişsiz ve ölçülü olma durumu; alçakgönüllülük.",
-        "engExample": "Despite his massive success, he retained his modesty.",
-        "altExamples": [
-            "He retained his modesty despite his massive success"
-        ],
-        "trExample": "Büyük başarısına rağmen tevazusunu korudu.",
-        "wordForms": [
-            {
-                "form": "Modest",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Modestly",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Inquisitive",
+        "trWord": "Meraklı / Sorgulayıcı",
+        "phonetic": "/ɪnˈkwɪz.ə.tɪv/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Curious or inquiring; or unduly curious about the affairs of others.",
+        "trDef": "Meraklı veya sorgulayıcı; veya başkalarının işlerini aşırı merak eden.",
+        "engExample": "The inquisitive child asked constant questions.",
+        "trExample": "Meraklı çocuk sürekli sorular sordu.",
         "details": {
-            "root": "From Latin modestus (keeping due measure).",
-            "prefix": "null",
-            "suffix": "-y (quality or state)",
-            "synonyms": [
-                "humility",
-                "meekness",
-                "shyness"
-            ],
-            "antonyms": [
-                "arrogance",
-                "boasting",
-                "pride"
-            ],
-            "moreExamples": [
-                "His modesty prevented him from accepting the award.",
-                "She spoke with great modesty."
+            "synonyms": ["curious", "inquiring", "prying"],
+            "antonyms": ["uninterested", "indifferent"],
+            "root": "quaerere",
+            "origin": { "root": "quaerere (to seek)", "prefix": "in-" },
+            "caseExamples": [
+                { "tr": "Sürekli soru sorması öğretmenini memnun ediyor.", "en": "His inquisitive nature pleases his teacher." },
+                { "tr": "Yeni yerler keşfetmeyi seven meraklı bir gezgin.", "en": "An inquisitive traveler who loves to explore new places." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "inquire", "noun": "inquisitiveness", "adverb": "inquisitively" }
     },
     {
         "id": 12,
-        "word": "Integrity",
-        "trWord": "Dürüstlük",
-        "phonetic": "/ɪn'teɡ.rə.ti/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The quality of being honest and having strong moral principles.",
-        "trDef": "Dürüst olma ve güçlü ahlaki ilkelere sahip olma kalitesi.",
-        "engExample": "She is a person of high integrity and respect.",
-        "altExamples": [
-            "Of high integrity and respect she is a person"
-        ],
-        "trExample": "O, son derece dürüst ve saygın bir insandır.",
-        "wordForms": [
-            {
-                "form": "Integral",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            }
-        ],
+        "word": "Pragmatic",
+        "trWord": "Pragmatik / Faydacı",
+        "phonetic": "/præɡˈmæt.ɪk/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Dealing with things sensibly and realistically in a way that is based on practical rather than theoretical considerations.",
+        "trDef": "Şeyleri teorik olmaktan ziyade pratik düşüncelere dayalı olarak makul ve gerçekçi bir şekilde ele alan.",
+        "engExample": "We need to take a pragmatic approach to solve this problem.",
+        "trExample": "Bu sorunu çözmek için pragmatik/gerçekçi bir yaklaşım sergilemeliyiz.",
         "details": {
-            "root": "From Latin integritas (soundness, wholeness).",
-            "prefix": "in- (not)",
-            "suffix": "-ity (state or condition)",
-            "synonyms": [
-                "honesty",
-                "probity",
-                "rectitude"
-            ],
-            "antonyms": [
-                "dishonesty",
-                "corruption",
-                "deceit"
-            ],
-            "moreExamples": [
-                "He is known as a man of great integrity.",
-                "The bridge's structural integrity was compromised."
+            "synonyms": ["practical", "realistic", "sensible"],
+            "antonyms": ["idealistic", "impractical"],
+            "root": "pragma",
+            "origin": { "root": "pragma (deed)" },
+            "caseExamples": [
+                { "tr": "İdeolojik tartışmalar yerine faydacı çözümlere odaklandık.", "en": "We focused on pragmatic solutions instead of ideological debates." },
+                { "tr": "Bütçe kısıtlamaları nedeniyle gerçekçi davranmak zorundayız.", "en": "We have to be pragmatic due to budget constraints." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "pragmatism", "adverb": "pragmatically" }
     },
     {
         "id": 13,
-        "word": "Patience",
-        "trWord": "Sabır",
-        "phonetic": "/ˈpeɪ.ʃəns/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The capacity to accept or tolerate delay, trouble, or suffering without getting angry.",
-        "trDef": "Gecikmeyi, sıkıntıyı veya acıyı sinirlenmeden kabul etme kapasitesi.",
-        "engExample": "Patience is a key element in achieving long-term goals.",
-        "altExamples": [
-            "In achieving long-term goals patience is a key element",
-            "Patience is a key element for achieving long-term goals"
-        ],
-        "trExample": "Sabır, uzun vadeli hedeflere ulaşmada kilit bir unsundur.",
-        "wordForms": [
-            {
-                "form": "Patient",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Patiently",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Abrupt",
+        "trWord": "Aniden Biten / Sert / Kaba",
+        "phonetic": "/əˈbrʌpt/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Sudden and unexpected; or brief to the point of rudeness.",
+        "trDef": "Ani ve beklenmedik; veya kabalık derecesinde kısa.",
+        "engExample": "The interview came to an abrupt end.",
+        "trExample": "Mülakat aniden/sert bir şekilde sona erdi.",
         "details": {
-            "root": "From Latin pati (to suffer, endure).",
-            "prefix": "null",
-            "suffix": "-ence (state or quality)",
-            "synonyms": [
-                "tolerance",
-                "endurance",
-                "forbearance"
-            ],
-            "antonyms": [
-                "impatience",
-                "frustration",
-                "haste"
-            ],
-            "moreExamples": [
-                "Learning a new language requires patience.",
-                "He lost his patience with the slow internet."
+            "synonyms": ["sudden", "unexpected", "curt"],
+            "antonyms": ["gradual", "leisurely"],
+            "root": "rumpere",
+            "origin": { "root": "rumpere (to break)", "prefix": "ab- (away)" },
+            "caseExamples": [
+                { "tr": "Trenin ani duruşu hepimizi sarstı.", "en": "The abrupt stop of the train shook us all." },
+                { "tr": "Konuşması kaba denecek kadar kısaydı.", "en": "His manner was direct to the point of being abrupt." }
             ]
-        }
+        },
+        "wordFamily": { "adverb": "abruptly", "noun": "abruptness" }
     },
     {
         "id": 14,
-        "word": "Contemplate",
-        "trWord": "Tefekkür Etmek",
-        "phonetic": "/ˈkɒn.təm.pleɪt/",
-        "pos": "verb",
-        "posTr": "fiil",
-        "engDef": "Look thoughtfully for a long time at; think deeply and at length.",
-        "trDef": "Bir şeye uzun süre düşünceli bir şekilde bakmak; derinlemesine düşünmek.",
-        "engExample": "He went to the forest to contemplate the meaning of life.",
-        "altExamples": [
-            "To contemplate the meaning of life he went to the forest",
-            "He went to the forest for contemplating the meaning of life"
-        ],
-        "trExample": "Hayatın anlamını tefekkür etmek için ormana gitti.",
-        "wordForms": [
-            {
-                "form": "Contemplation",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Contemplative",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            }
-        ],
+        "word": "Arbitrary",
+        "trWord": "Keyfi / Rasgele",
+        "phonetic": "/ˈɑː.bɪ.trər.i/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Based on random choice or personal whim, rather than any reason or system.",
+        "trDef": "Bir neden veya sisteme değil de, rastgele seçime veya kişisel hevese dayalı.",
+        "engExample": "The decision to close the library was completely arbitrary.",
+        "trExample": "Kütüphaneyi kapatma kararı tamamen keyfiydi.",
         "details": {
-            "root": "From Latin contemplari (to survey, observe).",
-            "prefix": "con- (together, thoroughly)",
-            "suffix": "-ate (having the state of)",
-            "synonyms": [
-                "ponder",
-                "reflect",
-                "consider"
-            ],
-            "antonyms": [
-                "ignore",
-                "disregard",
-                "neglect"
-            ],
-            "moreExamples": [
-                "She stood by the window to contemplate the future.",
-                "He is contemplating a career change."
+            "synonyms": ["random", "capricious", "subjective"],
+            "antonyms": ["rational", "systematic"],
+            "root": "arbiter",
+            "origin": { "root": "arbiter (judge)" },
+            "caseExamples": [
+                { "tr": "Giriş için belirlenen 10 dolarlık ücret tamamen keyfi görünüyor.", "en": "An arbitrary 10-dollar fee for entry seems unfair." },
+                { "tr": "Kurallar rasgele değil, verilere dayanarak belirlendi.", "en": "The rules are not arbitrary, they are based on data." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "arbitrate", "noun": "arbitrariness", "adverb": "arbitrarily" }
     },
     {
         "id": 15,
-        "word": "Justice",
-        "trWord": "Adalet",
-        "phonetic": "/ˈdʒʌs.tɪs/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "Just behavior or treatment; fairness.",
-        "trDef": "Adil davranış veya muamele; hakkaniyet.",
-        "engExample": "A healthy society is built on the foundation of justice.",
-        "altExamples": [
-            "On the foundation of justice a healthy society is built",
-            "Built on the foundation of justice is a healthy society"
-        ],
-        "trExample": "Sağlıklı bir toplum, adalet temeli üzerine kurulur.",
-        "wordForms": [
-            {
-                "form": "Just",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Justly",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Consistent",
+        "trWord": "Tutarlı / Kararlı",
+        "phonetic": "/kənˈsɪs.tənt/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Acting or done in the same way over time, especially so as to be fair or accurate.",
+        "trDef": "Özellikle adil veya doğru olması için zaman içinde aynı şekilde hareket eden veya yapılan.",
+        "engExample": "Her work is of a consistent high standard.",
+        "trExample": "Çalışmaları tutarlı bir şekilde yüksek standarttadır.",
         "details": {
-            "root": "From Latin justitia (righteousness, equity).",
-            "prefix": "null",
-            "suffix": "-ice (act or condition)",
-            "synonyms": [
-                "fairness",
-                "equity",
-                "impartiality"
-            ],
-            "antonyms": [
-                "injustice",
-                "unfairness",
-                "corruption"
-            ],
-            "moreExamples": [
-                "We demand justice for the victims.",
-                "The legal system is designed to uphold justice."
+            "synonyms": ["steady", "constant", "uniform"],
+            "antonyms": ["inconsistent", "erratic"],
+            "root": "sistere",
+            "origin": { "root": "sistere (to stand)", "prefix": "con-" },
+            "caseExamples": [
+                { "tr": "Başarıya giden yol tutarlı bir çalışmadan geçer.", "en": "The road to success goes through consistent work." },
+                { "tr": "Verdiğin cevaplar dünkülerle tutarlı olmalı.", "en": "Your answers should be consistent with what you said yesterday." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "consistency", "adverb": "consistently" }
     },
     {
         "id": 16,
-        "word": "Wisdom",
-        "trWord": "Bilgelik",
-        "phonetic": "/ˈwɪz.dəm/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The quality of having experience, knowledge, and good judgment.",
-        "trDef": "Tecrübe, bilgi ve iyi yargı yeteneğine sahip olma durumu.",
-        "engExample": "He shared his wisdom with the younger generation.",
-        "altExamples": [
-            "With the younger generation he shared his wisdom",
-            "He shared wisdom with the younger generation"
-        ],
-        "trExample": "Bilgeliğini genç nesille paylaştı.",
-        "wordForms": [
-            {
-                "form": "Wise",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Wisely",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Conventional",
+        "trWord": "Geleneksel / Sıradan",
+        "phonetic": "/kənˈven.ʃən.əl/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Based on or in accordance with what is generally done or believed.",
+        "trDef": "Genellikle yapılanlara veya inanılanlara dayanan veya bunlara uygun olan.",
+        "engExample": "She chose a conventional wedding dress.",
+        "trExample": "Geleneksel bir gelinlik seçti.",
         "details": {
-            "root": "From Old English wis (wise) + -dom.",
-            "prefix": "null",
-            "suffix": "-dom (state or condition)",
-            "synonyms": [
-                "sagacity",
-                "intelligence",
-                "insight"
-            ],
-            "antonyms": [
-                "foolishness",
-                "stupidity",
-                "ignorance"
-            ],
-            "moreExamples": [
-                "Age often brings wisdom.",
-                "Her wisdom guided us through the crisis."
+            "synonyms": ["traditional", "standard", "ordinary"],
+            "antonyms": ["unconventional", "original"],
+            "root": "venire",
+            "origin": { "root": "venire (to come)", "prefix": "con-" },
+            "caseExamples": [
+                { "tr": "Bu hastalık için geleneksel tedavi yöntemleri yetersiz kalıyor.", "en": "Conventional medical treatments are insufficient for this disease." },
+                { "tr": "Sıradan bir hayat sürmek istemediğini söylüyordu.", "en": "He said he didn't want to live a conventional life." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "convention", "adverb": "conventionally" }
     },
     {
         "id": 17,
-        "word": "Gracious",
-        "trWord": "Lütufkar",
-        "phonetic": "/ˈɡreɪ.ʃəs/",
+        "word": "Crucial",
+        "trWord": "Kritik / Hayati Derecede Önemli",
+        "phonetic": "/ˈkruː.ʃəl/",
         "pos": "adjective",
         "posTr": "sıfat",
-        "engDef": "Courteous, kind, and pleasant.",
-        "trDef": "Nazik, kibar ve lütufkar.",
-        "engExample": "She was a gracious host who welcomed everyone warmly.",
-        "altExamples": [
-            "She was a gracious host who warmly welcomed everyone",
-            "Warmly she welcomed everyone as a gracious host"
-        ],
-        "trExample": "Herkesi sıcak bir şekilde karşılayan lütufkar bir ev sahibiydi.",
-        "wordForms": [
-            {
-                "form": "Grace",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Graciously",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "engDef": "Decisive or critical, especially in the success or failure of something.",
+        "trDef": "Özellikle bir şeyin başarısında veya başarısızlığında belirleyici veya kritik.",
+        "engExample": "Vitamin C plays a crucial role in our immune system.",
+        "trExample": "C vitamini bağışıklık sistemimizde hayati bir rol oynar.",
         "details": {
-            "root": "From Latin gratia (favor, thanks).",
-            "prefix": "null",
-            "suffix": "-ous (full of)",
-            "synonyms": [
-                "elegant",
-                "polite",
-                "courteous"
-            ],
-            "antonyms": [
-                "rude",
-                "ungracious",
-                "discourteous"
-            ],
-            "moreExamples": [
-                "The queen was gracious to her guests.",
-                "He accepted the defeat with a gracious smile."
+            "synonyms": ["critical", "essential", "vital"],
+            "antonyms": ["trivial", "unimportant"],
+            "root": "crux",
+            "origin": { "root": "crux (cross)" },
+            "caseExamples": [
+                { "tr": "Bu karar şirketin geleceği için kritik öneme sahip.", "en": "This decision is crucial for the company's future." },
+                { "tr": "Takım çalışması projenin başarısında hayati bir faktördür.", "en": "Teamwork is a crucial factor in the project's success." }
             ]
-        }
+        },
+        "wordFamily": { "adverb": "crucially" }
     },
     {
         "id": 18,
-        "word": "Steadfast",
-        "trWord": "Sarsılmaz",
-        "phonetic": "/ˈsted.fɑːst/",
+        "word": "Drastic",
+        "trWord": "Sert / Köklü / Şiddetli",
+        "phonetic": "/ˈdræs.tɪk/",
         "pos": "adjective",
         "posTr": "sıfat",
-        "engDef": "Resolutely or dutifully firm and unwavering.",
-        "trDef": "Kararlı, sadık ve sarsılmaz.",
-        "engExample": "He remained steadfast in his belief despite the difficulties.",
-        "altExamples": [
-            "Despite the difficulties he remained steadfast in his belief",
-            "In his belief he remained steadfast despite the difficulties"
-        ],
-        "trExample": "Zorluklara rağmen inancında sarsılmaz kaldı.",
-        "wordForms": [
-            {
-                "form": "Steadfastly",
-                "pos": "adverb",
-                "posTr": "zarf"
-            },
-            {
-                "form": "Steadfastness",
-                "pos": "noun",
-                "posTr": "isim"
-            }
-        ],
+        "engDef": "Likely to have a strong or far-reaching effect; radical and extreme.",
+        "trDef": "Güçlü veya geniş kapsamlı bir etkiye sahip olması muhtemel; radikal ve aşırı.",
+        "engExample": "We need to take drastic measures to reduce pollution.",
+        "trExample": "Kirliliği azaltmak için sert/köklü önlemler almamız gerekiyor.",
         "details": {
-            "root": "From Old English stedefæst (firmly fixed in place).",
-            "prefix": "null",
-            "suffix": "-fast (firmly fixed)",
-            "synonyms": [
-                "resolute",
-                "unwavering",
-                "loyal"
-            ],
-            "antonyms": [
-                "fickle",
-                "unreliable",
-                "wavering"
-            ],
-            "moreExamples": [
-                "She remained steadfast in her decisions.",
-                "His steadfast loyalty was highly valued."
+            "synonyms": ["radical", "extreme", "severe"],
+            "antonyms": ["mild", "moderate"],
+            "root": "dras",
+            "origin": { "root": "dran (to do)" },
+            "caseExamples": [
+                { "tr": "Şirket maliyeti düşürmek için köklü değişiklikler yaptı.", "en": "The company made drastic changes to reduce costs." },
+                { "tr": "Bu sorunla başa çıkmak için sert önlemler alınmalı.", "en": "Drastic measures must be taken to deal with this problem." }
             ]
-        }
+        },
+        "wordFamily": { "adverb": "drastically" }
     },
     {
         "id": 19,
-        "word": "Conscience",
-        "trWord": "Vicdan",
-        "phonetic": "/ˈkɒn.ʃəns/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "An inner feeling or voice viewed as acting as a guide to the rightness or wrongness of one's behavior.",
-        "trDef": "Kişinin davranışının doğruluğu veya yanlışlığı konusunda rehberlik eden içsel ses veya his.",
-        "engExample": "His clear conscience allowed him to sleep peacefully.",
-        "altExamples": [
-            "His clear conscience allowed him to peacefully sleep",
-            "To sleep peacefully his clear conscience allowed him"
-        ],
-        "trExample": "Temiz vicdanı onun huzur içinde uyumasını sağladı.",
-        "wordForms": [
-            {
-                "form": "Conscientious",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            }
-        ],
+        "word": "Elaborate",
+        "trWord": "Detaylı / Özenli / Karmaşık",
+        "phonetic": "/iˈlæb.ər.ət/",
+        "pos": "adjective / verb",
+        "posTr": "sıfat / fiil",
+        "engDef": "Involving many carefully arranged parts or details; detailed and complicated in design and planning.",
+        "trDef": "Dikkatle düzenlenmiş birçok parça veya ayrıntıyı içeren; tasarım ve planlamada ayrıntılı ve karmaşık.",
+        "engExample": "They made elaborate preparations for the festival.",
+        "trExample": "Festival için özenli/detaylı hazırlıklar yaptılar.",
         "details": {
-            "root": "From Latin conscire (to be mutually aware).",
-            "prefix": "con- (with)",
-            "suffix": "-ence (state or action)",
-            "synonyms": [
-                "morals",
-                "principles",
-                "ethics"
-            ],
-            "antonyms": [
-                "immorality",
-                "indifference",
-                "unscrupulousness"
-            ],
-            "moreExamples": [
-                "A guilty conscience needs no accuser.",
-                "Let your conscience be your guide."
+            "synonyms": ["detailed", "complex", "intricate"],
+            "antonyms": ["simple", "plain"],
+            "root": "labor",
+            "origin": { "root": "labor (work)", "prefix": "e-" },
+            "caseExamples": [
+                { "tr": "Lütfen planınızı biraz daha detaylandırır mısınız?", "en": "Could you please elaborate more on your plan?" },
+                { "tr": "Bahçede karmaşık bir sulama sistemi kurmuşlar.", "en": "They set up an elaborate irrigation system in the garden." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "elaborate", "noun": "elaboration", "adverb": "elaborately" }
     },
     {
         "id": 20,
-        "word": "Altruism",
-        "trWord": "Diğerkamlık",
-        "phonetic": "/ˈæl.tru.ɪ.zəm/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The belief in or practice of disinterested and selfless concern for the well-being of others.",
-        "trDef": "Başkalarının iyiliği için bencil olmayan ve çıkarsız ilgi duyma inancı veya pratiği.",
-        "engExample": "Her life was characterized by extreme altruism.",
-        "altExamples": [
-            "By extreme altruism her life was characterized"
-        ],
-        "trExample": "Hayatı aşırı diğerkamlıkla karakterize edilmişti.",
-        "wordForms": [
-            {
-                "form": "Altruistic",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Altruistically",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Feasible",
+        "trWord": "Yapılabilir / Gerçekçi / Makul",
+        "phonetic": "/ˈfiː.zə.bəl/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Possible to do easily or conveniently.",
+        "trDef": "Kolayca veya rahatça yapılması mümkün.",
+        "engExample": "It is not feasible to build a tunnel under the ocean here.",
+        "trExample": "Burada okyanusun altına bir tünel inşa etmek yapılabilir/mümkün değildir.",
         "details": {
-            "root": "From French altruisme, from Latin alter (other).",
-            "prefix": "null",
-            "suffix": "-ism (belief or practice)",
-            "synonyms": [
-                "selflessness",
-                "philanthropy",
-                "charity"
-            ],
-            "antonyms": [
-                "selfishness",
-                "egoism",
-                "greed"
-            ],
-            "moreExamples": [
-                "Many animals display forms of altruism.",
-                "Her altruism led her to volunteer overseas."
+            "synonyms": ["possible", "practical", "workable"],
+            "antonyms": ["impractical", "impossible"],
+            "root": "facere",
+            "origin": { "root": "facere (to do)", "suffix": "-ible" },
+            "caseExamples": [
+                { "tr": "Bu planın uygulanabilir olduğunu kanıtlamamız gerekiyor.", "en": "We need to prove that this plan is feasible." },
+                { "tr": "Daha makul bir çözüm bulabiliriz.", "en": "We can find a more feasible solution." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "feasibility", "adverb": "feasibly" }
     },
     {
         "id": 21,
-        "word": "Forgiveness",
-        "trWord": "Bağışlama",
-        "phonetic": "/fəˈɡɪv.nəs/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The action or process of forgiving or being forgiven.",
-        "trDef": "Affetme veya affedilme eylemi veya süreci.",
-        "engExample": "Forgiveness is a sign of true strength.",
-        "altExamples": [
-            "Forgiveness is a true sign of strength",
-            "A sign of true strength is forgiveness"
-        ],
-        "trExample": "Bağışlama, gerçek gücün bir işaretidir.",
-        "wordForms": [
-            {
-                "form": "Forgive",
-                "pos": "verb",
-                "posTr": "fiil"
-            },
-            {
-                "form": "Forgiving",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            }
-        ],
+        "word": "Hectic",
+        "trWord": "Telaşlı / Çok Yoğun",
+        "phonetic": "/ˈhek.tɪk/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Full of incessant or frantic activity.",
+        "trDef": "Aralıksız veya çılgınca bir aktivite ile dolu.",
+        "engExample": "Life in the city is very hectic.",
+        "trExample": "Şehirdeki hayat çok yoğun/telaşlı.",
         "details": {
-            "root": "From Old English forgiefan (to give up, remit).",
-            "prefix": "for- (completely)",
-            "suffix": "-ness (state or quality)",
-            "synonyms": [
-                "pardon",
-                "mercy",
-                "absolution"
-            ],
-            "antonyms": [
-                "punishment",
-                "vengeance",
-                "retribution"
-            ],
-            "moreExamples": [
-                "She begged for his forgiveness.",
-                "Forgiveness is hard but necessary."
+            "synonyms": ["frantic", "busy", "frenetic"],
+            "antonyms": ["calm", "leisurely"],
+            "root": "hektikos",
+            "origin": { "root": "hektikos (habitual)" },
+            "caseExamples": [
+                { "tr": "İşe dönüşten sonraki ilk hafta çok yoğun geçti.", "en": "The first week after returning to work was very hectic." },
+                { "tr": "Bu kadar telaşlı bir programla nasıl başa çıkıyorsun?", "en": "How do you cope with such a hectic schedule?" }
             ]
-        }
+        },
+        "wordFamily": { "adverb": "hectically" }
     },
     {
         "id": 22,
-        "word": "Authenticity",
-        "trWord": "Sahicilik",
-        "phonetic": "/ˌɔː.θenˈtɪs.ə.ti/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The quality of being real or true.",
-        "trDef": "Gerçek veya doğru olma niteliği; özgünlük.",
-        "engExample": "The authenticity of his character inspired trust.",
-        "altExamples": [
-            "Trust was inspired by the authenticity of his character"
-        ],
-        "trExample": "Karakterinin sahiciliği güven ilham etti.",
-        "wordForms": [
-            {
-                "form": "Authentic",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Authentically",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Implicit",
+        "trWord": "Üstü Kapalı / İmalı / Mutlak",
+        "phonetic": "/ɪmˈplɪs.ɪt/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Suggested though not directly expressed; or with no qualification or question; absolute.",
+        "trDef": "Doğrudan ifade edilmese de ima edilen; veya sınırsız ve sorgusuz; mutlak.",
+        "engExample": "There was an implicit agreement that we wouldn't talk about politics.",
+        "trExample": "Siyaset konuşmayacağımıza dair üstü kapalı/zımni bir anlaşma vardı.",
         "details": {
-            "root": "From Greek authentikos (original, genuine).",
-            "prefix": "null",
-            "suffix": "-ity (state or condition)",
-            "synonyms": [
-                "genuineness",
-                "validity",
-                "truthfulness"
-            ],
-            "antonyms": [
-                "fakeness",
-                "falsehood",
-                "forgery"
-            ],
-            "moreExamples": [
-                "The experts verified the authenticity of the painting.",
-                "We appreciate the authenticity of this restaurant’s food."
+            "synonyms": ["implied", "tacit", "absolute"],
+            "antonyms": ["explicit", "direct"],
+            "root": "plicare",
+            "origin": { "root": "plicare (to fold)", "prefix": "im- (in)" },
+            "caseExamples": [
+                { "tr": "Söylenmese de aralarında sessiz bir rekabet vardı.", "en": "There was an implicit rivalry between them, though it was never spoken." },
+                { "tr": "Liderlerine olan güvenleri mutlak ve sorgusuzdu.", "en": "Their trust in their leader was implicit." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "imply", "noun": "implication", "adverb": "implicitly" }
     },
     {
         "id": 23,
-        "word": "Benevolence",
-        "trWord": "İyilikseverlik",
-        "phonetic": "/bəˈnev.əl.əns/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The quality of being well meaning; kindness.",
-        "trDef": "İyi niyetli olma niteliği; nezaket ve iyilikseverlik.",
-        "engExample": "The hospital was founded through the benevolence of local citizens.",
-        "altExamples": [
-            "Through the benevolence of local citizens the hospital was founded"
-        ],
-        "trExample": "Hastane, yerel vatandaşların iyilikseverliği sayesinde kuruldu.",
-        "wordForms": [
-            {
-                "form": "Benevolent",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Benevolently",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Plausible",
+        "trWord": "Makul / Akla Yatkın",
+        "phonetic": "/ˈplɔː.zə.bəl/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Seeming reasonable or probable.",
+        "trDef": "Makul veya muhtemel görünen.",
+        "engExample": "She couldn't think of a plausible excuse for being late.",
+        "trExample": "Geç kalmak için akla yatkın/makul bir mazeret düşünemedi.",
         "details": {
-            "root": "From Latin bene (well) + volens (wishing).",
-            "prefix": "bene- (good, well)",
-            "suffix": "-ence (state or quality)",
-            "synonyms": [
-                "kindness",
-                "generosity",
-                "goodwill"
-            ],
-            "antonyms": [
-                "malevolence",
-                "hostility",
-                "spite"
-            ],
-            "moreExamples": [
-                "His benevolence was known throughout the town.",
-                "We rely on the benevolence of our donors."
+            "synonyms": ["believable", "likely", "credible"],
+            "antonyms": ["implausible", "unlikely"],
+            "root": "plaudere",
+            "origin": { "root": "plaudere (to applaud/approve)" },
+            "caseExamples": [
+                { "tr": "Dedektif bu teoriyi oldukça akla yatkın buldu.", "en": "The detective found this theory to be quite plausible." },
+                { "tr": "Daha inandırıcı bir açıklama yapman gerekiyor.", "en": "You need to provide a more plausible explanation." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "plausibility", "adverb": "plausibly" }
     },
     {
         "id": 24,
-        "word": "Meticulous",
-        "trWord": "Titiz",
-        "phonetic": "/məˈtɪk.jə.ləs/",
+        "word": "Superficial",
+        "trWord": "Yüzeysel",
+        "phonetic": "/ˌsuː.pəˈfɪʃ.əl/",
         "pos": "adjective",
         "posTr": "sıfat",
-        "engDef": "Showing great attention to detail; very careful and precise.",
-        "trDef": "Detaylara büyük dikkat gösteren; çok dikkatli ve titiz.",
-        "engExample": "He was meticulous in his preparation for the project.",
-        "altExamples": [
-            "In his preparation for the project he was meticulous",
-            "For the project he was meticulous in his preparation"
-        ],
-        "trExample": "Proje hazırlığında çok titizdi.",
-        "wordForms": [
-            {
-                "form": "Meticulously",
-                "pos": "adverb",
-                "posTr": "zarf"
-            },
-            {
-                "form": "Meticulousness",
-                "pos": "noun",
-                "posTr": "isim"
-            }
-        ],
+        "engDef": "Existing or occurring at or on the surface; or lacking depth of character or understanding.",
+        "trDef": "Yüzeyde var olan veya meydana gelen; veya karakter veya anlayış derinliğinden yoksun.",
+        "engExample": "He only had a superficial understanding of the topic.",
+        "trExample": "Konu hakkında sadece yüzeysel bir bilgisi vardı.",
         "details": {
-            "root": "From Latin meticulosus (fearful), from metus (fear).",
-            "prefix": "null",
-            "suffix": "-ous (full of)",
-            "synonyms": [
-                "careful",
-                "precise",
-                "thorough"
-            ],
-            "antonyms": [
-                "careless",
-                "sloppy",
-                "negligent"
-            ],
-            "moreExamples": [
-                "She kept meticulous records of her expenses.",
-                "The artwork required meticulous attention to detail."
+            "synonyms": ["surface", "shallow", "cursory"],
+            "antonyms": ["deep", "profound"],
+            "root": "facies",
+            "origin": { "root": "facies (face)", "prefix": "super- (above)" },
+            "caseExamples": [
+                { "tr": "Kazadan sonra sadece yüzeysel yaraları vardı.", "en": "After the accident, he only had superficial injuries." },
+                { "tr": "İlişkileri her zaman çok yüzeysel kalmıştı.", "en": "Their relationship had always been very superficial." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "superficiality", "adverb": "superficially" }
     },
     {
         "id": 25,
-        "word": "Reflect",
-        "trWord": "Düşünmek",
-        "phonetic": "/rɪˈflekt/",
-        "pos": "verb",
-        "posTr": "fiil",
-        "engDef": "Think deeply or carefully about.",
-        "trDef": "Derinlemesine veya dikkatlice düşünmek; yansıtmak.",
-        "engExample": "Take a moment to reflect on your achievements.",
-        "altExamples": [
-            "To reflect on your achievements take a moment"
-        ],
-        "trExample": "Başarıların üzerine düşünmek için bir an ayır.",
-        "wordForms": [
-            {
-                "form": "Reflection",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Reflective",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            }
-        ],
+        "word": "Abstract",
+        "trWord": "Soyut / Özet",
+        "phonetic": "/ˈæb.strækt/",
+        "pos": "adjective / noun",
+        "posTr": "sıfat / isim",
+        "engDef": "Existing in thought or as an idea but not having a physical or concrete existence.",
+        "trDef": "Düşüncede veya bir fikir olarak var olan ancak fiziksel veya somut bir varlığı olmayan.",
+        "engExample": "Happiness is an abstract concept.",
+        "trExample": "Mutluluk soyut bir kavramdır.",
         "details": {
-            "root": "From Latin reflectere (to bend back).",
-            "prefix": "re- (back)",
-            "suffix": "null",
-            "synonyms": [
-                "mirror",
-                "echo",
-                "ponder"
-            ],
-            "antonyms": [
-                "absorb",
-                "ignore",
-                "disregard"
-            ],
-            "moreExamples": [
-                "The calm water reflects the mountains.",
-                "Take time to reflect on your progress."
+            "synonyms": ["theoretical", "conceptual", "summary"],
+            "antonyms": ["concrete", "actual"],
+            "root": "trahere",
+            "origin": { "root": "trahere (to pull)", "prefix": "ab- (away)" },
+            "caseExamples": [
+                { "tr": "O çocuklarla soyut konuları tartışmak zor.", "en": "It's difficult to discuss abstract topics with those children." },
+                { "tr": "Makalenin özetini birinci sayfada bulabilirsiniz.", "en": "You can find the abstract of the article on the first page." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "abstraction", "adverb": "abstractly" }
     },
     {
         "id": 26,
-        "word": "Trustworthy",
-        "trWord": "Güvenilir",
-        "phonetic": "/ˈtrʌstˌwɜː.ði/",
+        "word": "Coherent",
+        "trWord": "Mantıklı / Tutarlı",
+        "phonetic": "/kəʊˈhɪə.rənt/",
         "pos": "adjective",
         "posTr": "sıfat",
-        "engDef": "Able to be relied on as honest or truthful.",
-        "trDef": "Dürüst veya doğru olarak güvenilebilecek.",
-        "engExample": "A true friend must be trustworthy.",
-        "altExamples": [
-            "Must be trustworthy a true friend"
-        ],
-        "trExample": "Gerçek bir dost güvenilir olmalıdır.",
-        "wordForms": [
-            {
-                "form": "Trust",
-                "pos": "noun",
-                "posTr": "isim"
-            },
-            {
-                "form": "Trustworthiness",
-                "pos": "noun",
-                "posTr": "isim"
-            }
-        ],
+        "engDef": "Logical and consistent; or forming a unified whole.",
+        "trDef": "Mantıklı ve tutarlı; veya birleşik bir bütün oluşturan.",
+        "engExample": "He was so drunk he wasn't making any coherent sentences.",
+        "trExample": "O kadar sarhoştu ki mantıklı/tutarlı cümleler kuramıyordu.",
         "details": {
-            "root": "From Old Norse traust (trust) + Old English weorthig (worthy).",
-            "prefix": "null",
-            "suffix": "-worthy (deserving of)",
-            "synonyms": [
-                "reliable",
-                "dependable",
-                "honest"
-            ],
-            "antonyms": [
-                "unreliable",
-                "deceitful",
-                "treacherous"
-            ],
-            "moreExamples": [
-                "It is hard to find trustworthy friends.",
-                "She is a highly trustworthy employee."
+            "synonyms": ["logical", "consistent", "lucid"],
+            "antonyms": ["incoherent", "confused"],
+            "root": "haerere",
+            "origin": { "root": "haerere (to stick)", "prefix": "co- (together)" },
+            "caseExamples": [
+                { "tr": "Daha tutarlı ve ikna edici bir stratejiye ihtiyacımız var.", "en": "We need a more coherent and convincing strategy." },
+                { "tr": "O parçalar bir araya gelerek bütüncül bir plan oluşturuyor.", "en": "Those pieces fit together to form a coherent plan." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "cohere", "noun": "coherence", "adverb": "coherently" }
     },
     {
         "id": 27,
-        "word": "Harmony",
-        "trWord": "Uyum",
-        "phonetic": "/ˈhɑː.mə.ni/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The state of being in agreement or concord.",
-        "trDef": "Anlaşma veya uyum içinde olma durumu; ahenk.",
-        "engExample": "They learned to live in perfect harmony with nature.",
-        "altExamples": [
-            "In perfect harmony with nature they learned to live",
-            "They learned to live with nature in perfect harmony"
-        ],
-        "trExample": "Doğayla mükemmel bir uyum içinde yaşamayı öğrendiler.",
-        "wordForms": [
-            {
-                "form": "Harmonious",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Harmonize",
-                "pos": "verb",
-                "posTr": "fiil"
-            }
-        ],
+        "word": "Controversial",
+        "trWord": "Tartışmalı",
+        "phonetic": "/ˌkɒn.trəˈvɜː.ʃəl/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Giving rise or likely to give rise to public disagreement.",
+        "trDef": "Kamuoyunda tartışmaya yol açan veya yol açması muhtemel olan.",
+        "engExample": "Abortion is a highly controversial issue.",
+        "trExample": "Kürtaj oldukça tartışmalı bir meseledir.",
         "details": {
-            "root": "From Greek harmonia (joint, agreement).",
-            "prefix": "null",
-            "suffix": "-y (state or quality)",
-            "synonyms": [
-                "balance",
-                "peace",
-                "cooperation"
-            ],
-            "antonyms": [
-                "conflict",
-                "discord",
-                "clash"
-            ],
-            "moreExamples": [
-                "The colors in the painting are in perfect harmony.",
-                "We must live in harmony with our neighbors."
+            "synonyms": ["contentious", "disputed"],
+            "antonyms": ["uncontroversial", "agreed"],
+            "root": "vertere",
+            "origin": { "root": "vertere (to turn)", "prefix": "contra- (against)" },
+            "caseExamples": [
+                { "tr": "Yeni vergi yasası toplumda çok tartışmalı bir konu haline geldi.", "en": "The new tax law has become a highly controversial topic in society." },
+                { "tr": "Tartışmalı kararıyla tüm dikkatleri üzerine çekti.", "en": "He drew all eyes to him with his controversial decision." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "controversy", "adverb": "controversially" }
     },
     {
         "id": 28,
-        "word": "Prudence",
-        "trWord": "Sağduyu",
-        "phonetic": "/ˈpruː.dəns/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "Cautiousness; acting with or showing care and thought for the future.",
-        "trDef": "İhtiyatlılık; gelecek için özen ve düşünceyle hareket etme.",
-        "engExample": "We need to exercise prudence when making financial decisions.",
-        "altExamples": [
-            "When making financial decisions we need to exercise prudence",
-            "To exercise prudence we need when making financial decisions"
-        ],
-        "trExample": "Finansal kararlar alırken sağduyulu davranmalıyız.",
-        "wordForms": [
-            {
-                "form": "Prudent",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Prudently",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "word": "Definitive",
+        "trWord": "Kesin / Nihai / En İyisi",
+        "phonetic": "/dɪˈfɪn.ɪ.tɪv/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Done or reached decisively and with authority; or the best of its kind.",
+        "trDef": "Kararlı bir şekilde ve yetkiyle yapılan veya ulaşılan; veya türünün en iyisi.",
+        "engExample": "The court's decision is definitive.",
+        "trExample": "Mahkemenin kararı kesin/nihai.",
         "details": {
-            "root": "From Latin prudentia (foresight, sagacity).",
-            "prefix": "null",
-            "suffix": "-ence (state or quality)",
-            "synonyms": [
-                "caution",
-                "wisdom",
-                "carefulness"
-            ],
-            "antonyms": [
-                "recklessness",
-                "foolishness",
-                "impudence"
-            ],
-            "moreExamples": [
-                "Prudence is required when investing money.",
-                "She acted with great prudence."
+            "synonyms": ["final", "conclusive", "ultimate"],
+            "antonyms": ["provisional", "interim"],
+            "root": "finis",
+            "origin": { "root": "finis (end)", "prefix": "de-" },
+            "caseExamples": [
+                { "tr": "Henüz kesin bir kanıta ulaşamadık.", "en": "We haven't reached definitive proof yet." },
+                { "tr": "Bu, sanatçının hayatı üzerine yazılmış en kapsamlı ve en iyi kitaptır.", "en": "This is the definitive biography of the artist." }
             ]
-        }
+        },
+        "wordFamily": { "verb": "define", "noun": "definition", "adverb": "definitively" }
     },
     {
         "id": 29,
-        "word": "Unity",
-        "trWord": "Birlik",
-        "phonetic": "/ˈjuː.nə.ti/",
-        "pos": "noun",
-        "posTr": "isim",
-        "engDef": "The state of being united or joined as a whole.",
-        "trDef": "Birleşmiş veya bir bütün olarak bağlı olma durumu.",
-        "engExample": "There is strength in unity.",
-        "altExamples": [
-            "In unity there is strength"
-        ],
-        "trExample": "Birlikten kuvvet doğar.",
-        "wordForms": [
-            {
-                "form": "Unite",
-                "pos": "verb",
-                "posTr": "fiil"
-            },
-            {
-                "form": "United",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            }
-        ],
+        "word": "Empirical",
+        "trWord": "Deneysel / Gözleme Dayalı",
+        "phonetic": "/ɪmˈpɪr.ɪ.kəl/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Based on, concerned with, or verifiable by observation or experience rather than theory or pure logic.",
+        "trDef": "Teori veya saf mantıktan ziyade gözlem veya deneyime dayanan, bununla ilgili olan veya bununla doğrulanabilen.",
+        "engExample": "They provided empirical evidence to support their claims.",
+        "trExample": "İddialarını desteklemek için deneysel/gözleme dayalı kanıtlar sundular.",
         "details": {
-            "root": "From Latin unus (one).",
-            "prefix": "null",
-            "suffix": "-ity (state or condition)",
-            "synonyms": [
-                "togetherness",
-                "solidarity",
-                "cohesion"
-            ],
-            "antonyms": [
-                "division",
-                "separation",
-                "discord"
-            ],
-            "moreExamples": [
-                "The nation showed great unity during the crisis.",
-                "Our team lacks unity."
+            "synonyms": ["observed", "factual", "experimental"],
+            "antonyms": ["theoretical", "speculative"],
+            "root": "empeirikos",
+            "origin": { "root": "empeirikos (experienced)" },
+            "caseExamples": [
+                { "tr": "Teorini desteklemek için daha fazla deneysel veriye ihtiyacın var.", "en": "You need more empirical data to support your theory." },
+                { "tr": "Bu sonuçlar doğrudan gözlem ve deneyime dayanmaktadır.", "en": "These results are based on direct empirical observation." }
             ]
-        }
+        },
+        "wordFamily": { "noun": "empiricism", "adverb": "empirically" }
     },
     {
         "id": 30,
-        "word": "Courage",
-        "trWord": "Cesaret",
-        "phonetic": "/ˈkʌr.ɪdʒ/",
+        "word": "Inevitable",
+        "trWord": "Kaçınılmaz",
+        "phonetic": "/ɪˈnev.ɪ.tə.bəl/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Certain to happen; unavoidable.",
+        "trDef": "Gerçekleşeceği kesin; kaçınılmaz.",
+        "engExample": "Death is inevitable.",
+        "trExample": "Ölüm kaçınılmazdır.",
+        "details": {
+            "synonyms": ["unavoidable", "certain", "fated"],
+            "antonyms": ["avoidable", "uncertain"],
+            "root": "evitabilis",
+            "origin": { "root": "evitabilis (avoidable)", "prefix": "in- (not)" },
+            "caseExamples": [
+                { "tr": "İki şirket arasındaki rekabet kaçınılmaz bir noktaya geldi.", "en": "Competition between the two companies has reached an inevitable point." },
+                { "tr": "Savaşın sonuçları maalesef kaçınılmazdı.", "en": "The consequences of the war were unfortunately inevitable." }
+            ]
+        },
+        "wordFamily": { "noun": "inevitability", "adverb": "inevitably" }
+    },
+    {
+        "id": 31,
+        "word": "Inherent",
+        "trWord": "İçsel / Doğasında Olan",
+        "phonetic": "/ɪnˈher.ənt/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Existing in something as a permanent, essential, or characteristic attribute.",
+        "trDef": "Bir şeyde kalıcı, esas veya karakteristik bir özellik olarak var olan.",
+        "engExample": "There are inherent risks in any surgery.",
+        "trExample": "Her ameliyatın doğasında olan/içsel riskleri vardır.",
+        "details": {
+            "synonyms": ["intrinsic", "innate", "essential"],
+            "antonyms": ["extrinsic", "acquired"],
+            "root": "haerere",
+            "origin": { "root": "haerere (to stick)", "prefix": "in- (within)" },
+            "caseExamples": [
+                { "tr": "Her insanın doğasında olan bir öğrenme isteği vardır.", "en": "There is an inherent desire to learn in every human being." },
+                { "tr": "Yeni sistemin doğasında olan bazı zayıflıklar fark edildi.", "en": "Some weaknesses inherent in the new system were noticed." }
+            ]
+        },
+        "wordFamily": { "noun": "inherence", "adverb": "inherently" }
+    },
+    {
+        "id": 32,
+        "word": "Objective",
+        "trWord": "Nesnel / Hedef / Amaç",
+        "phonetic": "/əbˈdʒek.tɪv/",
+        "pos": "adjective / noun",
+        "posTr": "sıfat / isim",
+        "engDef": "Not influenced by personal feelings or opinions in considering and representing facts; or a thing aimed at or sought; a goal.",
+        "trDef": "Gerçekleri değerlendirirken ve sunarken kişisel duygulardan veya görüşlerden etkilenmeyen; veya hedeflenen veya aranan bir şey; bir amaç.",
+        "engExample": "We need an objective assessment of the situation.",
+        "trExample": "Durumun nesnel bir değerlendirmesine ihtiyacımız var.",
+        "details": {
+            "synonyms": ["impartial", "unbiased", "goal"],
+            "antonyms": ["subjective", "partial"],
+            "root": "jacere",
+            "origin": { "root": "jacere (to throw)", "prefix": "ob- (towards)" },
+            "caseExamples": [
+                { "tr": "Haber ajanslarının nesnel ve tarafsız olması gerekir.", "en": "News agencies should be objective and impartial." },
+                { "tr": "Yıl sonuna kadar ana hedefimize ulaşmayı planlıyoruz.", "en": "We plan to reach our main objective by the end of the year." }
+            ]
+        },
+        "wordFamily": { "noun": "objectivity", "adverb": "objectively" }
+    },
+    {
+        "id": 33,
+        "word": "Paradox",
+        "trWord": "Paradoks / Çelişki",
+        "phonetic": "/ˈpær.ə.dɒks/",
         "pos": "noun",
         "posTr": "isim",
-        "engDef": "The ability to do something that frightens one; bravery.",
-        "trDef": "İnsanı korkutan bir şeyi yapabilme yeteneği; cesaret.",
-        "engExample": "It takes courage to stand up for what is right.",
-        "altExamples": [
-            "To stand up for what is right it takes courage"
-        ],
-        "trExample": "Doğru olanı savunmak cesaret ister.",
-        "wordForms": [
-            {
-                "form": "Courageous",
-                "pos": "adjective",
-                "posTr": "sıfat"
-            },
-            {
-                "form": "Courageously",
-                "pos": "adverb",
-                "posTr": "zarf"
-            }
-        ],
+        "engDef": "A seemingly absurd or self-contradictory statement or proposition that when investigated or explained may prove to be well founded or true.",
+        "trDef": "Araştırıldığında veya açıklandığında temelli veya doğru olduğu kanıtlanabilecek, görünüşte saçma veya kendiyle çelişen bir ifade veya önerme.",
+        "engExample": "It is a paradox that the more you give, the more you have.",
+        "trExample": "Ne kadar çok verirsen o kadar çok şeye sahip olman bir paradokstur/çelişkidir.",
         "details": {
-            "root": "From Latin cor (heart).",
-            "prefix": "null",
-            "suffix": "-age (action or process)",
-            "synonyms": [
-                "bravery",
-                "valor",
-                "fearlessness"
-            ],
-            "antonyms": [
-                "cowardice",
-                "fear",
-                "timidity"
-            ],
-            "moreExamples": [
-                "It takes courage to speak the truth.",
-                "The soldiers were awarded for their courage in battle."
+            "synonyms": ["contradiction", "enigma", "puzzle"],
+            "antonyms": ["certainty", "consistency"],
+            "root": "doxa",
+            "origin": { "root": "doxa (opinion)", "prefix": "para- (contrary to)" },
+            "caseExamples": [
+                { "tr": "Daha az uyuyarak daha enerjik hissetmesi bir paradokstur.", "en": "It's a paradox that he feels more energetic by sleeping less." },
+                { "tr": "Zaman yolculuğu teorileri birçok paradoksu beraberinde getirir.", "en": "Time travel theories bring along many paradoxes." }
             ]
-        }
+        },
+        "wordFamily": { "adjective": "paradoxical", "adverb": "paradoxically" }
+    },
+    {
+        "id": 34,
+        "word": "Prevalent",
+        "trWord": "Yaygın",
+        "phonetic": "/ˈprev.əl.ənt/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Widespread in a particular area or at a particular time.",
+        "trDef": "Belirli bir bölgede veya belirli bir zamanda yaygın.",
+        "engExample": "The disease is more prevalent in tropical climates.",
+        "trExample": "Hastalık tropikal iklimlerde daha yaygındır.",
+        "details": {
+            "synonyms": ["widespread", "common", "ubiquitous"],
+            "antonyms": ["rare", "uncommon"],
+            "root": "valere",
+            "origin": { "root": "valere (to be strong)", "prefix": "prae- (before)" },
+            "caseExamples": [
+                { "tr": "Bu inanış kırsal kesimde hala çok yaygındır.", "en": "This belief is still very prevalent in rural areas." },
+                { "tr": "İşsizlik, ekonomik kriz dönemlerinde daha yaygın hale gelir.", "en": "Unemployment becomes more prevalent during economic crises." }
+            ]
+        },
+        "wordFamily": { "verb": "prevail", "noun": "prevalence" }
+    },
+    {
+        "id": 35,
+        "word": "Reluctant",
+        "trWord": "İsteksiz / Çekimser",
+        "phonetic": "/rɪˈlʌk.tənt/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Unwilling and hesitant; disinclined.",
+        "trDef": "İsteksiz ve tereddütlü; gönülsüz.",
+        "engExample": "She was reluctant to admit she was wrong.",
+        "trExample": "Hatalı olduğunu kabul etmekte isteksiz/çekimserdi.",
+        "details": {
+            "synonyms": ["unwilling", "hesitant", "loath"],
+            "antonyms": ["eager", "willing"],
+            "root": "luctari",
+            "origin": { "root": "luctari (to struggle)", "prefix": "re- (against)" },
+            "caseExamples": [
+                { "tr": "Yeni bir işe başlama konusunda biraz çekimser davranıyor.", "en": "He is a bit reluctant to start a new job." },
+                { "tr": "Yardım talebimizi kabul etmekte isteksiz görünüyorlardı.", "en": "They seemed reluctant to accept our request for help." }
+            ]
+        },
+        "wordFamily": { "noun": "reluctance", "adverb": "reluctantly" }
+    },
+    {
+        "id": 36,
+        "word": "Vague",
+        "trWord": "Muğlak / Net Olmayan",
+        "phonetic": "/veɪɡ/",
+        "pos": "adjective",
+        "posTr": "sıfat",
+        "engDef": "Of uncertain, indefinite, or unclear character or meaning.",
+        "trDef": "Belirsiz, süresiz veya net olmayan karakter veya anlamda.",
+        "engExample": "He was very vague about his plans for the future.",
+        "trExample": "Gelecekteki planları hakkında çok belirsiz/muğlaktı.",
+        "details": {
+            "synonyms": ["indistinct", "unclear", "hazy"],
+            "antonyms": ["clear", "precise"],
+            "root": "vagus",
+            "origin": { "root": "vagus (wandering)" },
+            "caseExamples": [
+                { "tr": "Kaza gecesini sadece çok hayal meyal hatırlıyormuş.", "en": "She had only a vague memory of the night of the accident." },
+                { "tr": "Yönergeler çok net değildi, oldukça muğlaktı.", "en": "The instructions were not very clear, they were quite vague." }
+            ]
+        },
+        "wordFamily": { "noun": "vagueness", "adverb": "vaguely" }
     }
 ];
 
@@ -1412,81 +834,676 @@ export const initialVocabulary = rawVocabulary.map(w => ({
     sm2: { rep: 0, int: 0, ef: 2.5, nextDate: Date.now(), totalReviews: 0, correctReviews: 0, lastQualityScore: 0 }
 }));
 
-export const commonWords = {
-    "capacity": "kapasite", "recover": "kurtulmak", "quickly": "hızlıca", "difficulties": "zorluklar", "student": "öğrenci", "homework": "ödev", "decision": "karar", "plan": "plan", "agreement": "anlaşma", "effect": "etki", "government": "hükümet", "new": "yeni", "traffic": "trafik", "rules": "kurallar", "existing": "mevcut", "available": "ulaşılabilir", "large": "büyük", "quantities": "miktarlar", "plentiful": "bol", "evidence": "kanıt", "support": "desteklemek", "theory": "teori", "firmly": "sıkıca", "opinion": "fikir", "action": "eylem", "difficulty": "zorluk", "eventually": "sonunda", "succeed": "başarmak", "statement": "ifade", "situation": "durum", "point": "nokta", "please": "lütfen", "pretense": "gösteriş", "deceit": "aldatma", "genuine": "hakiki", "feelings": "duygular", "sincere": "içten", "apology": "özür", "mistake": "hata", "quality": "nitelik", "thankful": "minnettar", "appreciation": "takdir", "gratitude": "şükran", "everyone": "herkes", "aim": "amaç", "actions": "eylemler", "intentions": "niyetler", "unassuming": "gösterişsiz", "moderate": "ölçülü", "estimation": "tahmin", "abilities": "yetenekler", "despite": "rağmen", "massive": "devasa", "success": "başarı", "modesty": "tevazu", "honest": "dürüst", "strong": "güçlü", "moral": "ahlaki", "principles": "prensipler", "person": "kişi", "high": "yüksek", "integrity": "dürüstlük", "respect": "saygı", "accept": "kabul etmek", "tolerate": "müsamaha", "delay": "gecikme", "trouble": "sıkıntı", "suffering": "acı", "angry": "kızgın", "key": "kilit", "element": "unsur", "achieving": "ulaşma", "long-term": "uzun vadeli", "goals": "hedefler", "time": "zaman", "think": "düşünmek", "deeply": "derinlemesine", "forest": "orman", "meaning": "anlam", "life": "hayat", "behavior": "davranış", "treatment": "muamele", "fairness": "hakkaniyet", "healthy": "sağlıklı", "society": "toplum", "foundation": "temel", "justice": "adalet", "experience": "tecrübe", "knowledge": "bilgi", "good": "iyi", "judgment": "yargı", "wisdom": "bilgelik", "generation": "nesil", "courteous": "kibar", "kind": "nazik", "pleasant": "hoş", "host": "ev sahibi", "firm": "sağlam", "belief": "inanç", "inner": "içsel", "feeling": "his", "voice": "ses", "guide": "rehber", "clear": "temiz", "conscience": "vicdan", "sleep": "uyumak", "practice": "pratik", "disinterested": "çıkarsız", "selfless": "bencil olmayan", "extreme": "aşırı", "altruism": "diğerkamlık", "process": "süreç", "forgiveness": "bağışlama", "sign": "işaret", "true": "doğru", "strength": "güç", "real": "gerçek", "authenticity": "sahicilik", "character": "karakter", "kindness": "nezaket", "hospital": "hastane", "benevolence": "iyilikseverlik", "local": "yerel", "citizens": "vatandaşlar", "attention": "dikkat", "detail": "detay", "careful": "dikkatli", "precise": "kesin", "meticulous": "titiz", "preparation": "hazırlık", "project": "proje", "moment": "an", "reflect": "düşünmek", "achievements": "başarılar", "friend": "arkadaş", "trustworthy": "güvenilir", "harmony": "uyum", "nature": "doğa", "perfect": "mükemmel", "cautiousness": "tedbir", "thought": "düşünce", "future": "gelecek", "prudence": "sağduyu", "financial": "finansal", "decisions": "kararlar", "whole": "bütün", "unity": "birlik", "ability": "yetenek", "bravery": "cesaret", "courage": "cesaret"
-};
+export const commonWords = {};
+export const localDict = {};
 
-export const localDict = { ...commonWords };
-rawVocabulary.forEach(w => {
-    localDict[w.word.toLowerCase()] = w.trWord.toLowerCase();
-    localDict[w.trWord.toLowerCase()] = w.word.toLowerCase();
-});
+function populateDict(array) {
+    if (!array || !Array.isArray(array)) return;
+    array.forEach(w => {
+        if (w && w.word && w.trWord) {
+            localDict[w.word.toLowerCase()] = w.trWord.toLowerCase();
+            localDict[w.trWord.toLowerCase()] = w.word.toLowerCase();
+        } else if (w && w.word && w.meaning) { // Fallback for old structure if any
+            localDict[w.word.toLowerCase()] = w.meaning.toLowerCase();
+            localDict[w.meaning.toLowerCase()] = w.word.toLowerCase();
+        }
+    });
+}
 
+populateDict(rawVocabulary);
 
 export const rawPhrasalVerbs = [
     {
-        id: 101,
-        word: "Take care of",
-        trWord: "İlgilenmek / Bakmak",
-        phonetic: "/teɪk keər əv/",
-        pos: "phrasal verb",
-        posTr: "deyimsel fiil",
-        engDef: "Keep someone or something safe and provided for; handle or deal with a task.",
-        trDef: "Birinin bakımını üstlenmek; bir konuyla veya görevle ilgilenmek.",
-        engExample: "Could you take care of my cat while I'm away?",
-        trExample: "Ben yokken kedime bakar mısın?",
-        details: {
-            miniCase: "The company's server went down during the night. Sarah was the only developer awake. She immediately took care of the situation before the clients noticed.",
-            trMiniCase: "Gece şirketin sunucusu çöktü. Uyanık tek geliştirici Sarah'ydı. Müşteriler fark etmeden durumu derhal halletti."
-        }
+        "id": 101,
+        "word": "Back out",
+        "trWord": "Sözünden Dönmek / Çekilmek",
+        "phonetic": "/bæk aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To withdraw from a commitment or agreement.",
+        "trDef": "Bir taahhütten veya anlaşmadan çekilmek.",
+        "engExample": "He backed out of the deal at the last minute.",
+        "trExample": "Son dakikada anlaşmadan çekildi.",
+        "details": {
+            "miniCase": "The company initially promised to fund the entire project. However, after reviewing the high costs, they decided to back out of the deal at the last minute. This surprise decision left the startup in a very difficult position.",
+            "trMiniCase": "Şirket başlangıçta tüm projeyi finanse etme sözü verdi. Ancak, yüksek maliyetleri inceledikten sonra son dakikada anlaşmadan çekilmeye karar verdiler. Bu sürpriz karar girişimi çok zor bir durumda bıraktı.",
+            "caseExamples": [
+                { "tr": "Son anda anlaşmadan çekilmeye karar verdiler.", "en": "They decided to back out of the agreement at the last minute." },
+                { "tr": "Yatırımcılar projeden çekilirse ne yapacağız?", "en": "What will we do if the investors back out of the project?" }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
     },
     {
-        id: 102,
-        word: "Look after someone",
-        trWord: "Birisinin bakımını üstlenmek",
-        phonetic: "/lʊk ˈɑːftər/",
-        pos: "phrasal verb",
-        posTr: "deyimsel fiil",
-        engDef: "Take care of someone, make sure they are well and have what they need.",
-        trDef: "Birine bakmak, onların iyi olduğundan ve ihtiyaçları olan şeylere sahip olduklarından emin olmak.",
-        engExample: "I have to look after my little brother today.",
-        trExample: "Bugün küçük kardeşime bakmak zorundayım.",
-        details: {
-            miniCase: "Mark's neighbour was very old and lived alone. Mark promised to look after him during the harsh winter. He visited him every day to bring hot food.",
-            trMiniCase: "Mark'ın komşusu çok yaşlıydı ve yalnız yaşıyordu. Mark zorlu kış boyunca ona bakmaya söz verdi. Sıcak yemek getirmek için onu her gün ziyaret etti."
-        }
+        "id": 102,
+        "word": "Bring forward",
+        "trWord": "Erkene Çekmek",
+        "phonetic": "/brɪŋ ˈfɔː.wəd/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To move a meeting or event to an earlier time.",
+        "trDef": "Bir toplantıyı veya etkinliği daha erken bir saate almak.",
+        "engExample": "They brought the meeting forward to 10 a.m.",
+        "trExample": "Toplantıyı sabah 10'a erkene çektiler.",
+        "details": {
+            "miniCase": "Due to the approaching storm, the flight departure was brought forward by two hours to ensure everyone's safety. The airline notified all passengers via SMS to arrive at the airport earlier than planned. Most people appreciated the proactive timing.",
+            "trMiniCase": "Yaklaşan fırtına nedeniyle, herkesin güvenliğini sağlamak amacıyla uçuşun kalkış saati iki saat erkene çekildi. Havayolu şirketi tüm yolcuları planlanandan daha erken gelmeleri için SMS ile bilgilendirdi. Çoğu kişi bu önleyici zamanlamayı takdirle karşıladı.",
+            "caseExamples": [
+                { "tr": "Toplantıyı yarına erkene çekebilir miyiz?", "en": "Can we bring the meeting forward to tomorrow?" },
+                { "tr": "Sınav tarihini bir hafta erkene çektiler.", "en": "They brought the exam date forward by one week." }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
     },
     {
-        id: 103,
-        word: "Make something done",
-        trWord: "Bir şeyi halletmek / Oldurtmak",
-        phonetic: "/meɪk ˈsʌmθɪŋ dʌn/",
-        pos: "phrasal verb / expression",
-        posTr: "deyim",
-        engDef: "To cause a task or action to be completed, often despite difficulties.",
-        trDef: "Genellikle zorluklara rağmen bir görevin veya eylemin tamamlanmasını sağlamak.",
-        engExample: "I don't care how hard it is, just make it done by Friday.",
-        trExample: "Ne kadar zor olduğu umurumda değil, sadece Cuma gününe kadar hallet.",
-        details: {
-            miniCase: "The project deadline was extremely tight. The manager gathered the team and demanded extra hours. Through determination and teamwork, they made it done right on time.",
-            trMiniCase: "Projenin teslim tarihi son derece sınırlıydı. Yönetici ekibi topladı ve ek mesai talep etti. Kararlılık ve ekip çalışması ile tam zamanında hallettiler."
-        }
+        "id": 103,
+        "word": "Call off",
+        "trWord": "İptal Etmek",
+        "phonetic": "/kɔːl ɒf/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To cancel an event or agreement.",
+        "trDef": "Bir etkinliği veya anlaşmayı iptal etmek.",
+        "engExample": "The wedding was called off after the couple had a big argument.",
+        "trExample": "Çift büyük bir tartışma yaşadıktan sonra düğün iptal edildi.",
+        "details": {
+            "miniCase": "The much-anticipated outdoor concert was called off because of heavy rain and lightning risks. Fans were disappointed, but the organizers promised to reschedule the event for next month. Refunds were also made available for those who couldn't attend the new date.",
+            "trMiniCase": "Büyük bir heyecanla beklenen açık hava konseri, şiddetli yağmur ve yıldırım riskleri nedeniyle iptal edildi. Hayranlar hayal kırıklığına uğradı ancak organizatörler etkinliği gelecek ay için yeniden planlama sözü verdiler. Yeni tarihe katılamayacak olanlar için iade imkanı da sağlandı.",
+            "caseExamples": [
+                { "tr": "Kötü hava koşulları nedeniyle maçı iptal ettiler.", "en": "They called off the match due to bad weather conditions." },
+                { "tr": "Grev, sendika ile anlaşılınca iptal edildi.", "en": "The strike was called off after an agreement with the union." }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
     },
     {
-        id: 104,
-        word: "Go through",
-        trWord: "Yaşamak (zorlu bir süreci) / İncelemek",
-        phonetic: "/ɡəʊ θruː/",
-        pos: "phrasal verb",
-        posTr: "deyimsel fiil",
-        engDef: "Experience a difficult or unpleasant situation or event; examine something systematically.",
-        trDef: "Zor veya nahoş bir durumu / olayı tecrübe etmek; bir şeyi sistematik olarak incelemek.",
-        engExample: "She is going through a very difficult time right now.",
-        trExample: "Şu anda çok zor bir dönemden geçiyor.",
-        details: {
-            miniCase: "Jason lost his job perfectly out of the blue. He went through a terrible depression for a month. Eventually, he started applying for new roles and regained his confidence.",
-            trMiniCase: "Jason tamamen beklenmedik bir şekilde işini kaybetti. Bir ay boyunca korkunç bir depresyondan geçti. Sonunda, yeni rollere başvurmaya başladı ve özgüvenini geri kazandı."
-        }
+        "id": 104,
+        "word": "Carry out",
+        "trWord": "Uygulamak / Yerine Getirmek",
+        "phonetic": "/ˈkær.i aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To perform or complete a task or instruction.",
+        "trDef": "Bir görevi veya talimatı yerine getirmek veya tamamlamak.",
+        "engExample": "The soldiers carried out their orders without question.",
+        "trExample": "Askerler emirlerini sorgulamadan yerine getirdiler.",
+        "details": {
+            "miniCase": "The engineering team had to carry out a series of safety inspections before the bridge could be opened to the public. They worked day and night to ensure every bolt was tightened correctly. Their dedication ensured that the project was completed on time and safely.",
+            "trMiniCase": "Mühendislik ekibi, köprü halka açılmadan önce bir dizi güvenlik denetimi gerçekleştirmek zorundaydı. Her cıvatanın doğru şekilde sıkıldığından emin olmak için gece gündüz çalıştılar. Özverili çalışmaları, projenin zamanında ve güvenli bir şekilde tamamlanmasını sağladı.",
+            "caseExamples": [
+                { "tr": "Bilim insanları yeni bir araştırma yürütüyor.", "en": "Scientists are carrying out a new research." },
+                { "tr": "Polis olay yerinde inceleme yapıyor.", "en": "The police are carrying out an investigation at the scene." }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 105,
+        "word": "Draw up",
+        "trWord": "Hazırlamak / Taslak Oluşturmak",
+        "phonetic": "/drɔː ʌp/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To prepare a document, plan, or contract.",
+        "trDef": "Bir belge, plan veya sözleşme hazırlamak.",
+        "engExample": "The lawyer drew up the contract yesterday.",
+        "trExample": "Avukat dün sözleşmeyi hazırladı/taslağını oluşturdu.",
+        "details": {
+            "miniCase": "After hours of negotiation, the lawyers finally began to draw up the formal contract. They had to be extremely careful with the wording to avoid any future legal disputes. Once the draft was ready, both parties reviewed it carefully before signing.",
+            "trMiniCase": "Saatler süren müzakerelerin ardından, avukatlar nihayet resmi sözleşmeyi hazırlamaya başladılar. Gelecekteki yasal anlaşmazlıkları önlemek için kelime seçiminde son derece dikkatli olmaları gerekiyordu. Taslak hazırlandıktan sonra, her iki taraf da imzalamadan önce dikkatlice inceledi.",
+            "caseExamples": [
+                { "tr": "Yeni bir iş planı oluşturmamız gerekiyor.", "en": "We need to draw up a new business plan." },
+                { "tr": "Mimar evin taslak planlarını hazırladı.", "en": "The architect drew up the preliminary plans for the house." }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 106,
+        "word": "Fall through",
+        "phonetic": "/fɔːl θruː/",
+        "trWord": "Başarısızlığa Uğramak / Suya Düşmek",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To fail to happen, typically used for plans or agreements.",
+        "trDef": "Genellikle planlar veya anlaşmalar için kullanılan, gerçekleşmemek.",
+        "engExample": "The sale fell through when the buyer couldn't get a loan.",
+        "trExample": "Alıcı kredi alamayınca satış başarısızlığa uğradı/suya düştü.",
+        "details": {
+            "miniCase": "We had everything ready for the summer house purchase, but the deal unfortunately fell through at the last second. The bank rejected the loan application because of a minor technical error. We were very disappointed after weeks of preparation.",
+            "trMiniCase": "Yazlık ev alımı için her şeyimiz hazırdı ancak maalesef anlaşma son saniyede suya düştü. Banka, küçük bir teknik hata nedeniyle kredi başvurusunu reddetti. Haftalarca süren hazırlıktan sonra büyük hayal kırıklığına uğradık.",
+            "caseExamples": [
+                { "tr": "Yatırımcı vazgeçince tüm proje suya düştü.", "en": "The whole project fell through when the investor backed out." },
+                { "tr": "Anlaşma son anda başarısızlığa uğradı.", "en": "The agreement fell through at the eleventh hour." }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 107,
+        "word": "Follow through",
+        "trWord": "Sonuna Kadar Götürmek",
+        "phonetic": "/ˈfɒl.əʊ θruː/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To complete something that has been started.",
+        "trDef": "Başlanmış bir şeyi tamamlamak.",
+        "engExample": "He said he would help me, but he didn't follow through.",
+        "trExample": "Bana yardım edeceğini söyledi ama sözünü sonuna kadar götürmedi/yerine getirmedi.",
+        "details": {
+            "miniCase": "The team came up with a brilliant idea for the marketing campaign, but they failed to follow through on the execution phase. Without consistent action, even the best ideas remain just as concepts on paper. The manager had to intervene to get the project moving again.",
+            "trMiniCase": "Ekip pazarlama kampanyası için harika bir fikir buldu ancak uygulama aşamasını sonuna kadar götürmekte başarılı olamadılar. İstikrarlı bir eylem olmadan, en iyi fikirler bile kağıt üzerinde sadece konsept olarak kalır. Projeyi tekrar harekete geçirmek için yöneticinin müdahale etmesi gerekti.",
+            "caseExamples": [
+                { "tr": "Verdiğin sözleri sonuna kadar götürmelisin.", "en": "You must follow through on the promises you've made." },
+                { "tr": "Tedavi sürecini sonuna kadar götürmek çok önemlidir.", "en": "It is crucial to follow through with the treatment process." }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 108,
+        "word": "Lay out",
+        "trWord": "Detaylıca Açıklamak / Düzenlemek",
+        "phonetic": "/leɪ aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To explain something clearly and in detail; or to arrange something.",
+        "trDef": "Bir şeyi net ve ayrıntılı bir şekilde açıklamak; veya bir şeyi düzenlemek.",
+        "engExample": "The architect laid out the plans for the new house.",
+        "trExample": "Mimar yeni ev için planları detaylıca açıkladı/serdi.",
+        "details": {
+            "miniCase": "She laid out the rules on the first day of class.",
+            "trMiniCase": "Dersin ilk gününde kuralları detaylıca açıkladı."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 109,
+        "word": "Look into",
+        "trWord": "İncelemek / Araştırmak",
+        "phonetic": "/lʊk ˈɪn.tuː/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To investigate or examine something.",
+        "trDef": "Bir şeyi araştırmak veya incelemek.",
+        "engExample": "The police are looking into the cause of the accident.",
+        "trExample": "Polis kazanın nedenini inceliyor/araştırıyor.",
+        "details": {
+            "miniCase": "I will look into the matter and let you know my decision.",
+            "trMiniCase": "Meseleyi inceleyeceğim ve kararımı size bildireceğim."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 110,
+        "word": "Rule out",
+        "trWord": "Elemek / İmkansız Görmek",
+        "phonetic": "/ruːl aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To exclude something as a possibility.",
+        "trDef": "Bir şeyi olasılık olarak dışlamak.",
+        "engExample": "We can't rule out the possibility of a mistake.",
+        "trExample": "Hata olasılığını eleyemeyiz/göz ardı edemeyiz.",
+        "details": {
+            "miniCase": "The doctors ruled out surgery as a treatment option.",
+            "trMiniCase": "Doktorlar tedavi seçeneği olarak ameliyatı elediler."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 111,
+        "word": "Take over",
+        "trWord": "Devralmak",
+        "phonetic": "/teɪk ˈəʊ.vər/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To assume control of something from someone else.",
+        "trDef": "Bir şeyin kontrolünü başkasından devralmak.",
+        "engExample": "He will take over the family business when his father retires.",
+        "trExample": "Babası emekli olduğunda aile işini devralacak.",
+        "details": {
+            "miniCase": "The company was taken over by a large corporation.",
+            "trMiniCase": "Şirket büyük bir kurum tarafından devralındı."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 112,
+        "word": "Wind up",
+        "trWord": "Sonlandırmak / Kendini Bulmak",
+        "phonetic": "/waɪnd ʌp/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To end or finish something; or to end up in a particular place or situation.",
+        "trDef": "Bir şeyi bitirmek veya sonlandırmak; veya kendini belirli bir yer veya durumda bulmak.",
+        "engExample": "We need to wind up the meeting soon.",
+        "trExample": "Toplantıyı yakında sonlandırmamız gerekiyor.",
+        "details": {
+            "miniCase": "He wound up in jail after the robbery.",
+            "trMiniCase": "Soygundan sonra kendini hapiste buldu."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 113,
+        "word": "Come across",
+        "trWord": "Karşılaşmak / İzlenim Bırakmak",
+        "phonetic": "/kʌm əˈkrɒs/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To find something by chance; or to give a particular impression.",
+        "trDef": "Şans eseri bir şey bulmak; veya belirli bir izlenim bırakmak.",
+        "engExample": "He came across as very confident during the interview.",
+        "trExample": "Mülakat sırasında çok özgüvenli bir izlenim bıraktı.",
+        "details": {
+            "miniCase": "While cleaning the attic, I came across some old photos.",
+            "trMiniCase": "Tavan arasını temizlerken bazı eski fotoğraflarla karşılaştım."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 114,
+        "word": "Count on",
+        "trWord": "Güvenmek / Bel Bağlamak",
+        "phonetic": "/kaʊnt ɒn/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To rely or depend on someone.",
+        "trDef": "Birine güvenmek veya bel bağlamak.",
+        "engExample": "You can count on me if you need help.",
+        "trExample": "Yardıma ihtiyacın olursa bana güvenebilirsin.",
+        "details": {
+            "miniCase": "We are counting on the weather being fine for the picnic.",
+            "trMiniCase": "Piknik için havanın güzel olacağına bel bağlıyoruz."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 115,
+        "word": "Cut off",
+        "trWord": "Sözünü Kesmek / İlişimi Koparmak",
+        "phonetic": "/kʌt ɒf/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To interrupt someone; or to isolate or disconnect someone.",
+        "trDef": "Birinin sözünü kesmek; veya birini izole etmek veya bağlantısını kesmek.",
+        "engExample": "The phone line was cut off during our conversation.",
+        "trExample": "Konuşmamız sırasında telefon hattı kesildi.",
+        "details": {
+            "miniCase": "He cut off all ties with his family after the argument.",
+            "trMiniCase": "Tartışmadan sonra ailesiyle bütün bağlarını kopardı."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 116,
+        "word": "Drift apart",
+        "trWord": "Birbirinden Uzaklaşmak",
+        "phonetic": "/drɪft əˈpɑːt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To gradually become less friendly or close to someone.",
+        "trDef": "Biriyle yavaş yavaş daha az dostça veya yakın olmak.",
+        "engExample": "They drifted apart after they went to different universities.",
+        "trExample": "Farklı üniversitelere gittikten sonra birbirlerinden uzaklaştılar.",
+        "details": {
+            "miniCase": "Old friends sometimes drift apart as they grow older.",
+            "trMiniCase": "Eski arkadaşlar bazen yaşlandıkça birbirinden uzaklaşır."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 117,
+        "word": "Get along",
+        "trWord": "İyi Geçinmek",
+        "phonetic": "/ɡet əˈlɒŋ/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To have a friendly relationship with someone.",
+        "trDef": "Biriyle arkadaşça bir ilişkiye sahip olmak.",
+        "engExample": "I get along very well with my neighbors.",
+        "trExample": "Komşularımla çok iyi geçiniyorum.",
+        "details": {
+            "miniCase": "They don't get along with each other at all.",
+            "trMiniCase": "Birbirleriyle hiç iyi geçinemiyorlar."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 118,
+        "word": "Look up to",
+        "trWord": "Hayranlık Duymak / Örnek Almak",
+        "phonetic": "/lʊk ʌp tuː/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To admire and respect someone.",
+        "trDef": "Birine hayranlık duymak ve saygı göstermek.",
+        "engExample": "He has always looked up to his older brother.",
+        "trExample": "Her zaman ağabeyini örnek aldı/ona hayranlık duydu.",
+        "details": {
+            "miniCase": "Many young players look up to him as a role model.",
+            "trMiniCase": "Birçok genç oyuncu onu bir rol model olarak örnek alır."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 119,
+        "word": "Make up",
+        "trWord": "Barışmak / Uydurmak",
+        "phonetic": "/meɪk ʌp/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To reconcile after a disagreement; or to invent a story.",
+        "trDef": "Bir anlaşmazlıktan sonra barışmak; veya bir hikaye uydurmak.",
+        "engExample": "They had a fight but they made up quickly.",
+        "trExample": "Kavga ettiler ama çabuk barıştılar.",
+        "details": {
+            "miniCase": "He made up an excuse for being late.",
+            "trMiniCase": "Geç kalmak için bir mazeret uydurdu."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 120,
+        "word": "Pass for",
+        "trWord": "Gibi Görünmek / Algılanmak",
+        "phonetic": "/pɑːs fɔː/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To be accepted or mistaken as someone or something else.",
+        "trDef": "Başka biri veya başka bir şey olarak kabul edilmek veya karıştırılmak.",
+        "engExample": "With those glasses, he could pass for a professor.",
+        "trExample": "O gözlüklerle bir profesör gibi görünebilir/sanılabilir.",
+        "details": {
+            "miniCase": "The fake diamonds were so good they could pass for real ones.",
+            "trMiniCase": "Sahte elmaslar o kadar iyiydi ki gerçek sanılabilirlerdi."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 121,
+        "word": "Put up with",
+        "trWord": "Katlanmak / Tahammül Etmek",
+        "phonetic": "/pʊt ʌp wɪð/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To tolerate or endure something unpleasant.",
+        "trDef": "Hoş olmayan bir şeye katlanmak veya tahammül etmek.",
+        "engExample": "I can't put up with his constant complaining.",
+        "trExample": "Onun sürekli şikayet etmesine katlanamıyorum/tahammül edemiyorum.",
+        "details": {
+            "miniCase": "She has put up with a lot of stress at work recently.",
+            "trMiniCase": "Son zamanlarda işte çok fazla strese katlandı."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 122,
+        "word": "Stand out",
+        "trWord": "Göze Çarpmak / Farklı Olmak",
+        "phonetic": "/stænd aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To be much better than other people or things; or to be very noticeable.",
+        "trDef": "Diğer insanlardan veya şeylerden çok daha iyi olmak; veya çok belirgin olmak.",
+        "engExample": "The red dress made her stand out in the crowd.",
+        "trExample": "Kırmızı elbise onun kalabalıkta göze çarpmasını/fark edilmesini sağladı.",
+        "details": {
+            "miniCase": "He stands out as one of the best students in the class.",
+            "trMiniCase": "Sınıftaki en iyi öğrencilerden biri olarak göze çarpıyor."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 123,
+        "word": "Talk into",
+        "trWord": "İkna Etmek",
+        "phonetic": "/tɔːk ˈɪn.tuː/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To persuade someone to do something.",
+        "trDef": "Birini bir şey yapmaya ikna etmek.",
+        "engExample": "She talked me into going to the party.",
+        "trExample": "Beni partiye gitmeye ikna etti.",
+        "details": {
+            "miniCase": "I didn't want to buy the car, but the salesman talked me into it.",
+            "trMiniCase": "Arabayı almak istemiyordum ama satıcı beni buna ikna etti."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 124,
+        "word": "Turn down",
+        "trWord": "Reddetmek / Sesini Kısmak",
+        "phonetic": "/tɜːn daʊn/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To reject an offer or application; or to reduce the volume.",
+        "trDef": "Bir teklifi veya başvuruyu reddetmek; veya sesi kısmak.",
+        "engExample": "He turned down the job offer because the salary was too low.",
+        "trExample": "Maaş çok düşük olduğu için iş teklifini reddetti.",
+        "details": {
+            "miniCase": "Could you turn the music down, please?",
+            "trMiniCase": "Müziğin sesini kısar mısınız lütfen?"
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 125,
+        "word": "Bear with",
+        "trWord": "Sabırlı Olmak / Beklemek",
+        "phonetic": "/beər wɪð/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To be patient with someone or something.",
+        "trDef": "Biriyle veya bir şeyle sabırlı olmak.",
+        "engExample": "Please bear with me while I find the file.",
+        "trExample": "Dosyayı bulana kadar lütfen bana karşı sabırlı olun/bekleyin.",
+        "details": {
+            "miniCase": "If you just bear with us for a few more minutes, the manager will be here.",
+            "trMiniCase": "Bize birkaç dakika daha sabrederseniz, yönetici burada olacak."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 126,
+        "word": "Catch on",
+        "trWord": "Anlamak / Popülerleşmek",
+        "phonetic": "/kætʃ ɒn/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To understand something; or to become popular.",
+        "trDef": "Bir şeyi anlamak; veya popüler olmak.",
+        "engExample": "It took him a long time to catch on to the joke.",
+        "trExample": "Şakayı anlaması uzun zamanını aldı.",
+        "details": {
+            "miniCase": "The new fashion trend hasn't really caught on yet.",
+            "trMiniCase": "Yeni moda akımı henüz tam olarak popülerleşmedi."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 127,
+        "word": "Figure out",
+        "trWord": "Çözmek / Anlamak",
+        "phonetic": "/ˈfɪɡ.ər aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To understand or solve something after thinking about it.",
+        "trDef": "Üzerinde düşündükten sonra bir şeyi anlamak veya çözmek.",
+        "engExample": "I can't figure out why she is so angry.",
+        "trExample": "Onun neden bu kadar kızgın olduğunu çözemiyorum/anlayamıyorum.",
+        "details": {
+            "miniCase": "We need to figure out a way to save money.",
+            "trMiniCase": "Para biriktirmenin bir yolunu bulmamız/çözmemiz gerekiyor."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 128,
+        "word": "Get over",
+        "trWord": "Atlatmak",
+        "phonetic": "/ɡet ˈəʊ.vər/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To recover from an illness or a difficult situation.",
+        "trDef": "Bir hastalıktan veya zor bir durumdan kurtulmak/atlatmak.",
+        "engExample": "It took her a long time to get over the breakup.",
+        "trExample": "Ayrılığı atlatması uzun zamanını aldı.",
+        "details": {
+            "miniCase": "She found it incredibly difficult to get over the loss of her pet after ten years of companionship. Her friends tried to cheer her up, but she needed time to process her grief at her own pace. Eventually, she started focusing on the happy memories instead of the sadness.",
+            "trMiniCase": "On yıllık arkadaşlıktan sonra evcil hayvanını kaybetmenin acısını atlatmayı inanılmaz derecede zor buldu. Arkadaşları onu neşelendirmeye çalıştı ancak üzüntüsünü kendi hızında atlatmak için zamana ihtiyacı vardı. Sonunda, üzüntü yerine mutlu anılara odaklanmaya başladı.",
+            "caseExamples": [
+                { "tr": "Bu şoku atlatması birkaç ay sürdü.", "en": "It took him several months to get over the shock." },
+                { "tr": "Grip oldum ama yavaş yavaş atlatıyorum.", "en": "I have the flu but I'm slowly getting over it." }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 129,
+        "word": "Give in",
+        "trWord": "Teslim Olmak / Boyun Eğmek",
+        "phonetic": "/ɡɪv ɪn/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To stop fighting or arguing; or to surrender.",
+        "trDef": "Savaşmayı veya tartışmayı bırakmak; veya teslim olmak.",
+        "engExample": "The rebels finally gave in after weeks of fighting.",
+        "trExample": "İsyancılar haftalarca süren çatışmalardan sonra nihayet teslim oldular.",
+        "details": {
+            "miniCase": "The children kept begging for ice cream before dinner. Although the parents initially said no, they eventually gave in because the kids were being so persistent. Everyone enjoyed the treat, but dinner was eaten much later than usual.",
+            "trMiniCase": "Çocuklar akşam yemeğinden önce dondurma için yalvarmaya devam ettiler. Ebeveynler başlangıçta hayır deseler de, çocuklar çok ısrarcı olduğu için sonunda boyun eğdiler. Herkes ikramın tadını çıkardı ancak akşam yemeği her zamankinden çok daha geç yendi.",
+            "caseExamples": [
+                { "tr": "Baskılara daha fazla dayanamayıp teslim oldu.", "en": "He couldn't stand the pressure anymore and gave in." },
+                { "tr": "Asla pes etme, her şey düzelecek.", "en": "Never give in, everything will be fine." }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 130,
+        "word": "Look back on",
+        "trWord": "Geriye Dönüp Bakmak / Hatırlamak",
+        "phonetic": "/lʊk bæk ɒn/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To think about something that happened in the past.",
+        "trDef": "Geçmişte olan bir şey hakkında düşünmek.",
+        "engExample": "I look back on my school days with great fondness.",
+        "trExample": "Okul günlerimi büyük bir düşkünlükle hatırlıyorum/geriye dönüp bakıyorum.",
+        "details": {
+            "miniCase": "Now that he is retired, he often likes to look back on his career with a sense of pride. He remembers the challenges he faced during the early years and how much he learned from his mistakes. It gives him great satisfaction to see how far he has come since then.",
+            "trMiniCase": "Artık emekli olduğu için, kariyerine sık sık gururla geriye dönüp bakmayı seviyor. İlk yıllarda karşılaştığı zorlukları ve hatalarından ne kadar çok şey öğrendiğini hatırlıyor. O zamandan beri ne kadar yol kat ettiğini görmek ona büyük bir doyum veriyor.",
+            "caseExamples": [
+                { "tr": "Geçmişe baktığımda ne kadar saf olduğumu anlıyorum.", "en": "When I look back on the past, I realize how naive I was." },
+                { "tr": "Üniversite günlerini her zaman özlemle hatırlar.", "en": "He always looks back on his university days with nostalgia." }
+            ]
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 131,
+        "word": "Make out",
+        "trWord": "Seçebilmek / Anlamak",
+        "phonetic": "/meɪk aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To be able to see, hear, or understand something with difficulty.",
+        "trDef": "Bir şeyi güçlükle görebilmek, duyabilmek veya anlayabilmek.",
+        "engExample": "I could just make out a figure in the distance.",
+        "trExample": "Uzaktaki bir figürü zar zor seçebiliyordum.",
+        "details": {
+            "miniCase": "I can't make out what he is saying.",
+            "trMiniCase": "Ne dediğini anlayamıyorum/seçemiyorum."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 132,
+        "word": "Own up",
+        "trWord": "İtiraf Etmek / Sahiplenmek",
+        "phonetic": "/əʊn ʌp/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To admit that you have done something wrong.",
+        "trDef": "Yanlış bir şey yaptığını itiraf etmek.",
+        "engExample": "No one owned up to breaking the window.",
+        "trExample": "Kimse pencereyi kırdığını itiraf etmedi.",
+        "details": {
+            "miniCase": "You should own up to your mistakes.",
+            "trMiniCase": "Hatalarını dürüstçe itiraf etmelisin."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 133,
+        "word": "Point out",
+        "trWord": "İşaret Etmek / Dikkat Çekmek",
+        "phonetic": "/pɔɪnt aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To direct someone's attention to something.",
+        "trDef": "Birinin dikkatini bir şeye yöneltmek.",
+        "engExample": "He pointed out that we were running late.",
+        "trExample": "Geç kaldığımızı işaret etti/dikkat çekti.",
+        "details": {
+            "miniCase": "The teacher pointed out the errors in my essay.",
+            "trMiniCase": "Öğretmen makalemdeki hatalara dikkat çekti."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 134,
+        "word": "Set out",
+        "trWord": "Yola Çıkmak / Başlamak",
+        "phonetic": "/set aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To start a journey; or to begin a task with a specific goal.",
+        "trDef": "Bir yolculuğa çıkmak; veya belirli bir hedefle bir göreve başlamak.",
+        "engExample": "They set out on their journey across Europe.",
+        "trExample": "Avrupa yolculuklarına başladılar/yola çıktılar.",
+        "details": {
+            "miniCase": "He set out to become the best player in the league.",
+            "trMiniCase": "Ligdeki en iyi oyuncu olmak için yola çıktı/işe koyuldu."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 135,
+        "word": "Think over",
+        "trWord": "İyice Düşünmek / Taşınmak",
+        "phonetic": "/θɪŋk ˈəʊ.vər/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To consider something carefully before making a decision.",
+        "trDef": "Bir karar vermeden önce bir şeyi dikkatlice düşünmek.",
+        "engExample": "I need some time to think over your offer.",
+        "trExample": "Teklifini iyice düşünmek için biraz zamana ihtiyacım var.",
+        "details": {
+            "miniCase": "Think it over before you give me your answer.",
+            "trMiniCase": "Bana cevabını vermeden önce iyice düşün."
+        },
+        "targetMode": "Phrasal Verbs"
+    },
+    {
+        "id": 136,
+        "word": "Work out",
+        "trWord": "Çözmek / Antrenman Yapmak",
+        "phonetic": "/wɜːk aʊt/",
+        "pos": "phrasal verb",
+        "posTr": "deyimsel fiil",
+        "engDef": "To solve a problem; or to exercise.",
+        "trDef": "Bir sorunu çözmek; veya egzersiz yapmak.",
+        "engExample": "I'm sure we can work out this problem together.",
+        "trExample": "Bu sorunu birlikte çözebileceğimizden eminim.",
+        "details": {
+            "miniCase": "He works out at the gym every morning.",
+            "trMiniCase": "Her sabah spor salonunda antrenman yapıyor."
+        },
+        "targetMode": "Phrasal Verbs"
     }
 ];
 
@@ -1494,3 +1511,5 @@ export const initialPhrasalVerbs = rawPhrasalVerbs.map(w => ({
     ...w,
     sm2: { rep: 0, int: 0, ef: 2.5, nextDate: Date.now(), totalReviews: 0, correctReviews: 0, lastQualityScore: 0 }
 }));
+
+populateDict(rawPhrasalVerbs);

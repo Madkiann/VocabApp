@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Bookmark, Share2, Sparkles, Volume2, Eye, EyeOff, ChevronDown, RefreshCw, Layers, Clock, BookOpen, Edit3, Trash2 } from 'lucide-react';
+import { Bookmark, Share2, Sparkles, Volume2, Eye, EyeOff, ChevronDown, RefreshCw, Layers, Clock, BookOpen, Edit3, Trash2, Undo2, Lightbulb, MessagesSquare } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Mascot } from './Mascot';
 import { sharePhrasalToCanvas } from '../utils/shareWord';
 
@@ -18,12 +19,17 @@ export const PhrasalCard = ({
     isTranslated,
     setIsTranslated,
     onDeleteWord,
-    onEditWord
+    onEditWord,
+    onUndo,
+    canUndo,
+    isSystem = false
 }) => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isMiniCaseOpen, setIsMiniCaseOpen] = useState(false);
     const [isMiniCaseTrOpen, setIsMiniCaseTrOpen] = useState(false);
     const [isExampleTrRevealed, setIsExampleTrRevealed] = useState(false);
+    const [isCaseExamplesOpen, setIsCaseExamplesOpen] = useState(false);
+    const [revealedCaseExampleIdx, setRevealedCaseExampleIdx] = useState(null);
 
     const handleSpeak = (e) => {
         if (e) e.stopPropagation();
@@ -58,6 +64,16 @@ export const PhrasalCard = ({
 
             {/* Top Action Area - Positioned relative to card top */}
             <div className="absolute top-12 right-6 flex gap-2 z-50">
+                {canUndo && (
+                    <button
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => { e.stopPropagation(); onUndo(); }}
+                        className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isDark ? 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'} backdrop-blur-md`}
+                        title={t.undo || "Geri Al"}
+                    >
+                        <Undo2 size={16} strokeWidth={2.5} />
+                    </button>
+                )}
                 <button
                     onPointerDown={(e) => e.stopPropagation()}
                     onClick={(e) => { e.stopPropagation(); sharePhrasalToCanvas(wordObj, appLang, isDark); }}
@@ -66,13 +82,15 @@ export const PhrasalCard = ({
                 >
                     <Share2 size={16} strokeWidth={2.5} />
                 </button>
-                <button
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onClick={(e) => { e.stopPropagation(); toggleSaveWord(wordObj); }}
-                    className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isSavedStatus ? 'bg-amber-400 text-slate-900 shadow-glow-amber' : (isDark ? 'bg-slate-800/40 text-slate-300 hover:bg-slate-700/80 backdrop-blur-md' : 'bg-white/50 text-slate-500 hover:bg-white/90 backdrop-blur-md')}`}
-                >
-                    <Bookmark size={16} strokeWidth={2.5} fill={isSavedStatus ? "currentColor" : "none"} />
-                </button>
+                {!isSystem && (
+                    <button
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => { e.stopPropagation(); toggleSaveWord(wordObj); }}
+                        className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isSavedStatus ? 'bg-amber-400 text-slate-900 shadow-glow-amber' : (isDark ? 'bg-slate-800/40 text-slate-300 hover:bg-slate-700/80 backdrop-blur-md' : 'bg-white/50 text-slate-500 hover:bg-white/90 backdrop-blur-md')}`}
+                    >
+                        <Bookmark size={16} strokeWidth={2.5} fill={isSavedStatus ? "currentColor" : "none"} />
+                    </button>
+                )}
                 {isAdmin && (
                     <div className="flex gap-2">
                         <button
@@ -204,11 +222,13 @@ export const PhrasalCard = ({
                         </div>
                     </section>
 
+
+
                     {/* AI Mini Case Display */}
                     {wordObj.details?.miniCase && (
-                        <section className="mt-4 mb-8">
+                        <section className="mt-4 mb-4">
                             <div
-                                className={`w-full p-5 rounded-[2.5rem] border-2 relative overflow-hidden text-left shadow-sm cursor-pointer transition-all duration-300 flex flex-col ${isDark ? 'border-amber-500/20 bg-amber-900/10 hover:border-amber-500/40' : 'border-amber-200 bg-amber-50/50 hover:bg-amber-100/50'}`}
+                                className={`w-full p-5 rounded-[2.5rem] border-2 relative overflow-hidden text-left shadow-sm cursor-pointer transition-all duration-300 flex flex-col ${isDark ? 'border-indigo-500/10 bg-indigo-500/5 hover:border-indigo-500/30' : 'border-indigo-100 bg-indigo-50/30 hover:bg-indigo-50'}`}
                                 onClick={(e) => { e.stopPropagation(); setIsMiniCaseOpen(!isMiniCaseOpen); }}
                             >
                                 <div className="absolute top-0 right-[-10px] w-32 h-32 opacity-[0.03] pointer-events-none">
@@ -218,9 +238,9 @@ export const PhrasalCard = ({
                                 <div className="flex items-center justify-between relative z-10 w-full px-1">
                                     <div className="flex items-center gap-3">
                                         <Mascot isDark={isDark} size="sm" isAdmin={isAdmin} />
-                                        <span className={`text-[11px] font-black uppercase tracking-[0.3em] mt-0.5 ${isDark ? 'text-amber-500' : 'text-amber-600'}`}>Mini Case Story</span>
+                                        <span className={`text-[11px] font-black uppercase tracking-[0.3em] mt-0.5 ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>Mini Case Story</span>
                                     </div>
-                                    <ChevronDown size={20} strokeWidth={2.5} className={`transform transition-transform duration-300 ${isDark ? 'text-amber-500' : 'text-amber-600'} ${isMiniCaseOpen ? 'rotate-180' : ''}`} />
+                                    <ChevronDown size={20} strokeWidth={2.5} className={`transform transition-transform duration-300 ${isDark ? 'text-indigo-400' : 'text-indigo-600'} ${isMiniCaseOpen ? 'rotate-180' : ''}`} />
                                 </div>
 
                                 <div className={`grid transition-all duration-300 ease-in-out w-full ${isMiniCaseOpen ? 'grid-rows-[1fr] opacity-100 mt-5' : 'grid-rows-[0fr] opacity-0 mt-0'}`}>
@@ -231,7 +251,7 @@ export const PhrasalCard = ({
 
                                         <div className={`grid transition-all duration-300 ease-in-out w-full ${isMiniCaseTrOpen ? 'grid-rows-[1fr] opacity-100 mb-4' : 'grid-rows-[0fr] opacity-0 mb-0'}`}>
                                             <div className="overflow-hidden">
-                                                <div className={`p-4 rounded-2xl border-l-4 italic text-sm relative z-10 ${isDark ? 'bg-black/20 border-amber-500/50 text-slate-400' : 'bg-white/50 border-amber-400 text-slate-600'}`}>
+                                                <div className={`p-4 rounded-2xl border-l-4 italic text-sm relative z-10 ${isDark ? 'bg-black/20 border-indigo-500/50 text-slate-400' : 'bg-white/50 border-indigo-400 text-slate-600'}`}>
                                                     {wordObj.details?.trMiniCase}
                                                 </div>
                                             </div>
@@ -239,11 +259,71 @@ export const PhrasalCard = ({
 
                                         <button
                                             onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(!isMiniCaseTrOpen); }}
-                                            className={`flex items-center inline-flex gap-2 text-[10px] font-black transition-colors uppercase tracking-[0.2em] relative z-20 ${isDark ? 'text-amber-500 hover:text-amber-400' : 'text-amber-600 hover:text-amber-500'}`}
+                                            className={`flex items-center inline-flex gap-2 text-[10px] font-black transition-colors uppercase tracking-[0.2em] relative z-20 ${isDark ? 'text-indigo-500 hover:text-indigo-400' : 'text-indigo-600 hover:text-indigo-500'}`}
                                         >
                                             <RefreshCw size={14} className={isMiniCaseTrOpen ? "rotate-180 transition-transform duration-500" : "transition-transform duration-500"} />
                                             {isMiniCaseTrOpen ? (t.hideTranslation || "ÇEVİRİYİ GİZLE") : (t.showTranslation || "ÇEVİRİYİ GÖR")}
                                         </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Case Examples (Vaka Örnekleri) */}
+                    {(wordObj.details?.caseExamples?.length > 0 || wordObj.details?.trMiniCaseExamples?.length > 0) && (
+                        <section className="mt-4 mb-8">
+                            <div
+                                className={`w-full p-5 rounded-[2.5rem] border-2 relative overflow-hidden text-left shadow-sm cursor-pointer transition-all duration-300 flex flex-col ${isDark ? 'border-amber-500/10 bg-amber-500/5 hover:border-amber-500/30' : 'border-amber-100 bg-amber-50/30 hover:bg-amber-50'}`}
+                                onClick={(e) => { e.stopPropagation(); setIsCaseExamplesOpen(!isCaseExamplesOpen); }}
+                            >
+                                <div className="flex items-center justify-between relative z-10 w-full px-1">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`p-2 rounded-xl ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-500/10 text-amber-600'}`}>
+                                            <Lightbulb size={20} strokeWidth={2.5} />
+                                        </div>
+                                        <span className={`text-[11px] font-black uppercase tracking-[0.3em] mt-0.5 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>Vaka Örnekleri</span>
+                                    </div>
+                                    <ChevronDown size={20} strokeWidth={2.5} className={`transform transition-transform duration-300 ${isDark ? 'text-amber-400' : 'text-amber-600'} ${isCaseExamplesOpen ? 'rotate-180' : ''}`} />
+                                </div>
+
+                                <div className={`grid transition-all duration-300 ease-in-out w-full ${isCaseExamplesOpen ? 'grid-rows-[1fr] opacity-100 mt-6' : 'grid-rows-[0fr] opacity-0 mt-0'}`}>
+                                    <div className="overflow-hidden space-y-4">
+                                        {(wordObj.details.caseExamples || wordObj.details.trMiniCaseExamples).map((item, idx) => (
+                                            <div key={idx} className={`p-5 rounded-3xl border transition-all ${isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
+                                                <p className={`text-sm font-bold mb-3 leading-relaxed ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
+                                                    {typeof item === 'string' ? item : item.tr}
+                                                </p>
+
+                                                <AnimatePresence>
+                                                    {revealedCaseExampleIdx === idx && (
+                                                        <motion.div
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: 'auto', opacity: 1 }}
+                                                            exit={{ height: 0, opacity: 0 }}
+                                                            transition={{ duration: 0.3, ease: 'easeOut' }}
+                                                            className="overflow-hidden"
+                                                        >
+                                                            <div
+                                                                className={`p-4 mt-2 rounded-2xl border-l-4 italic text-sm cursor-pointer ${isDark ? 'bg-amber-500/5 border-amber-500/50 text-amber-200/70' : 'bg-amber-50 border-amber-400 text-amber-900/70'}`}
+                                                                onClick={(e) => { e.stopPropagation(); setRevealedCaseExampleIdx(null); }}
+                                                            >
+                                                                {item.en || "Translation coming soon..."}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+
+                                                {revealedCaseExampleIdx !== idx && (
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); setRevealedCaseExampleIdx(idx); }}
+                                                        className="flex items-center gap-2 text-[10px] font-black text-amber-500 hover:text-amber-400 transition-colors uppercase tracking-[0.2em]"
+                                                    >
+                                                        <RefreshCw size={14} /> ÇEVİRİYİ GÖR
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -259,12 +339,12 @@ export const PhrasalCard = ({
                         </button>
                     </div>
                 </div>
-            </div>
+            </div >
 
             {/* Hint Indicator */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-30 animate-pulse text-[10px] font-bold uppercase tracking-widest text-inherit pointer-events-none z-0">
+            < div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-30 animate-pulse text-[10px] font-bold uppercase tracking-widest text-inherit pointer-events-none z-0" >
                 {t.swipeHint || "Kaydır"}
-            </div>
+            </div >
         </>
     );
 };

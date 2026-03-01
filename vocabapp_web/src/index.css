@@ -1,18 +1,19 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-@theme {
-    --font-sans: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+@layer theme {
+    :root {
+        --font-sans: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-    --color-brand-primary: hsl(230, 85%, 60%);
-    --color-brand-secondary: hsl(280, 80%, 65%);
-    --color-brand-accent: hsl(35, 100%, 55%);
+        --color-brand-primary: hsl(230, 85%, 60%);
+        --color-brand-secondary: hsl(280, 80%, 65%);
+        --color-brand-accent: hsl(35, 100%, 55%);
 
-    --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.15);
-    --shadow-glow-blue: 0 0 30px rgba(59, 130, 246, 0.4);
-    --shadow-glow-emerald: 0 0 30px rgba(16, 185, 129, 0.4);
-    --shadow-glow-rose: 0 0 30px rgba(244, 63, 94, 0.4);
-
+        --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.15);
+        --shadow-glow-blue: 0 0 30px rgba(59, 130, 246, 0.4);
+        --shadow-glow-emerald: 0 0 30px rgba(16, 185, 129, 0.4);
+        --shadow-glow-rose: 0 0 30px rgba(244, 63, 94, 0.4);
+    }
 
     @keyframes fade-in {
         from {
@@ -103,50 +104,52 @@
     }
 }
 
-@utility animate-fade-in {
-    animation: fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+@layer utilities {
+    .animate-fade-in {
+        animation: fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
 
-@utility animate-shake {
-    animation: shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
+    .animate-shake {
+        animation: shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
 
-@utility animate-pop {
-    animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+    .animate-pop {
+        animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
 
-@utility animate-float {
-    animation: float 3s ease-in-out infinite;
-}
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
 
-@utility animate-water {
-    animation: flowing-water 3s linear infinite;
-    background-size: 200% auto;
-}
+    .animate-water {
+        animation: flowing-water 3s linear infinite;
+        background-size: 200% auto;
+    }
 
-@utility animate-burn {
-    animation: burn 0.8s ease-in-out infinite alternate;
-}
+    .animate-burn {
+        animation: burn 0.8s ease-in-out infinite alternate;
+    }
 
-@utility glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
+    .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
 
-@utility glass-dark {
-    background: rgba(15, 23, 42, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
+    .glass-dark {
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-@utility text-gradient {
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    background-image: linear-gradient(to right, var(--color-brand-primary), var(--color-brand-secondary));
+    .text-gradient {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        background-image: linear-gradient(to right, var(--color-brand-primary), var(--color-brand-secondary));
+    }
 }
 
 @layer base {
@@ -208,9 +211,10 @@
         background-attachment: fixed;
     }
 
-    .dark.mesh-bg,
+    /* Target root.dark better for body background */
+    :root.dark body,
     .dark .mesh-bg,
-    .dark body {
+    .dark.mesh-bg {
         background-color: #051025;
         background-image:
             radial-gradient(at 10% 0%, hsla(230, 90%, 15%, 0.8) 0px, transparent 75%),
@@ -218,6 +222,16 @@
             radial-gradient(at 90% 0%, hsla(25, 90%, 10%, 0.7) 0px, transparent 75%),
             radial-gradient(at 0% 100%, hsla(200, 80%, 15%, 0.8) 0px, transparent 75%);
         background-attachment: fixed;
+    }
+
+    /* FIXED background is often buggy on mobile Chrome/WebView */
+    @media (max-width: 1024px) {
+
+        .mesh-bg,
+        body,
+        :root.dark body {
+            background-attachment: scroll !important;
+        }
     }
 
     .mask-fade-v {

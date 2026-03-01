@@ -18,13 +18,18 @@ export const SettingsModal = ({
     isAdmin,
     handleVersionClick,
     verifyMasterKey,
-    setShowAdminPanel
+    setShowAdminPanel,
+    soundEnabled,
+    setSoundEnabled
 }) => {
     const [themeDragStartX, setThemeDragStartX] = React.useState(0);
     const [isDraggingTheme, setIsDraggingTheme] = React.useState(false);
     const [showKeyModal, setShowKeyModal] = React.useState(false);
     const [masterKey, setMasterKey] = React.useState('');
     const [keyError, setKeyError] = React.useState(false);
+    const [dragStartY, setDragStartY] = React.useState(0);
+    const [dragCurrentY, setDragCurrentY] = React.useState(0);
+    const [isDraggingPage, setIsDraggingPage] = React.useState(false);
 
     const onVersionClick = () => {
         const reachedTarget = handleVersionClick();
@@ -82,12 +87,45 @@ export const SettingsModal = ({
         }
     };
 
+    const handlePagePointerDown = (e) => {
+        if (e.target.closest('.overflow-y-auto')) return; // Don't drag if scrolling content
+        setIsDraggingPage(true);
+        setDragStartY(e.clientY || (e.touches && e.touches[0].clientY) || 0);
+    };
+
+    const handlePagePointerMove = (e) => {
+        if (!isDraggingPage) return;
+        const currentY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+        const delta = currentY - dragStartY;
+        // Apply resistance if pulling up, otherwise follow
+        setDragCurrentY(delta > 0 ? delta : delta * 0.2);
+    };
+
+    const handlePagePointerUp = () => {
+        if (!isDraggingPage) return;
+        if (dragCurrentY > 80) setShowSettings(false);
+        setIsDraggingPage(false);
+        setDragCurrentY(0);
+    };
+
     if (!showSettings) return null;
 
     return (
         <>
             <div className={`fixed inset-0 z-[120] flex flex-col justify-end bg-black/70 animate-fade-in`} onClick={() => setShowSettings(false)}>
-                <div className={`w-full h-[90vh] p-4 pt-6 rounded-t-[2.5rem] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] ${isDark ? 'bg-[#121212] border-t border-slate-800' : 'bg-[#f4f4f5] border-t border-slate-200'} transform transition-transform animate-slide-up flex flex-col`} onClick={e => e.stopPropagation()}>
+                <div
+                    className={`w-full h-[90vh] p-4 pt-4 rounded-t-[2.5rem] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] ${isDark ? 'bg-[#121212] border-t border-slate-800' : 'bg-[#f4f4f5] border-t border-slate-200'} transform transition-transform flex flex-col`}
+                    onClick={e => e.stopPropagation()}
+                    onPointerDown={handlePagePointerDown}
+                    onPointerMove={handlePagePointerMove}
+                    onPointerUp={handlePagePointerUp}
+                    onPointerCancel={handlePagePointerUp}
+                    style={{ transform: `translateY(${dragCurrentY}px)`, transition: isDraggingPage ? 'none' : 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
+                >
+                    {/* Drag Handle */}
+                    <div className="w-full pt-1 pb-4 cursor-grab active:cursor-grabbing touch-none" onPointerDown={handlePagePointerDown}>
+                        <div className="w-12 h-1.5 bg-slate-500/30 rounded-full mx-auto flex-shrink-0" />
+                    </div>
 
                     {/* Header */}
                     <div className="flex items-center gap-3 mb-6 px-4">
@@ -133,7 +171,18 @@ export const SettingsModal = ({
                                     </div>
                                 </div>
 
-
+                                <button onClick={() => setSoundEnabled(!soundEnabled)} className={`w-full flex items-center justify-between p-4 px-5 hover:bg-black/10 active:bg-black/20 dark:hover:bg-white/10 dark:active:bg-white/20 transition-all duration-100 cursor-pointer ${isDark ? 'border-slate-800/50' : 'border-slate-100'}`}>
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDark ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-600'}`}><Sparkles size={22} /></div>
+                                        <div className="text-left py-1">
+                                            <h4 className={`text-base font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{t.soundEffects || 'Ses Efektleri'}</h4>
+                                            <p className={`text-[10px] font-semibold tracking-[0.15em] uppercase opacity-70 mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{soundEnabled ? (appLang === 'tr' ? 'Açık' : 'On') : (appLang === 'tr' ? 'Kapalı' : 'Off')}</p>
+                                        </div>
+                                    </div>
+                                    <div className={`w-12 h-6 rounded-full p-1 transition-colors relative shadow-inner ${soundEnabled ? 'bg-emerald-500' : 'bg-slate-300'}`}>
+                                        <div className={`w-4 h-4 rounded-full bg-white shadow-md absolute top-1 transition-all duration-300 ${soundEnabled ? 'left-[calc(100%-1.25rem)]' : 'left-1'}`}></div>
+                                    </div>
+                                </button>
                             </div>
                         </div>
 

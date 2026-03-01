@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { RefreshCw, Check, X, Sun, Moon, Instagram, Globe, Archive, Languages, Hourglass, BarChart3, Brain, Flame, Clock, Sparkles, ArrowRight, Menu, Settings, Layers, Coffee, BookOpen, ServerCrash } from 'lucide-react';
+import { RefreshCw, Check, X, Sun, Moon, Instagram, Globe, Archive, Languages, Hourglass, BarChart3, Brain, Flame, Clock, Sparkles, ArrowRight, Menu, Settings, Layers, Coffee, BookOpen, ServerCrash, Undo2 } from 'lucide-react';
 import { rawVocabulary, initialVocabulary, initialPhrasalVerbs, localDict } from './data/vocabulary';
 import { translations } from './data/translations';
 import { safeJsonParse, calculateAdvancedSM2 } from './utils/helpers';
@@ -24,6 +24,9 @@ import { LevelTestModal } from './components/LevelTestModal';
 // Hooks
 import { useAdmin } from './hooks/useAdmin';
 
+// Sounds
+import { sounds } from './utils/sounds';
+
 export default function App() {
   const [appLang, setAppLang] = useState('tr');
   const t = translations[appLang];
@@ -32,11 +35,27 @@ export default function App() {
   const [userEmail, setUserEmail] = useState(null);
   const { isAdmin, handleVersionClick, verifyMasterKey } = useAdmin(userEmail);
 
+  const [appMode, setAppMode] = useState('swipe');
+  const [cardsSwipedSinceQuiz, setCardsSwipedSinceQuiz] = useState(0);
+  const [vocabMode, setVocabMode] = useState('words'); // words, phrasal, chill
+
   const [themePref, setThemePref] = useState(() => localStorage.getItem('vocabapp_theme') || 'system');
   const [systemIsDark, setSystemIsDark] = useState(window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : false);
   const [isLogoVisible, setIsLogoVisible] = useState(true);
+  const [currentDate, setCurrentDate] = useState(Date.now());
+  const [streak, setStreak] = useState(1);
   const [history, setHistory] = useState([]);
-  const [showUndo, setShowUndo] = useState(false);
+  const [isQuizReview, setIsQuizReview] = useState(false);
+  const [reviewingEntryId, setReviewingEntryId] = useState(null);
+  const [maxStreak, setMaxStreak] = useState(() => parseInt(localStorage.getItem('vocabapp_max_streak') || '0', 10));
+  const [quizLog, setQuizLog] = useState(() => {
+    const stored = safeJsonParse(localStorage.getItem('vocabapp_quiz_log'));
+    return { total: 0, correct: 0, history: [], ...(stored || {}) };
+  });
+  const [swipeLog, setSwipeLog] = useState(() => {
+    const stored = safeJsonParse(localStorage.getItem('vocabapp_swipe_log'));
+    return { correctIds: [], wrongIds: [], ...(stored || {}) };
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -51,11 +70,28 @@ export default function App() {
   const [globalAnnouncement, setGlobalAnnouncement] = useState(() => localStorage.getItem('vocabapp_announcement') || '');
   const [difficultWords, setDifficultWords] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_difficult_words')) || []);
   const [totalSwipes, setTotalSwipes] = useState(() => parseInt(localStorage.getItem('vocabapp_total_swipes') || '0', 10));
+  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('vocabapp_sound_enabled') !== 'false');
+
+  useEffect(() => {
+    sounds.enabled = soundEnabled;
+    localStorage.setItem('vocabapp_sound_enabled', soundEnabled);
+  }, [soundEnabled]);
+
 
   // Advanced System States
   const [modeSwipes, setModeSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_mode_swipes')) }));
   const [hourlySwipes, setHourlySwipes] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_hourly_swipes')) || new Array(24).fill(0));
   const [systemLogs, setSystemLogs] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_system_logs')) || []);
+  const [appStartDate] = useState(() => {
+    const stored = localStorage.getItem('vocabapp_start_date');
+    if (stored) return parseInt(stored, 10);
+    const now = Date.now();
+    localStorage.setItem('vocabapp_start_date', now.toString());
+    return now;
+  });
+
+  const appDay = Math.min(3, Math.floor((currentDate - appStartDate) / (24 * 60 * 60 * 1000)) + 1);
+
   const [maintenanceMode, setMaintenanceMode] = useState(() => localStorage.getItem('vocabapp_maintenance') === 'true');
   const [customWords, setCustomWords] = useState(() => {
     const stored = safeJsonParse(localStorage.getItem('vocabapp_custom_words'));
@@ -84,7 +120,9 @@ export default function App() {
   const [rightSwipes, setRightSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_right_swipes')) }));
   const [leftSwipes, setLeftSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_left_swipes')) }));
   const [modeTime, setModeTime] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_mode_time')) }));
+  const [dailyStats, setDailyStats] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_daily_stats')) || {});
 
+  const [lastActionStatus, setLastActionStatus] = useState(null); // 'correct', 'wrong', null
   const [dauDisplay, setDauDisplay] = useState(1); // Set to exact usage counter
 
   useEffect(() => {
@@ -112,6 +150,7 @@ export default function App() {
   useEffect(() => localStorage.setItem('vocabapp_left_swipes', JSON.stringify(leftSwipes)), [leftSwipes]);
   useEffect(() => localStorage.setItem('vocabapp_mode_time', JSON.stringify(modeTime)), [modeTime]);
   useEffect(() => localStorage.setItem('vocabapp_deleted_words', JSON.stringify(deletedWords)), [deletedWords]);
+  useEffect(() => localStorage.setItem('vocabapp_daily_stats', JSON.stringify(dailyStats)), [dailyStats]);
 
   const trackSwipe = (wordText, quality, modeParam = 'words', isSuccess = true) => {
     setTotalSwipes(prev => prev + 1);
@@ -125,6 +164,9 @@ export default function App() {
     }
 
     const hour = new Date().getHours();
+    setLastActionStatus(isSuccess ? 'correct' : 'wrong');
+    setTimeout(() => setLastActionStatus(null), 400);
+
     setHourlySwipes(prev => {
       const next = [...prev];
       next[hour] += 1;
@@ -142,6 +184,47 @@ export default function App() {
         return [...prev, { text: wordText, fails: 1 }].sort((a, b) => b.fails - a.fails);
       });
     }
+
+    setDailyStats(prev => {
+      const todayStr = new Date().toDateString();
+      const hour = new Date().getHours();
+      const dayData = prev[todayStr] || {
+        swiped: 0,
+        correct: 0,
+        wrong: 0,
+        quiz: 0,
+        time: 0,
+        hourlyActions: new Array(24).fill(0),
+        hourlyTime: new Array(24).fill(0),
+        swipedIds: [] // Track unique words swiped today
+      };
+
+      const isQuiz = modeParam === 'quiz';
+      const newHourlyActions = [...(dayData.hourlyActions || new Array(24).fill(0))];
+      newHourlyActions[hour] = (newHourlyActions[hour] || 0) + 1;
+
+      // Find the card ID to track unique swipes
+      const currentVocab = vocabMode === 'words' ? wordVocab : (vocabMode === 'phrasal' ? phrasalVocab : chillVocab);
+      const card = currentVocab.find(w => (w.text || w.eng) === wordText);
+      const cardId = card?.id;
+
+      const alreadySwiped = cardId && (dayData.swipedIds || []).includes(cardId);
+      const newSwipedIds = (cardId && !alreadySwiped) ? [...(dayData.swipedIds || []), cardId] : (dayData.swipedIds || []);
+
+      return {
+        ...prev,
+        [todayStr]: {
+          ...dayData,
+          swiped: dayData.swiped + (!isQuiz && !alreadySwiped ? 1 : 0),
+          correct: dayData.correct + (isSuccess ? 1 : 0),
+          wrong: dayData.wrong + (!isSuccess ? 1 : 0),
+          quiz: dayData.quiz + (isQuiz ? 1 : 0),
+          hourlyActions: newHourlyActions,
+          swipedIds: newSwipedIds
+        }
+      };
+    });
+
     localStorage.setItem('vocabapp_last_active_date', new Date().toDateString());
   };
 
@@ -184,6 +267,27 @@ export default function App() {
 
   const isDark = themePref === 'system' ? systemIsDark : themePref === 'dark';
 
+  // Sync theme class to root for better CSS targeting (fixes Android background)
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add('dark');
+      root.style.colorScheme = 'dark';
+    } else {
+      root.classList.remove('dark');
+      root.style.colorScheme = 'light';
+    }
+
+    // Update theme-color meta tag for mobile browser UI
+    let metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (!metaTheme) {
+      metaTheme = document.createElement('meta');
+      metaTheme.name = 'theme-color';
+      document.head.appendChild(metaTheme);
+    }
+    metaTheme.content = isDark ? '#051025' : '#f1f5f9';
+  }, [isDark]);
+
   const cycleTheme = () => {
     if (themePref === 'system') setThemePref('light');
     else if (themePref === 'light') setThemePref('dark');
@@ -195,7 +299,6 @@ export default function App() {
     return themePref === 'dark' ? 'Karanlık' : 'Aydınlık';
   };
 
-  const [vocabMode, setVocabMode] = useState('words'); // words, phrasal, chill
   const [wordVocab, setWordVocab] = useState([...initialVocabulary]);
   const [phrasalVocab, setPhrasalVocab] = useState([...initialPhrasalVerbs]);
   const [chillVocab, setChillVocab] = useState([...initialVocabulary].map(w => ({ ...w, sm2: { ...w.sm2, ef: 3.0 } })));
@@ -204,8 +307,14 @@ export default function App() {
     const custom = customWords.filter(w => w.targetMode === 'words');
     const overrideIds = new Set(custom.map(w => w.id));
     const deletedIds = new Set(deletedWords);
-    return [...wordVocab.filter(w => !overrideIds.has(w.id) && !deletedIds.has(w.id)), ...custom].filter(w => !deletedIds.has(w.id));
-  }, [wordVocab, customWords, deletedWords]);
+
+    // Filter by appDay: Day 1 (1-12), Day 2 (1-24), Day 3 (1-36)
+    const dayLimit = appDay * 12;
+    const baseWords = wordVocab.filter(w => !overrideIds.has(w.id) && !deletedIds.has(w.id));
+    const limitedWords = baseWords.slice(0, dayLimit);
+
+    return [...limitedWords, ...custom].filter(w => !deletedIds.has(w.id));
+  }, [wordVocab, customWords, deletedWords, appDay]);
 
   const computedPhrasals = useMemo(() => {
     const custom = customWords.filter(w => w.targetMode === 'phrasal');
@@ -235,14 +344,36 @@ export default function App() {
     else setChillVocab(setter);
   };
 
-  const [currentDate, setCurrentDate] = useState(Date.now());
-  const [streak, setStreak] = useState(1);
 
   const [deck, setDeck] = useState([]);
   const [learningWords, setLearningWords] = useState([]);
   const [savedWords, setSavedWords] = useState([]);
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentWordIndex, setCurrentWordIndex] = useState(() => {
+    const saved = localStorage.getItem('vocabapp_current_index');
+    return saved ? parseInt(saved, 10) : 0;
+  });
   const [vaultFolders, setVaultFolders] = useState(['General']);
+  const [activeVaultFolder, setActiveVaultFolder] = useState(null);
+  const [showQuizHistory, setShowQuizHistory] = useState(false);
+
+  useEffect(() => {
+    if (streak > maxStreak) {
+      setMaxStreak(streak);
+      localStorage.setItem('vocabapp_max_streak', streak.toString());
+    }
+  }, [streak, maxStreak]);
+
+  useEffect(() => {
+    localStorage.setItem('vocabapp_current_index', currentWordIndex.toString());
+  }, [currentWordIndex]);
+
+  useEffect(() => {
+    localStorage.setItem('vocabapp_quiz_log', JSON.stringify(quizLog));
+  }, [quizLog]);
+
+  useEffect(() => {
+    localStorage.setItem('vocabapp_swipe_log', JSON.stringify(swipeLog));
+  }, [swipeLog]);
 
   const toggleSaveWord = (word) => {
     let newSaved;
@@ -307,6 +438,24 @@ export default function App() {
         localStorage.setItem('vocabapp_total_time', newValue.toString());
         return newValue;
       });
+
+      const todayStr = new Date().toDateString();
+      const hour = new Date().getHours();
+      setDailyStats(prev => {
+        const dayData = prev[todayStr] || { swiped: 0, correct: 0, wrong: 0, quiz: 0, time: 0, hourlyActions: new Array(24).fill(0), hourlyTime: new Array(24).fill(0) };
+        const newHourlyTime = [...(dayData.hourlyTime || new Array(24).fill(0))];
+        newHourlyTime[hour] = (newHourlyTime[hour] || 0) + 1;
+
+        return {
+          ...prev,
+          [todayStr]: {
+            ...dayData,
+            time: (dayData.time || 0) + 1,
+            hourlyTime: newHourlyTime
+          }
+        };
+      });
+
       // Track time per mode
       setModeTime(prev => {
         let activeKey = vocabMode;
@@ -315,7 +464,7 @@ export default function App() {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [vocabMode, appMode]); // Added modes to ensure correct tracking if they change
 
   // UI States
   const [isTranslated, setIsTranslated] = useState(false);
@@ -348,6 +497,7 @@ export default function App() {
   const [userSentence, setUserSentence] = useState("");
   const [writingFeedback, setWritingFeedback] = useState(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [isRetryMode, setIsRetryMode] = useState(false);
 
   // Quiz States
   const [quizExplanation, setQuizExplanation] = useState(null);
@@ -356,9 +506,7 @@ export default function App() {
   const [swipeDelta, setSwipeDelta] = useState({ x: 0, y: 0 });
   const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0, isTop: true });
   const [isDragging, setIsDragging] = useState(false);
-  const [appMode, setAppMode] = useState('swipe');
   const [lastQuizType, setLastQuizType] = useState(null);
-  const [cardsSwipedSinceQuiz, setCardsSwipedSinceQuiz] = useState(0);
   const [quizQuestion, setQuizQuestion] = useState(null);
   const [quizFeedback, setQuizFeedback] = useState(null);
 
@@ -402,13 +550,21 @@ export default function App() {
   }, []);
 
 
-  const refreshDeck = () => {
-    const dueWords = vocab.filter(w => w.sm2.nextDate <= currentDate);
-    setDeck(dueWords);
+  const refreshDeck = (isRetry = false) => {
+    let newDeck;
+    if (isRetry) {
+      newDeck = vocab.sort(() => Math.random() - 0.5);
+      setIsRetryMode(true);
+    } else {
+      newDeck = vocab.filter(w => w.sm2.nextDate <= currentDate);
+      setIsRetryMode(false);
+    }
+
+    setDeck(newDeck);
     setCurrentWordIndex(0);
     setCardsSwipedSinceQuiz(0);
     setAppMode('swipe');
-    if (dueWords.length > 0) {
+    if (newDeck.length > 0) {
       setIsRevealed(false);
     }
   };
@@ -533,20 +689,41 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (appMode === 'swipe' && learningWords.length > 0) {
-      if (cardsSwipedSinceQuiz >= 3 || currentWordIndex >= deck.length) {
+    if (appMode === 'swipe') {
+      // 1. Mastery Check: Quiz triggers when the deck is finished (if there are missed words)
+      const isDeckEnd = currentWordIndex >= deck.length && deck.length > 0;
+
+      // 2. Regular Interval: Quiz triggers every 5 swiped cards
+      const isIntervalHit = cardsSwipedSinceQuiz >= 5;
+
+      if ((isIntervalHit || isDeckEnd) && learningWords.length > 0) {
         generateQuiz();
       }
     }
-  }, [currentWordIndex, deck.length, learningWords, appMode, cardsSwipedSinceQuiz]);
+  }, [currentWordIndex, deck.length, learningWords.length, appMode, cardsSwipedSinceQuiz]);
 
-  const generateQuiz = () => {
+  const handleRetryQuiz = (entry) => {
+    const target = vocab.find(w => (w.word || w.eng) === entry.word);
+    if (!target) return;
+    setIsQuizReview(true);
+    setReviewingEntryId(entry.id);
+    generateQuiz(target, entry.type);
+    setShowDashboard(false);
+  };
+
+  const generateQuiz = (forcedTargetWord = null, forcedType = null) => {
     setIsTranslated(false); setShowForms(false); setShowAi(false); setShowWriting(false); setShowDetails(false);
     setAiData(null); setQuizExplanation(null); setQuickTx({ visible: false, text: '', x: 0, y: 0 });
+    if (!forcedTargetWord) {
+      setIsQuizReview(false);
+      setReviewingEntryId(null);
+    }
 
-    const targetWord = learningWords[Math.floor(Math.random() * learningWords.length)];
+    const targetWord = forcedTargetWord || learningWords[Math.floor(Math.random() * learningWords.length)];
+    if (!targetWord) return;
+
     const availableTypes = ['mc', 'sentence', 'tf'].filter(type => type !== lastQuizType) || ['mc', 'tf'];
-    const selectedType = availableTypes[Math.floor(Math.random() * availableTypes.length)] || 'mc';
+    const selectedType = forcedType || availableTypes[Math.floor(Math.random() * availableTypes.length)] || 'mc';
     setLastQuizType(selectedType);
 
     if (selectedType === 'mc') {
@@ -555,21 +732,23 @@ export default function App() {
       while (options.length < 4 && failsafe < 100) {
         failsafe++;
         const randomOption = vocab[Math.floor(Math.random() * vocab.length)];
-        if (!options.find(opt => opt.id === randomOption.id)) options.push(randomOption);
+        if (!options.find(opt => opt.id == randomOption.id)) options.push(randomOption); // Loose equality for ID safety
       }
       setQuizQuestion({ type: 'mc', target: targetWord, options: options.sort(() => Math.random() - 0.5) });
       setAppMode('quiz_mc');
     } else if (selectedType === 'sentence') {
-      const targetExample = targetWord.engExample || "Target Example.";
-      const cleanSentence = targetExample.replace(/[.,!?]/g, '');
+      const targetExample = targetWord.engExample || targetWord.eng || "Sample Sentence.";
+      // Better normalization for tokenization: removes smart quotes and all basic punctuation
+      const cleanSentence = targetExample.replace(/[.,:;!?()"'[\]“”‘’]/g, '');
       const correctTokens = cleanSentence.split(/\s+/).filter(t => t.trim());
+
       const distractors = [];
       let failsafe = 0;
       while (distractors.length < 3 && failsafe < 100) {
         failsafe++;
         const randomWord = vocab[Math.floor(Math.random() * vocab.length)];
-        const randomExample = randomWord.engExample || "Random Example.";
-        const randomTokens = randomExample.replace(/[.,!?]/g, '').split(/\s+/).filter(t => t.trim());
+        const randomExample = randomWord.engExample || randomWord.eng || "";
+        const randomTokens = randomExample.replace(/[.,:;!?()"'[\]“”‘’]/g, '').split(/\s+/).filter(t => t.trim());
         if (randomTokens.length > 0) {
           const randomToken = randomTokens[Math.floor(Math.random() * randomTokens.length)].toLowerCase();
           if (!correctTokens.map(t => t.toLowerCase()).includes(randomToken) && !distractors.includes(randomToken)) distractors.push(randomToken);
@@ -580,9 +759,26 @@ export default function App() {
       setAvailableTokens(allTokens); setSelectedTokens([]);
       setAppMode('quiz_sentence');
     } else if (selectedType === 'tf') {
-      const isTrue = Math.random() > 0.5;
-      const displayWord = isTrue ? targetWord : vocab.find(w => w.id !== targetWord.id && w.pos === targetWord.pos) || vocab[0];
-      setQuizQuestion({ type: 'tf', target: targetWord, displayedEngDef: displayWord.engDef, displayedTrDef: displayWord.trDef, isCorrectPair: isTrue });
+      let isTrue = Math.random() > 0.5;
+      let displayWord = targetWord;
+
+      if (!isTrue) {
+        const decoys = vocab.filter(w => w.id != targetWord.id && w.pos === targetWord.pos);
+        if (decoys.length > 0) {
+          displayWord = decoys[Math.floor(Math.random() * decoys.length)];
+        } else {
+          isTrue = true; // Fallback if no decoy found
+          displayWord = targetWord;
+        }
+      }
+
+      setQuizQuestion({
+        type: 'tf',
+        target: targetWord,
+        displayedEngDef: displayWord.engDef || displayWord.meaning,
+        displayedTrDef: displayWord.trDef || displayWord.trMeaning,
+        isCorrectPair: isTrue
+      });
       setAppMode('quiz_tf');
     }
     setQuizFeedback(null);
@@ -593,11 +789,23 @@ export default function App() {
     if (currentWordIndex >= deck.length) return;
 
     if (!isComplete) {
+      // Check for daily quota before allowing swipe start
+      const todayStr = new Date().toDateString();
+      const stats = dailyStats[todayStr] || { swiped: 0, swipedIds: [] };
+      const currentWord = deck[currentWordIndex];
+      const alreadySwiped = currentWord && (stats.swipedIds || []).includes(currentWord.id);
+
+      if (stats.swiped >= 12 && !alreadySwiped) {
+        alert("Günlük kotana ulaştın (12/12). Yarın devam edebilirsin!");
+        return;
+      }
       setSwipeDirection(direction);
       return;
     }
 
     const currentWord = deck[currentWordIndex];
+    if (!currentWord) return null;
+
     const isCorrect = direction === 'right';
 
     let quality;
@@ -606,13 +814,16 @@ export default function App() {
     if (!isCorrect) {
       quality = 1;
       mode = 'recall';
+      sounds.playError();
     } else {
       if (!isRevealed) {
         quality = 5;
         mode = 'perfect';
+        sounds.playMastery();
       } else {
         quality = 4;
         mode = 'recall';
+        sounds.playSuccess();
       }
     }
 
@@ -639,14 +850,25 @@ export default function App() {
       isRevealed,
       currentWord: { ...currentWord }
     }].slice(-10)); // Keep last 10 for safety
-    setShowUndo(true);
-    setTimeout(() => setShowUndo(false), 3000);
 
     setSwipeDirection(null);
     setIsTranslated(false);
     setShowForms(false); setShowAi(false); setShowWriting(false); setShowDetails(false);
     setUserSentence(""); setWritingFeedback(null); setAiData(null);
     setQuickTx({ visible: false, text: '', x: 0, y: 0 });
+
+    // Track Swipe Log for Vault
+    setSwipeLog(prev => {
+      const newLog = { ...prev };
+      if (isCorrect) {
+        newLog.correctIds = [currentWord.id, ...newLog.correctIds.filter(id => id !== currentWord.id)].slice(0, 50);
+        newLog.wrongIds = newLog.wrongIds.filter(id => id !== currentWord.id);
+      } else {
+        newLog.wrongIds = [currentWord.id, ...newLog.wrongIds.filter(id => id !== currentWord.id)].slice(0, 50);
+        newLog.correctIds = newLog.correctIds.filter(id => id !== currentWord.id);
+      }
+      return newLog;
+    });
 
     const nextIndex = currentWordIndex + 1;
     setCurrentWordIndex(nextIndex);
@@ -658,15 +880,68 @@ export default function App() {
   const handleUndo = () => {
     if (history.length === 0) return;
     const prevState = history[history.length - 1];
+
+    // Revert daily stats if necessary
+    if (prevState.currentWord) {
+      const todayStr = new Date().toDateString();
+      setDailyStats(prev => {
+        const dayData = prev[todayStr];
+        if (!dayData) return prev;
+
+        const card = prevState.currentWord;
+        const existsInSwiped = (dayData.swipedIds || []).includes(card.id);
+
+        if (existsInSwiped) {
+          // If we had swiped it today, we need to know if it was ALREADY swiped before this action
+          // We'll simplify: if we undo, and the word is in the swiped list, we remove it and decrement
+          // This might be slightly aggressive but fits the 12-quota UX
+          const newSwipedIds = (dayData.swipedIds || []).filter(id => id !== card.id);
+          return {
+            ...prev,
+            [todayStr]: {
+              ...dayData,
+              swiped: Math.max(0, dayData.swiped - 1),
+              swipedIds: newSwipedIds
+            }
+          };
+        }
+        return prev;
+      });
+    }
+
     setVocab(prevState.vocab);
     setLearningWords(prevState.learningWords);
     setCurrentWordIndex(prevState.currentWordIndex);
     setIsRevealed(prevState.isRevealed);
     setHistory(prev => prev.slice(0, -1));
-    setShowUndo(false);
   };
 
   const handleQuizAction = (isCorrect, wrongMessage, correctValueLocal, userValueLocal, quizType) => {
+    if (isQuizReview) {
+      if (isCorrect) {
+        sounds.playSuccess();
+        if (reviewingEntryId) {
+          setQuizLog(prev => ({
+            ...prev,
+            history: prev.history.map(h => h.id === reviewingEntryId ? { ...h, reviewed: true } : h)
+          }));
+        }
+        const successMessage = (quizType === 'sentence') ? (wrongMessage || t.correctAwesome) : t.correctAwesome;
+        setQuizFeedback({ type: 'success', message: successMessage, correctValueLocal: null, userValueLocal: null });
+        setTimeout(() => {
+          setAppMode('swipe');
+          setShowDashboard(true);
+          setShowQuizHistory(true);
+          setIsQuizReview(false);
+          setReviewingEntryId(null);
+        }, 1500);
+      } else {
+        sounds.playError();
+        setQuizFeedback({ type: 'error', message: wrongMessage, correctValueLocal, userValueLocal });
+      }
+      return;
+    }
+
     let mode = 'recognition';
     let quality = isCorrect ? 4 : 1;
 
@@ -679,32 +954,73 @@ export default function App() {
     setVocab(prev => prev.map(w => w.id === updatedWord.id ? updatedWord : w));
     trackSwipe(quizQuestion.target.text || quizQuestion.target.eng, quality, 'quiz', isCorrect);
 
+    setQuizLog(prev => ({
+      total: prev.total + 1,
+      correct: prev.correct + (isCorrect ? 1 : 0),
+      history: [{
+        id: Date.now(),
+        date: new Date().toISOString(),
+        word: quizQuestion.target.word || quizQuestion.target.eng,
+        type: quizType,
+        isCorrect
+      }, ...prev.history].slice(0, 50)
+    }));
+
     if (isCorrect) {
+      sounds.playSuccess();
       setLearningWords(prev => prev.filter(w => w.id !== updatedWord.id));
-      setQuizFeedback({ type: 'success', message: t.correctAwesome, correctValueLocal: null, userValueLocal: null });
+      const successMessage = (quizType === 'sentence') ? (wrongMessage || t.correctAwesome) : t.correctAwesome;
+      setQuizFeedback({ type: 'success', message: successMessage, correctValueLocal: null, userValueLocal: null });
       setCardsSwipedSinceQuiz(0);
       setTimeout(() => {
+        if (isQuizReview) {
+          setShowDashboard(true);
+          setShowQuizHistory(true);
+          setIsQuizReview(false);
+          setReviewingEntryId(null);
+        }
         setAppMode('swipe');
         if (deck[currentWordIndex]) setIsRevealed(false);
       }, 1500);
     } else {
+      sounds.playError();
       setQuizFeedback({ type: 'error', message: wrongMessage, correctValueLocal, userValueLocal });
     }
   };
 
   const handleSentenceCheck = () => {
-    const normalizeString = (str) => str.replace(/[.,:;!?()"'[\]]+/g, '').toLowerCase().trim();
+    const normalize = (str) => {
+      if (!str) return "";
+      return str
+        .replace(/[.,:;!?()"'[\]“”‘’]/g, '')
+        .replace(/\s+/g, ' ')
+        .toLowerCase()
+        .trim();
+    };
 
-    const userSentenceStr = normalizeString(selectedTokens.map(tok => tok.text).join(' '));
-    const mainCorrectSentenceStr = normalizeString(quizQuestion.correctTokens.join(' '));
+    const userTokens = selectedTokens.map(tok => normalize(tok.text));
+    const targetTokens = quizQuestion.correctTokens.map(tok => normalize(tok));
 
-    const altExamples = quizQuestion.target.altExamples || [];
-    const cleanAltExamples = altExamples.map(alt => normalizeString(alt));
+    const userSentenceStr = userTokens.join(' ');
+    const mainCorrectSentenceStr = targetTokens.join(' ');
 
-    const isCorrect = (userSentenceStr === mainCorrectSentenceStr) || cleanAltExamples.includes(userSentenceStr);
+    const altExamples = (quizQuestion.target.altExamples || []).map(alt => normalize(alt));
+
+    // 1. Exact Match (Normalized)
+    const isExactMatch = (userSentenceStr === mainCorrectSentenceStr) || altExamples.includes(userSentenceStr);
+
+    // 2. Fuzzy Match (Bag of Words)
+    // If all required words are present, we check if the grammar is likely correct.
+    // For this context, we'll allow any permutation of the target tokens as long as all are used.
+    const isBagOfWordsMatch = userTokens.length === targetTokens.length &&
+      [...userTokens].sort().join('|') === [...targetTokens].sort().join('|');
+
+    let isCorrect = isExactMatch || isBagOfWordsMatch;
+    let feedbackMessage = isExactMatch ? t.correctAwesome : (appLang === 'tr' ? `Doğru! Alternatif kullanım: "${quizQuestion.target.engExample || quizQuestion.target.eng}"` : `Correct! Alternative usage: "${quizQuestion.target.engExample || quizQuestion.target.eng}"`);
+
     const userDisplay = selectedTokens.map(tok => tok.text).join(' ');
 
-    handleQuizAction(isCorrect, t.wrongOrder, quizQuestion.target.engExample, userDisplay, 'sentence');
+    handleQuizAction(isCorrect, isCorrect ? feedbackMessage : t.wrongOrder, quizQuestion.target.engExample || quizQuestion.target.eng, userDisplay, 'sentence');
   };
 
   const toggleToken = (token, from) => {
@@ -757,6 +1073,9 @@ export default function App() {
   const dueTomorrowCount = vocab.filter(w => w.sm2.nextDate > currentDate && w.sm2.nextDate <= currentDate + 24 * 60 * 60 * 1000).length;
   const dueTomorrowMins = Math.max(1, Math.round((dueTomorrowCount * 15) / 60));
 
+  const todayStats = dailyStats[new Date().toDateString()] || { swiped: 0 };
+  const dailyProgress = Math.min(1, (todayStats.swiped || 0) / 12);
+
   // Achievement Check Logic
   useEffect(() => {
     const achievementsList = [
@@ -788,11 +1107,22 @@ export default function App() {
     setAchievementQueue(prev => prev.filter(a => a.id !== id));
   }, []);
 
-  const renderCardContentWrapper = (word, isSaved) => {
+  const renderCardContentWrapper = (word, isSaved, isSystem = false) => {
+    const todayStr = new Date().toDateString();
+    const swipedToday = (dailyStats[todayStr]?.swiped || 0);
+    const remainingCardsCount = isRetryMode ? (deck.length - currentWordIndex) : (12 - swipedToday);
+    const safeRemaining = Math.max(0, remainingCardsCount);
+
     const stats = {
-      current: currentWordIndex + 1,
-      total: deck.length,
-      timeRemaining: Math.max(1, Math.ceil((deck.length - currentWordIndex) * 0.25))
+      current: isRetryMode ? (currentWordIndex + 1) : Math.min(12, swipedToday + 1),
+      total: isRetryMode ? deck.length : 12,
+      timeRemaining: Math.max(1, Math.ceil(safeRemaining * 0.25))
+    };
+
+    const commonProps = {
+      onUndo: handleUndo,
+      canUndo: history.length > 0 && !isSystem,
+      isSystem
     };
 
     if (vocabMode === 'phrasal') {
@@ -813,6 +1143,7 @@ export default function App() {
           setIsTranslated={setIsTranslated}
           onDeleteWord={deleteWord}
           onEditWord={editWord}
+          {...commonProps}
         />
       );
     }
@@ -851,6 +1182,7 @@ export default function App() {
         stats={stats}
         onDeleteWord={deleteWord}
         onEditWord={editWord}
+        {...commonProps}
       />
     );
   };
@@ -861,13 +1193,30 @@ export default function App() {
       <AchievementPopup queue={achievementQueue} onComplete={handleAchievementComplete} isDark={isDark} t={t} isAdmin={isAdmin} />
       <BottomNav
         isDark={isDark}
-        showVault={showVault} setShowVault={setShowVault}
-        showDashboard={showDashboard} setShowDashboard={setShowDashboard}
+        showVault={showVault}
+        onVaultClick={() => {
+          sounds.playClick();
+          if (showVault) setActiveVaultFolder(null); // Re-click reset
+          else { setShowVault(true); setShowDashboard(false); setShowSettings(false); }
+        }}
+        showDashboard={showDashboard}
+        onDashboardClick={() => {
+          sounds.playClick();
+          if (showDashboard) setShowQuizHistory(false); // Re-click reset
+          else { setShowDashboard(true); setShowVault(false); setShowSettings(false); }
+        }}
+        onHomeClick={() => {
+          sounds.playClick();
+          if (!showVault && !showDashboard) setAppMode('swipe'); // Re-click reset
+          else { setShowVault(false); setShowDashboard(false); setShowSettings(false); }
+        }}
         streak={streak}
-        setShowSettings={setShowSettings}
+        setShowSettings={(val) => { sounds.playClick(); setShowSettings(val); }}
         t={t}
-        onSecretClick={() => setShowAdminPanel(true)}
+        onSecretClick={() => { sounds.playClick(); setShowAdminPanel(true); }}
         isAdmin={isAdmin}
+        dailyProgress={dailyProgress * 100} // Pass as percentage
+        lastActionStatus={lastActionStatus}
       />
       <SettingsModal
         t={t}
@@ -886,6 +1235,8 @@ export default function App() {
         handleVersionClick={handleVersionClick}
         verifyMasterKey={verifyMasterKey}
         setShowAdminPanel={setShowAdminPanel}
+        soundEnabled={soundEnabled}
+        setSoundEnabled={setSoundEnabled}
       />
       <LevelTestModal
         isOpen={showLevelTest}
@@ -896,6 +1247,16 @@ export default function App() {
       />
       {showAdminPanel && (
         <AdminPanel
+          onResetSystem={() => {
+            if (!window.confirm("DİKKAT: Tüm çalışma verilerin, klasörlerin ve özel eklediğin kelimeler silinecek. Sadece sistem kelimeleri kalacak. Emin misin?")) return;
+            // Prefix protected clear
+            Object.keys(localStorage).forEach(key => {
+              if (key.startsWith('vocabapp_')) {
+                localStorage.removeItem(key);
+              }
+            });
+            window.location.reload();
+          }}
           isDark={isDark}
           appLang={appLang}
           t={t}
@@ -949,7 +1310,7 @@ export default function App() {
         ].map((mode) => (
           <button
             key={mode.id}
-            onClick={() => setVocabMode(mode.id)}
+            onClick={() => { sounds.playClick(); setVocabMode(mode.id); }}
             className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${vocabMode === mode.id ? (isDark ? 'bg-indigo-500 text-white shadow-lg scale-105' : 'bg-indigo-600 text-white shadow-md scale-105') : (isDark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900')}`}
           >
             <mode.icon size={12} strokeWidth={3} />
@@ -975,8 +1336,21 @@ export default function App() {
     return (
       <>
         <Dashboard
-          t={t}
           isDark={isDark}
+          stats={{
+            totalTime: totalSecondsSpent,
+            totalSwipes: totalSwipes,
+            streak: streak,
+            maxStreak: maxStreak,
+            quizLog: quizLog,
+            modeSwipes: modeSwipes,
+            rightSwipes: rightSwipes,
+            leftSwipes: leftSwipes,
+            dailyProgress: dailyProgress,
+            difficultWords: difficultWords,
+            dailyStats: dailyStats
+          }}
+          t={t}
           setShowDashboard={setShowDashboard}
           streak={streak}
           dueTodayCount={dueTodayCount}
@@ -996,6 +1370,20 @@ export default function App() {
           vocabMode={vocabMode}
           setVocabMode={setVocabMode}
           onLevelTestClick={() => setShowLevelTest(true)}
+          maxStreak={maxStreak}
+          quizLog={quizLog}
+          onVaultClick={(folder) => {
+            setShowVault(true);
+            setActiveVaultFolder(folder);
+            setShowDashboard(false);
+          }}
+          onRetryQuiz={handleRetryQuiz}
+          showQuizHistory={showQuizHistory}
+          setShowQuizHistory={setShowQuizHistory}
+          dailyStats={dailyStats}
+          isAdmin={isAdmin}
+          advanceTime={advanceTime}
+          onJumpToCard={jumpToCard}
         />
         {bottomNavigation}
       </>
@@ -1012,6 +1400,7 @@ export default function App() {
           bgMain={bgMain}
           textMain={textMain}
           cardBg={cardBg}
+          vocab={vocab} // Added full vocab for systemic tracking
           savedWords={savedWords}
           setSelectedVaultWord={setSelectedVaultWord}
           setIsRevealed={setIsRevealed}
@@ -1031,6 +1420,9 @@ export default function App() {
           updateWordFolder={updateWordFolder}
           deleteVaultFolder={deleteVaultFolder}
           renameVaultFolder={renameVaultFolder}
+          swipeLog={swipeLog}
+          activeFolder={activeVaultFolder}
+          setActiveFolder={setActiveVaultFolder}
         />
         {bottomNavigation}
       </>
@@ -1133,6 +1525,7 @@ export default function App() {
                 cardBg={cardBg}
                 bgMain={bgMain}
                 textMain={textMain}
+                isQuizReview={isQuizReview}
               />
             ) : isDeckFinished ? (
               <div className={`text-center w-full max-w-sm ${cardBg} p-8 pt-12 rounded-[3.5rem] shadow-premium border animate-fade-in relative overflow-visible`}>
@@ -1152,7 +1545,7 @@ export default function App() {
                   <p className="font-bold text-lg">{t.dueTomorrowMins.replace('{words}', dueTomorrowCount).replace('{mins}', dueTomorrowMins)}</p>
                 </div>
 
-                <button onClick={refreshDeck} className="w-full py-4 rounded-2xl font-black text-slate-900 bg-amber-400 hover:bg-amber-500 transition-transform active:scale-95 shadow-lg">
+                <button onClick={() => refreshDeck(true)} className="w-full py-4 rounded-2xl font-black text-slate-900 bg-amber-400 hover:bg-amber-500 transition-transform active:scale-95 shadow-lg">
                   <RefreshCw size={20} className="inline mr-2" /> {t.continueTraining}
                 </button>
               </div>
@@ -1175,16 +1568,6 @@ export default function App() {
                 </SwipeableCard>
               </div>
             )}
-          </div>
-        )}
-        {showUndo && (
-          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] animate-slide-up">
-            <button
-              onClick={handleUndo}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95 ${isDark ? 'bg-slate-800 text-white border border-slate-700' : 'bg-white text-slate-900 border border-slate-200'}`}
-            >
-              <RefreshCw size={14} className="animate-reverse-spin" /> {appLang === 'tr' ? 'GERİ AL' : 'UNDO'}
-            </button>
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "build/web",
+    "public": "vocabapp_mobile/build/web",
     "ignore": [
       "firebase.json",
       "**/.*",

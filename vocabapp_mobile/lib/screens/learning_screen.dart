@@ -346,48 +346,151 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
 
   Widget _buildLearningScreen() {
     final currentWord = deck[currentWordIndex];
-    return Padding(
-      padding: const EdgeInsets.only(top: 160, bottom: 40),
-      child: SwipeableCard(
-        onSwipe: (isRight) => _handleSM2(isRight ? 4 : 1),
-        rightBackground: Container(color: Colors.green.withOpacity(0.2), child: const Center(child: Icon(LucideIcons.check, color: Colors.white, size: 64))),
-        leftBackground: Container(color: Colors.red.withOpacity(0.2), child: const Center(child: Icon(LucideIcons.x, color: Colors.white, size: 64))),
-        child: _buildCardContent(currentWord),
-      ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Mascot Peering from behind
+        Positioned(
+          top: 80,
+          child: Opacity(
+            opacity: 0.8,
+            child: MascotWidget(
+              isDark: true,
+              size: MascotSize.xl,
+              look: isRevealed ? MascotLook.happy : MascotLook.neutral,
+              animated: true,
+            ),
+          ),
+        ),
+        
+        // The Swipeable Card
+        Padding(
+          padding: const EdgeInsets.only(top: 180, bottom: 40),
+          child: SwipeableCard(
+            onSwipe: (isRight) => _handleSM2(isRight ? 4 : 1),
+            rightBackground: Container(
+              decoration: BoxDecoration(color: const Color(0xFF10B981).withOpacity(0.1), borderRadius: BorderRadius.circular(32)),
+              child: const Center(child: Icon(LucideIcons.check, color: Color(0xFF10B981), size: 80)),
+            ),
+            leftBackground: Container(
+              decoration: BoxDecoration(color: const Color(0xFFF43F5E).withOpacity(0.1), borderRadius: BorderRadius.circular(32)),
+              child: const Center(child: Icon(LucideIcons.x, color: Color(0xFFF43F5E), size: 80)),
+            ),
+            child: _buildCardContent(currentWord),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildCardContent(Word word) {
     return Container(
-      width: double.infinity, margin: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: BoxDecoration(color: const Color(0xFF16161B), borderRadius: BorderRadius.circular(32), border: Border.all(color: Colors.white.withOpacity(0.05))),
-      child: Column(
-        children: [
-          if (!isRevealed) 
-            GestureDetector(onTap: _toggleReveal, child: Container(height: 400, alignment: Alignment.center, child: Text(word.text, style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white))))
-          else 
-            _buildRevealedContent(word),
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF16161B),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 30, offset: const Offset(0, 15)),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: ScaleTransition(scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation), child: child)),
+            child: !isRevealed 
+              ? GestureDetector(
+                  key: const ValueKey('front'),
+                  onTap: _toggleReveal,
+                  child: Container(
+                    height: 420,
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(word.text, style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1.5)),
+                        const SizedBox(height: 12),
+                        Text(_t('tapToReveal').toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white24, letterSpacing: 2)),
+                      ],
+                    ),
+                  ),
+                )
+              : _buildRevealedContent(word),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildRevealedContent(Word word) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
+    return Container(
+      key: const ValueKey('back'),
+      padding: const EdgeInsets.all(32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(word.text, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
-          Text(word.trWord, style: const TextStyle(fontSize: 20, color: Color(0xFF818CF8))),
-          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(word.text, style: GoogleFonts.outfit(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1)),
+                    Text(word.trWord, style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF818CF8))),
+                  ],
+                ),
+              ),
+              BookmarkButton(word: word),
+            ],
+          ),
+          const SizedBox(height: 32),
           _buildAccordionSection(_t('def'), word.engDef, word.trDef, 'def_${word.id}'),
           const SizedBox(height: 16),
           _buildAccordionSection(_t('ex'), word.engExample, word.trExample, 'ex_${word.id}'),
-          const SizedBox(height: 24),
-          _buildToolButtons(word),
+          const SizedBox(height: 32),
+          
+          // Action Buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildPanelToggle(LucideIcons.pencil, _t('write'), 'writing'),
+              const SizedBox(width: 12),
+              _buildPanelToggle(LucideIcons.sparkles, _t('analyze'), 'ai'),
+              const SizedBox(width: 12),
+              _buildPanelToggle(LucideIcons.info, _t('details'), 'details'),
+            ],
+          ),
+
           if (_activePanel != null) _buildActivePanel(word),
+          const SizedBox(height: 20),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPanelToggle(IconData icon, String label, String panelId) {
+    bool isActive = _activePanel == panelId;
+    return GestureDetector(
+      onTap: () => setState(() => _activePanel = isActive ? null : panelId),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF6366F1) : Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isActive ? Colors.transparent : Colors.white.withOpacity(0.05)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: isActive ? Colors.white : Colors.white38),
+            const SizedBox(width: 8),
+            Text(label, style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, color: isActive ? Colors.white : Colors.white38)),
+          ],
+        ),
       ),
     );
   }
@@ -397,16 +500,25 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label.toUpperCase(), style: const TextStyle(fontSize: 10, color: Colors.white38, letterSpacing: 2)),
-        const SizedBox(height: 8),
+        Text(label.toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white24, letterSpacing: 2)),
+        const SizedBox(height: 10),
         GestureDetector(
           onTap: () => setState(() => _wordTranslationVisible[key] = !isTr),
           child: AnimatedSize(
             duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
             child: Container(
-              width: double.infinity, padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Colors.white.withOpacity(0.02), borderRadius: BorderRadius.circular(16)),
-              child: Text(isTr ? tr : eng, style: const TextStyle(color: Colors.white70, height: 1.5)),
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.03),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white.withOpacity(0.05)),
+              ),
+              child: Text(
+                isTr ? tr : eng,
+                style: GoogleFonts.outfit(color: isTr ? const Color(0xFFA5B4FC) : Colors.white70, height: 1.5, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ),
@@ -414,30 +526,65 @@ class _LearningScreenState extends State<LearningScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildToolButtons(Word word) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildActivePanel(Word word) {
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.only(top: 24),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: const Color(0xFF6366F1).withOpacity(0.2)),
+        ),
+        child: _activePanel == 'writing' 
+          ? _buildWritingPanel(word)
+          : _activePanel == 'ai' ? _buildAiPanel(word) : _buildDetailsPanel(word),
+      ),
+    );
+  }
+
+  Widget _buildWritingPanel(Word word) {
+    return Column(
       children: [
-        _buildSmallBtn(LucideIcons.pencil, () => setState(() => _activePanel = 'writing')),
-        _buildSmallBtn(LucideIcons.sparkles, () => setState(() => _activePanel = 'ai')),
-        BookmarkButton(word: word),
+        TextField(
+          controller: _writingController,
+          style: const TextStyle(color: Colors.white),
+          maxLines: 2,
+          decoration: InputDecoration(hintText: _t('writingPlaceholder'), hintStyle: const TextStyle(color: Colors.white12), border: InputBorder.none),
+        ),
+        const SizedBox(height: 16),
+        InkWell(
+          onTap: () => setState(() => _activePanel = null),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12), width: double.infinity,
+            decoration: BoxDecoration(color: const Color(0xFF6366F1), borderRadius: BorderRadius.circular(16)),
+            child: Center(child: Text(_t('checkAnswer').toUpperCase(), style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white))),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildSmallBtn(IconData icon, VoidCallback onTap) {
-    return IconButton(onPressed: onTap, icon: Icon(icon, size: 18, color: Colors.white38));
+  Widget _buildAiPanel(Word word) {
+    return Column(children: [const Icon(LucideIcons.sparkles, color: Color(0xFF818CF8), size: 32), const SizedBox(height: 12), Text(_t('aiLoading'), style: const TextStyle(color: Colors.white38, fontSize: 12))]);
   }
 
-  Widget _buildActivePanel(Word word) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: Container(
-        margin: const EdgeInsets.only(top: 16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(16)),
-        child: Text("Panel: $_activePanel active for ${word.text}", style: const TextStyle(color: Colors.white38, fontSize: 12)),
-      ),
+  Widget _buildDetailsPanel(Word word) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildDetailRow(LucideIcons.type, "Part of Speech", word.pos.toUpperCase()),
+        _buildDetailRow(LucideIcons.clock, "Retention", "${(word.sm2.interval ?? 0).toString()} Days"),
+      ],
     );
   }
+
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(children: [Icon(icon, size: 14, color: Colors.white24), const SizedBox(width: 12), Text(label, style: const TextStyle(color: Colors.white24, fontSize: 12)), const Spacer(), Text(value, style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold))]),
+    );
+  }
+}
 }

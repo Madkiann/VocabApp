@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
 export "FLUTTER_ROOT=C:\Users\omerm\Develop\flutter"
-export "FLUTTER_APPLICATION_PATH=C:\Games\vocabapp_mobile_flutter"
+export "FLUTTER_APPLICATION_PATH=C:\Games\vocabapp\vocabapp_mobile"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"

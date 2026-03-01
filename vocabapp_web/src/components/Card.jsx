@@ -16,8 +16,12 @@ import {
     Share2,
     BookOpen,
     ChevronDown,
-    Trash2
+    Trash2,
+    Undo2,
+    Lightbulb,
+    MessagesSquare
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { shareWordToCanvas } from '../utils/shareWord';
 import { Mascot } from './Mascot';
 
@@ -54,21 +58,40 @@ export const Card = ({
     stats,
     isAdmin = false,
     onDeleteWord,
-    onEditWord
+    onEditWord,
+    onUndo,
+    canUndo,
+    isSystem = false
 }) => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isExampleTrRevealed, setIsExampleTrRevealed] = useState(false);
+    const [isCaseExamplesOpen, setIsCaseExamplesOpen] = useState(false);
+    const [revealedCaseExampleIdx, setRevealedCaseExampleIdx] = useState(null);
+    const [isMiniCaseTrOpen, setIsMiniCaseTrOpen] = useState(false);
 
     const handleSpeak = (e) => {
         if (e) e.stopPropagation();
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
+
+            // Warm up voices (crucial for some browsers/WebViews)
+            const voices = window.speechSynthesis.getVoices();
+
             const utterance = new SpeechSynthesisUtterance(wordObj.word);
             utterance.lang = 'en-US';
             utterance.rate = 0.9;
+            utterance.volume = 1.0;
+
+            // Try to find a high-quality English voice if available
+            const preferredVoice = voices.find(v => v.lang.includes('en-US')) || voices[0];
+            if (preferredVoice) utterance.voice = preferredVoice;
+
             utterance.onstart = () => setIsSpeaking(true);
             utterance.onend = () => setIsSpeaking(false);
-            utterance.onerror = () => setIsSpeaking(false);
+            utterance.onerror = (err) => {
+                console.error("TTS Error:", err);
+                setIsSpeaking(false);
+            };
             window.speechSynthesis.speak(utterance);
         }
     };
@@ -92,6 +115,16 @@ export const Card = ({
 
             {/* Top Action Area - Positioned relative to card top */}
             <div className="absolute top-12 right-6 flex gap-2 z-50">
+                {canUndo && (
+                    <button
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => { e.stopPropagation(); onUndo(); }}
+                        className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isDark ? 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'} backdrop-blur-md`}
+                        title={t.undo || "Geri Al"}
+                    >
+                        <Undo2 size={16} strokeWidth={2.5} />
+                    </button>
+                )}
                 <button
                     onPointerDown={(e) => e.stopPropagation()}
                     onClick={(e) => { e.stopPropagation(); shareWordToCanvas(wordObj, appLang, t, isDark); }}
@@ -100,13 +133,15 @@ export const Card = ({
                 >
                     <Share2 size={16} strokeWidth={2.5} />
                 </button>
-                <button
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onClick={(e) => { e.stopPropagation(); toggleSaveWord(wordObj); }}
-                    className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isSavedStatus ? 'bg-amber-400 text-slate-900 shadow-glow-amber' : (isDark ? 'bg-slate-800/40 text-slate-300 hover:bg-slate-700/80 backdrop-blur-md' : 'bg-white/50 text-slate-500 hover:bg-white/90 backdrop-blur-md')}`}
-                >
-                    <Bookmark size={16} strokeWidth={2.5} fill={isSavedStatus ? "currentColor" : "none"} />
-                </button>
+                {!isSystem && (
+                    <button
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => { e.stopPropagation(); toggleSaveWord(wordObj); }}
+                        className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isSavedStatus ? 'bg-amber-400 text-slate-900 shadow-glow-amber' : (isDark ? 'bg-slate-800/40 text-slate-300 hover:bg-slate-700/80 backdrop-blur-md' : 'bg-white/50 text-slate-500 hover:bg-white/90 backdrop-blur-md')}`}
+                    >
+                        <Bookmark size={16} strokeWidth={2.5} fill={isSavedStatus ? "currentColor" : "none"} />
+                    </button>
+                )}
                 {isAdmin && (
                     <div className="flex gap-2">
                         <button
@@ -141,10 +176,12 @@ export const Card = ({
                         <h2 className={`font-black tracking-tight mb-4 w-full px-2 leading-none pointer-events-none ${isDark ? 'text-white' : 'text-slate-900'} ${wordObj.word.length > 8 ? (wordObj.word.length > 12 ? 'text-3xl sm:text-4xl' : 'text-4xl sm:text-5xl') : 'text-5xl sm:text-6xl'}`} style={{ wordBreak: 'break-word' }}>
                             {wordObj.word.charAt(0).toUpperCase() + wordObj.word.slice(1)}
                         </h2>
-                        <div className="flex items-center justify-center gap-2 opacity-50 font-serif text-xl pointer-events-none" style={{ fontFamily: '"Arial Unicode MS", "Lucida Sans Unicode", "Segoe UI", sans-serif' }}>
+                        <div className="flex items-center justify-center gap-2 opacity-50 font-serif text-xl relative z-30" style={{ fontFamily: '"Arial Unicode MS", "Lucida Sans Unicode", "Segoe UI", sans-serif' }}>
                             <Volume2
                                 size={24}
-                                className={`transition-all ${isSpeaking ? 'text-indigo-400 scale-110 opacity-100 drop-shadow-md' : ''}`}
+                                className={`transition-all cursor-pointer ${isSpeaking ? 'text-indigo-400 scale-110 opacity-100 drop-shadow-md' : 'hover:scale-110 hover:text-indigo-500'}`}
+                                onClick={handleSpeak}
+                                onPointerDown={(e) => e.stopPropagation()}
                             />
                             <span>{wordObj.phonetic}</span>
                         </div>
@@ -263,6 +300,7 @@ export const Card = ({
                                     <Sparkles size={24} />
                                     <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t.askAiBtn || 'ASK AI'}</span>
                                 </button>
+
                                 <button
                                     onClick={() => { setShowForms(!showForms); setShowAi(false); setShowWriting(false); setShowDetails(false); }}
                                     className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${showForms ? 'border-indigo-400 bg-indigo-400/10 text-indigo-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400 hover:border-slate-700 hover:text-indigo-400' : 'border-slate-100 glass text-slate-600 shadow-sm hover:border-slate-300 hover:text-indigo-500')}`}
@@ -272,8 +310,67 @@ export const Card = ({
                                 </button>
                             </div>
 
+                            {/* Case Examples (Vaka Örnekleri) - Word Mode Accordion */}
+                            {wordObj.details?.caseExamples?.length > 0 && (
+                                <section className="mt-4 mb-4">
+                                    <div
+                                        className={`w-full p-5 rounded-[2.5rem] border-2 relative overflow-hidden text-left shadow-sm cursor-pointer transition-all duration-300 flex flex-col ${isDark ? 'border-amber-500/10 bg-amber-500/5 hover:border-amber-500/30' : 'border-amber-100 bg-amber-50/30 hover:bg-amber-50'}`}
+                                        onClick={(e) => { e.stopPropagation(); setIsCaseExamplesOpen(!isCaseExamplesOpen); }}
+                                    >
+                                        <div className="flex items-center justify-between relative z-10 w-full px-1">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`p-2 rounded-xl ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-500/10 text-amber-600'}`}>
+                                                    <Lightbulb size={20} strokeWidth={2.5} />
+                                                </div>
+                                                <span className={`text-[11px] font-black uppercase tracking-[0.3em] mt-0.5 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>Vaka Örnekleri</span>
+                                            </div>
+                                            <ChevronDown size={20} strokeWidth={2.5} className={`transform transition-transform duration-300 ${isDark ? 'text-amber-400' : 'text-amber-600'} ${isCaseExamplesOpen ? 'rotate-180' : ''}`} />
+                                        </div>
+
+                                        <div className={`grid transition-all duration-300 ease-in-out w-full ${isCaseExamplesOpen ? 'grid-rows-[1fr] opacity-100 mt-6' : 'grid-rows-[0fr] opacity-0 mt-0'}`}>
+                                            <div className="overflow-hidden space-y-4">
+                                                {wordObj.details.caseExamples.map((item, idx) => (
+                                                    <div key={idx} className={`p-5 rounded-3xl border transition-all ${isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
+                                                        <p className={`text-sm font-bold mb-3 leading-relaxed ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
+                                                            {item.tr}
+                                                        </p>
+
+                                                        <AnimatePresence>
+                                                            {revealedCaseExampleIdx === idx && (
+                                                                <motion.div
+                                                                    initial={{ height: 0, opacity: 0 }}
+                                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                                    exit={{ height: 0, opacity: 0 }}
+                                                                    transition={{ duration: 0.3 }}
+                                                                >
+                                                                    <div
+                                                                        className={`p-4 rounded-2xl border-l-[6px] italic text-sm font-medium ${isDark ? 'bg-amber-500/10 border-amber-500/50 text-amber-200' : 'bg-amber-50 border-amber-400 text-amber-900'} cursor-pointer mb-2`}
+                                                                        onClick={(e) => { e.stopPropagation(); setRevealedCaseExampleIdx(null); }}
+                                                                    >
+                                                                        {item.en}
+                                                                    </div>
+                                                                </motion.div>
+                                                            )}
+                                                        </AnimatePresence>
+
+                                                        {revealedCaseExampleIdx !== idx && (
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); setRevealedCaseExampleIdx(idx); }}
+                                                                className="flex items-center gap-2 text-[10px] font-black text-amber-500 hover:text-amber-400 transition-colors uppercase tracking-[0.2em]"
+                                                            >
+                                                                <RefreshCw size={14} /> ÇEVİRİYİ GÖR
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            )}
+
                             {/* Panels */}
-                            <div className="space-y-6 pb-6 mt-6">
+                            <div className="space-y-6 pb-6">
                                 {showWriting && (
                                     <div className={`p-8 rounded-[3rem] border-2 animate-fade-in ${isDark ? 'bg-slate-900 border-amber-500/20' : 'bg-white border-amber-200 shadow-premium'}`}>
                                         <h4 className="text-xs font-black mb-6 flex items-center gap-2 text-amber-500 uppercase tracking-[0.2em]">
@@ -421,17 +518,9 @@ export const Card = ({
                                                 </div>
                                             )}
 
-                                            {wordObj.details.miniCase && (
-                                                <div className="pt-4 border-t border-emerald-500/10">
-                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-4 block">{t.teacherNotes}</span>
-                                                    <p className={`text-sm font-bold leading-relaxed mb-3 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                                        {wordObj.details.miniCase}
-                                                    </p>
-                                                    <div className={`p-4 rounded-[1.5rem] italic text-xs ${isDark ? 'bg-slate-800/50 text-slate-400 border-l-4 border-amber-500/50' : 'bg-emerald-50/50 text-slate-600 border-l-4 border-amber-400'}`}>
-                                                        {wordObj.details.trMiniCase}
-                                                    </div>
-                                                </div>
-                                            )}
+
+
+
                                         </div>
                                     </div>
                                 )}

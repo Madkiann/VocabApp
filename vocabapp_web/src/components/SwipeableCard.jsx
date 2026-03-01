@@ -10,12 +10,11 @@ export const SwipeableCard = ({
     swipeDirection,
     isRevealed
 }) => {
-    const minSwipeDistance = 60; // Reduced from 100 for easier mobile swiping
-    const minVelocity = 200; // Reduced from 500 for easier flick gestures
+    const minSwipeDistance = 120; // Increased for better stability on small screens
+    const minVelocity = 400; // Require a faster flick if distance is low
     const x = useMotionValue(0);
     const controls = useAnimation();
     const isDragLocked = useRef(false);
-    const isSwiping = useRef(false);
 
     const opacityLeft = useTransform(x, [-minSwipeDistance / 2, -minSwipeDistance], [0, 1]);
     const opacityRight = useTransform(x, [minSwipeDistance / 2, minSwipeDistance], [0, 1]);
@@ -27,9 +26,9 @@ export const SwipeableCard = ({
 
     useEffect(() => {
         if (swipeDirection === 'left') {
-            controls.start({ x: -500, opacity: 0, transition: { duration: 0.25 } }).then(() => onSwipe('left', true));
+            controls.start({ x: -600, opacity: 0, scale: 0.9, transition: { duration: 0.3, ease: "easeOut" } }).then(() => onSwipe('left', true));
         } else if (swipeDirection === 'right') {
-            controls.start({ x: 500, opacity: 0, transition: { duration: 0.25 } }).then(() => onSwipe('right', true));
+            controls.start({ x: 600, opacity: 0, scale: 0.9, transition: { duration: 0.3, ease: "easeOut" } }).then(() => onSwipe('right', true));
         }
     }, [swipeDirection, controls, onSwipe]);
 
@@ -38,7 +37,6 @@ export const SwipeableCard = ({
     };
 
     const handleDrag = (event, info) => {
-        // Once we detect significant horizontal movement, lock it in
         if (!isDragLocked.current && Math.abs(info.offset.x) > 10) {
             isDragLocked.current = true;
         }
@@ -53,17 +51,16 @@ export const SwipeableCard = ({
         const offset = info.offset.x;
         const velocity = info.velocity.x;
 
-        // Use combination of distance and velocity for better mobile feel
-        // A fast flick (high velocity) should work even with less distance
-        const isRightSwipe = offset > minSwipeDistance || (offset > 30 && velocity > minVelocity);
-        const isLeftSwipe = offset < -minSwipeDistance || (offset < -30 && velocity < -minVelocity);
+        // Check if movement is significant enough to trigger swipe
+        const isRightSwipe = offset > minSwipeDistance || (offset > 50 && velocity > minVelocity);
+        const isLeftSwipe = offset < -minSwipeDistance || (offset < -50 && velocity < -minVelocity);
 
         if (isRightSwipe) {
-            controls.start({ x: 500, opacity: 0, transition: { duration: 0.25 } }).then(() => onSwipe('right', true));
+            controls.start({ x: 600, opacity: 0, scale: 0.9, transition: { duration: 0.25 } }).then(() => onSwipe('right', true));
         } else if (isLeftSwipe) {
-            controls.start({ x: -500, opacity: 0, transition: { duration: 0.25 } }).then(() => onSwipe('left', true));
+            controls.start({ x: -600, opacity: 0, scale: 0.9, transition: { duration: 0.25 } }).then(() => onSwipe('left', true));
         } else {
-            controls.start({ x: 0, transition: { type: 'spring', stiffness: 400, damping: 25 } });
+            controls.start({ x: 0, scale: 1, rotate: 0, transition: { type: 'spring', stiffness: 400, damping: 20 } });
         }
     };
 

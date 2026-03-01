@@ -172,7 +172,7 @@ class _LevelAssessmentWidgetState extends State<LevelAssessmentWidget> {
           const SizedBox(height: 24),
           Text(
             "Hi, I'm your Hoca! 👋",
-            style: GoogleFonts.outfit(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900, tracking: -1),
+            style: GoogleFonts.outfit(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: -1),
           ),
           const SizedBox(height: 12),
           Text(
@@ -302,7 +302,7 @@ class _LevelAssessmentWidgetState extends State<LevelAssessmentWidget> {
           const SizedBox(height: 8),
           Text(
             eval.level,
-            style: GoogleFonts.outfit(color: Colors.emeraldAccent, fontSize: 36, fontWeight: FontWeight.w900, tracking: -1),
+            style: GoogleFonts.outfit(color: const Color(0xFF6EE7B7), fontSize: 36, fontWeight: FontWeight.w900, letterSpacing: -1),
           ),
           const SizedBox(height: 8),
           Text("Correct Answers: $score / 15", style: GoogleFonts.outfit(color: Colors.white24, fontSize: 14, fontWeight: FontWeight.bold)),
@@ -319,7 +319,7 @@ class _LevelAssessmentWidgetState extends State<LevelAssessmentWidget> {
               children: [
                 Row(
                   children: [
-                    const Icon(LucideIcons.award, color: Colors.emerald, size: 20),
+                    const Icon(LucideIcons.award, color: Color(0xFF10B981), size: 20),
                     const SizedBox(width: 10),
                     Text("HOCA'DAN NOT", style: GoogleFonts.outfit(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1)),
                   ],
@@ -384,7 +384,6 @@ class _LevelAssessmentWidgetState extends State<LevelAssessmentWidget> {
       child: Container(
         width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          gradient: const LinearProgressIndicator().valueColor, // Just a placeholder for indigo gradient
           color: Colors.indigo,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [BoxShadow(color: Colors.indigo.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10))],

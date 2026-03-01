@@ -40,7 +40,8 @@ export const AdminPanel = ({
     allChill = [],
     onEditWord,
     onDeleteWord,
-    onJumpToCard
+    onJumpToCard,
+    onResetSystem
 }) => {
     const [activeTab, setActiveTab] = useState(editingWord ? 'cms' : 'insights');
     const [bannerDraft, setBannerDraft] = useState(globalAnnouncement || '');
@@ -161,7 +162,8 @@ export const AdminPanel = ({
         verb: editingWord?.wordFamily?.verb || '',
         adjective: editingWord?.wordFamily?.adjective || '',
         adverb: editingWord?.wordFamily?.adverb || '',
-        moreExJson: editingWord?.details?.moreExamples ? JSON.stringify(editingWord.details.moreExamples, null, 2) : '[]'
+        moreExJson: editingWord?.details?.moreExamples ? JSON.stringify(editingWord.details.moreExamples, null, 2) : '[]',
+        trMiniCaseEx: editingWord?.details?.trMiniCaseExamples ? JSON.stringify(editingWord.details.trMiniCaseExamples, null, 2) : '["Türkçe örnek cümle 1", "Türkçe örnek cümle 2"]'
     };
 
     const [cmsDraft, setCmsDraft] = useState(initialCms);
@@ -196,7 +198,8 @@ export const AdminPanel = ({
                 verb: editingWord.wordFamily?.verb || '',
                 adjective: editingWord.wordFamily?.adjective || '',
                 adverb: editingWord.wordFamily?.adverb || '',
-                moreExJson: editingWord.details?.moreExamples ? JSON.stringify(editingWord.details.moreExamples, null, 2) : '[]'
+                moreExJson: editingWord.details?.moreExamples ? JSON.stringify(editingWord.details.moreExamples, null, 2) : '[]',
+                trMiniCaseEx: editingWord.details?.trMiniCaseExamples ? JSON.stringify(editingWord.details.trMiniCaseExamples, null, 2) : '[]'
             });
             setActiveTab('cms');
         }
@@ -216,6 +219,11 @@ export const AdminPanel = ({
         let moreExParsed = [];
         try { moreExParsed = JSON.parse(cmsDraft.moreExJson); } catch (e) {
             console.error("Invalid moreExamples JSON");
+        }
+
+        let trMiniCaseExParsed = [];
+        try { trMiniCaseExParsed = JSON.parse(cmsDraft.trMiniCaseEx || '[]'); } catch (e) {
+            console.error("Invalid trMiniCaseExamples JSON");
         }
 
         const processedWord = {
@@ -243,7 +251,8 @@ export const AdminPanel = ({
                 },
                 moreExamples: moreExParsed,
                 miniCase: capitalize(cmsDraft.miniCase),
-                trMiniCase: capitalize(cmsDraft.trMiniCase)
+                trMiniCase: capitalize(cmsDraft.trMiniCase),
+                trMiniCaseExamples: trMiniCaseExParsed
             },
             wordFamily: {
                 noun: capitalize(cmsDraft.noun),
@@ -291,7 +300,7 @@ export const AdminPanel = ({
         setCmsDraft({
             eng: '', tr: '', pos: 'noun', posTr: 'isim', phonetic: '',
             engDef: '', trDef: '', engEx: '', trEx: '',
-            miniCase: '', trMiniCase: '', target: 'words',
+            miniCase: '', trMiniCase: '', trMiniCaseEx: '[]', target: 'words',
             root: '', prefix: '', suffix: '', synonyms: '', antonyms: '', forms: '[]',
             noun: '', verb: '', adjective: '', adverb: '', moreExJson: '[]'
         });
@@ -325,6 +334,10 @@ export const AdminPanel = ({
                 similarWords: { synonyms: [], antonyms: [] },
                 moreExamples: [
                     { en: "Extra example 1", tr: "Ekstra örnek 1" }
+                ],
+                caseExamples: [
+                    { "tr": "Vaka örneği Türkçe cümle 1", "en": "Case example English sentence 1" },
+                    { "tr": "Vaka örneği Türkçe cümle 2", "en": "Case example English sentence 2" }
                 ]
             },
             wordFamily: { noun: "", verb: "", adjective: "", adverb: "" },
@@ -334,14 +347,21 @@ export const AdminPanel = ({
             word: capitalize(templateKeyword) || "Phrasal Verb",
             trWord: "Çeviri",
             phonetic: "/.../",
-            type: "Phrasal Verb",
+            pos: "phrasal verb",
+            posTr: "deyimsel fiil",
             targetMode: "Phrasal Verbs",
-            engDef: "Definition here.",
-            trDef: "Çeviri buraya.",
-            engEx: "Example sentence.",
-            trEx: "Örnek cümle çevirisi.",
-            caseStoryEn: "Detailed mini case story in English.",
-            caseStoryTr: "Detaylı Türkçe mini hikaye.",
+            engDef: "A clear and concise definition of the phrasal verb in English.",
+            trDef: "Phrasal verb'ün Türkçe karşılığı ve kısa açıklaması.",
+            engExample: "A natural sentence showing how the phrasal verb is used in context.",
+            trExample: "İngilizce örnek cümlenin doğal bir Türkçe tercümesi.",
+            details: {
+                miniCase: "This is a detailed placeholder for a mini story. It should consist of at least 2-3 sentences to provide enough context for the student to understand the nuance of the phrasal verb in a real-life scenario.",
+                trMiniCase: "Bu, mini bir hikaye için detaylı bir yer tutucudur. Öğrencinin phrasal verb'ün gerçek hayat senaryosundaki nüanslarını anlaması için en az 2-3 cümleden oluşmalıdır.",
+                caseExamples: [
+                    { "tr": "Vaka örneği Türkçe cümle 1", "en": "Case example English sentence 1" },
+                    { "tr": "Vaka örneği Türkçe cümle 2", "en": "Case example English sentence 2" }
+                ]
+            },
             syncToChill: true
         };
         return JSON.stringify(skeleton, null, 2);
@@ -436,8 +456,8 @@ export const AdminPanel = ({
         const word = templateKeyword || "the word";
         const mode = templateMode === 'words' ? 'Vocabulary' : 'Phrasal Verb';
         const structure = templateMode === 'words' ?
-            'origin (root, prefix, suffix), word family (noun, verb, adj, adv), synonyms, antonyms, and 2 extra examples' :
-            'detailed mini story case in both English and Turkish';
+            'origin (root, prefix, suffix), word family (noun, verb, adj, adv), synonyms, antonyms, and 2 case examples (Turkish sentences and English translations)' :
+            'detailed mini story case in both English and Turkish, AND 2-3 case examples (Turkish sentences and English translations) using the phrasal verb';
 
         const prompt = `Please fill the following JSON structure for the ${mode} "${word}". 
 Rules:
@@ -511,7 +531,8 @@ ${handleGenerateTemplate()}`;
                             similarWords,
                             moreExamples: item.details?.moreExamples || item.moreExamples || [],
                             miniCase: capitalize((item.details?.miniCase || item.caseStoryEn || '').trim()),
-                            trMiniCase: capitalize((item.details?.trMiniCase || item.caseStoryTr || '').trim())
+                            trMiniCase: capitalize((item.details?.trMiniCase || item.caseStoryTr || '').trim()),
+                            caseExamples: item.details?.caseExamples || item.caseExamples || item.details?.trMiniCaseExamples || []
                         },
                         wordFamily,
                         sm2: item.sm2 || { rep: 0, int: 1, ef: 2.5, nextDate: Date.now(), totalReviews: 0, correctReviews: 0 },
@@ -544,7 +565,8 @@ ${handleGenerateTemplate()}`;
                                     ...(existing.details || {}),
                                     ...(newItem.details || {}),
                                     origin: { ...(existing.details?.origin || {}), ...(newItem.details?.origin || {}) },
-                                    similarWords: { ...(existing.details?.similarWords || {}), ...(newItem.details?.similarWords || {}) }
+                                    similarWords: { ...(existing.details?.similarWords || {}), ...(newItem.details?.similarWords || {}) },
+                                    caseExamples: newItem.details?.caseExamples || existing.details?.caseExamples || []
                                 },
                                 wordFamily: {
                                     ...(existing.wordFamily || {}),
@@ -927,13 +949,16 @@ ${handleGenerateTemplate()}`;
                                                     className={`w-full p-4 rounded-2xl outline-none font-bold text-xs resize-none leading-relaxed ${isDark ? 'bg-white/5 text-slate-200' : 'bg-slate-50 text-slate-700'}`}
                                                     rows={4}
                                                 />
-                                                <textarea
-                                                    value={cmsDraft.trMiniCase}
-                                                    placeholder="Hikaye çevirisi..."
-                                                    onChange={e => setCmsDraft({ ...cmsDraft, trMiniCase: capitalize(e.target.value) })}
-                                                    className={`w-full p-4 rounded-2xl outline-none font-medium text-xs resize-none italic opacity-60 ${isDark ? 'bg-indigo-500/5 text-indigo-300' : 'bg-indigo-50 text-indigo-900'}`}
-                                                    rows={4}
-                                                />
+                                                <div className="space-y-2">
+                                                    <label className="text-[9px] font-black uppercase tracking-widest opacity-40">Turkish Case Sentences (JSON Array)</label>
+                                                    <textarea
+                                                        value={cmsDraft.trMiniCaseEx}
+                                                        placeholder='["Türkçe cümle 1", "Türkçe cümle 2"]'
+                                                        onChange={e => setCmsDraft({ ...cmsDraft, trMiniCaseEx: e.target.value })}
+                                                        className={`w-full p-4 rounded-2xl outline-none font-mono text-[10px] resize-none ${isDark ? 'bg-black/50 text-emerald-400' : 'bg-slate-900 text-emerald-300'}`}
+                                                        rows={3}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -1542,6 +1567,31 @@ ${handleGenerateTemplate()}`;
                                     {t.submit}
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'settings' && (
+                    <div className="space-y-6">
+                        <div className={`p-8 rounded-[3rem] border-4 border-dashed ${isDark ? 'bg-rose-500/5 border-rose-500/20' : 'bg-rose-50 border-rose-200'}`}>
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-14 h-14 rounded-2xl bg-rose-500 flex items-center justify-center shadow-lg shadow-rose-500/20">
+                                    <RotateCcw size={32} className="text-white" />
+                                </div>
+                                <div>
+                                    <h3 className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>Tehlikeli Bölge</h3>
+                                    <p className="text-xs font-bold opacity-40 uppercase tracking-widest">Sistemi Fabrika Ayarlarına Döndür</p>
+                                </div>
+                            </div>
+                            <p className={`text-sm font-medium mb-8 leading-relaxed opacity-60 ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
+                                Sistemi sıfırladığınızda tüm ilerleme, klasörler ve özel kelimeler kalıcı olarak silinecektir. Sadece kaynak koddaki kelimeler kalacaktır.
+                            </p>
+                            <button
+                                onClick={onResetSystem}
+                                className="w-full py-6 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-rose-500/30 transition-all active:scale-95"
+                            >
+                                SİSTEMİ REFORME ET VE SIFIRLA
+                            </button>
                         </div>
                     </div>
                 )}

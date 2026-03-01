@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">VocabApp</string>
+    <string name="title_activity_main">VocabApp</string>
+    <string name="package_name">com.madkiann.vocabapp</string>
+    <string name="custom_url_scheme">com.madkiann.vocabapp</string>
+</resources>
