@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowLeft, Settings, X, Languages, Moon, Sun, Hourglass, Share, Instagram, Globe, Heart, Sparkles, MessageSquare, ChevronRight } from 'lucide-react';
+import { Mascot } from './Mascot';
 import FlamingooImg from '../assets/Mascot/Flamingoo.png';
 
 export const SettingsModal = ({
@@ -195,7 +196,7 @@ export const SettingsModal = ({
                                 <div className="relative z-10 flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center relative ${isDark ? 'bg-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.2)]' : 'bg-white shadow-md'}`}>
-                                            <img src={FlamingooImg} alt="Mascot" className="w-10 h-10 object-contain" />
+                                            <Mascot variant="3d" look="glasses" size="sm" isDark={isDark} animated={true} />
                                             <div className="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900">
                                                 <Sparkles size={10} className="text-white fill-white" />
                                             </div>

@@ -49,22 +49,26 @@ class SoundSystem {
         this.resume();
         if (!this.ctx || !this.enabled) return;
 
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
+        // "Remind Me" Supportive Chord
+        const now = this.ctx.currentTime;
+        [329.63, 392.00].forEach((freq, i) => { // E4, G4 (Minor-ish soft feel)
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
 
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(220, this.ctx.currentTime); // A3
-        osc.frequency.linearRampToValueAtTime(110, this.ctx.currentTime + 0.2); // A2
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.linearRampToValueAtTime(freq * 0.98, now + 0.3);
 
-        gain.gain.setValueAtTime(0, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.08, this.ctx.currentTime + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.04, now + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
 
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
 
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.4);
+            osc.start(now);
+            osc.stop(now + 0.4);
+        });
     }
 
     playClick() {
@@ -115,6 +119,47 @@ class SoundSystem {
             osc.start(now + (i * 0.05));
             osc.stop(now + (i * 0.05) + 0.4);
         });
+    }
+
+    playCompanion() {
+        this.init();
+        this.resume();
+        if (!this.ctx || !this.enabled) return;
+
+        const now = this.ctx.currentTime;
+
+        // 1. Tonal Tinkle (Success feeling)
+        [880, 1108, 1318].forEach((freq, i) => { // A5, C#6, E6
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + (i * 0.05));
+            gain.gain.setValueAtTime(0, now + (i * 0.05));
+            gain.gain.linearRampToValueAtTime(0.02, now + (i * 0.05) + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + (i * 0.05));
+            osc.stop(now + 0.5);
+        });
+
+        // 2. Torch Crackle (Ambient feel)
+        const bufferSize = this.ctx.sampleRate * 0.5; // 0.5 seconds
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * 0.01; // Low level white noise
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0, now);
+        noiseGain.gain.linearRampToValueAtTime(0.03, now + 0.1);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+        noise.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+        noise.start(now);
+        noise.stop(now + 0.5);
     }
 }
 

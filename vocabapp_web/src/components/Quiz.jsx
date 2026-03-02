@@ -1,5 +1,4 @@
-import React from 'react';
-import { RefreshCw, GraduationCap, AlertCircle, Target, ArrowRight, Sparkles, Loader2, Check, X } from 'lucide-react';
+import { RefreshCw, GraduationCap, AlertCircle, Target, ArrowRight, Sparkles, Loader2, Check, RotateCcw } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { Mascot } from './Mascot';
 export const Quiz = ({
@@ -33,8 +32,8 @@ export const Quiz = ({
 }) => {
     const renderQuizFeedback = () => (
         <div className="mt-8 space-y-6 animate-fade-in w-full">
-            <div className={`p-8 rounded-[3rem] border-2 shadow-premium ${quizFeedback.type === 'success' ? 'border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10' : 'border-rose-500/30 bg-rose-500/5 dark:bg-rose-500/10'}`}>
-                <div className={`text-center font-black text-2xl mb-6 flex flex-col items-center gap-6 ${quizFeedback.type === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>
+            <div className={`p-8 rounded-[3rem] border-2 shadow-premium ${quizFeedback.type === 'success' ? 'border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10' : 'border-purple-500/30 bg-purple-500/5 dark:bg-purple-500/10'}`}>
+                <div className={`text-center font-black text-2xl mb-6 flex flex-col items-center gap-6 ${quizFeedback.type === 'success' ? 'text-emerald-500' : 'text-purple-500'}`}>
                     <Mascot
                         isDark={isDark}
                         size="xl"
@@ -45,8 +44,8 @@ export const Quiz = ({
                         isAdmin={isAdmin}
                     />
                     <div className="flex items-center justify-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-xl flex-shrink-0 ${quizFeedback.type === 'success' ? 'bg-emerald-500 animate-pop' : 'bg-rose-500 animate-shake'}`}>
-                            {quizFeedback.type === 'success' ? <Check size={24} strokeWidth={3.5} /> : <X size={24} strokeWidth={3.5} />}
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-xl flex-shrink-0 ${quizFeedback.type === 'success' ? 'bg-emerald-500 animate-pop' : 'bg-purple-500 animate-shake'}`}>
+                            {quizFeedback.type === 'success' ? <Check size={24} strokeWidth={3.5} /> : <RotateCcw size={24} strokeWidth={3.5} />}
                         </div>
                         <span className="uppercase tracking-tight">{quizFeedback.message}</span>
                     </div>
@@ -57,7 +56,7 @@ export const Quiz = ({
                         {quizFeedback.userValueLocal && (
                             <div className="opacity-50">
                                 <p className="text-[10px] uppercase font-black tracking-[0.25em] mb-2">{t.yourAnswer}</p>
-                                <p className="text-xl font-bold line-through decoration-rose-500/50">{quizFeedback.userValueLocal}</p>
+                                <p className="text-xl font-bold line-through decoration-purple-500/50">{quizFeedback.userValueLocal}</p>
                             </div>
                         )}
                         <div className={`p-6 rounded-[2rem] ${isDark ? 'bg-white/5 border border-white/10' : 'bg-white border border-slate-100 shadow-sm'}`}>
@@ -117,21 +116,21 @@ export const Quiz = ({
                 </button>
             </div>
 
-            <div className="w-full mb-10">
+            <div className="w-full mb-6 relative z-10">
                 {appMode === 'quiz_mc' && (
-                    <div className={`p-8 rounded-[2.5rem] text-center border shadow-inner ${isDark ? 'bg-indigo-950/20 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}>
-                        <h3 className={`text-3xl font-black leading-tight ${isDark ? 'text-white' : 'text-indigo-900'}`}>{isTranslated ? quizQuestion.target.trDef : quizQuestion.target.engDef}</h3>
+                    <div className={`p-6 rounded-[2.5rem] text-center border shadow-inner ${isDark ? 'bg-indigo-950/20 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}>
+                        <h3 className={`text-2xl font-black leading-tight ${isDark ? 'text-white' : 'text-indigo-900'}`}>{isTranslated ? quizQuestion.target.trDef : quizQuestion.target.engDef}</h3>
                     </div>
                 )}
                 {appMode === 'quiz_tf' && (
-                    <div className={`p-8 rounded-[2.5rem] text-center border ${isDark ? 'bg-slate-900/40 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
-                        <h3 className={`text-4xl font-black mb-4 uppercase tracking-tight ${isDark ? 'text-indigo-400' : 'text-indigo-900'}`}>{quizQuestion.target.word}</h3>
-                        <p className="text-lg opacity-50 font-medium italic leading-tight">"{isTranslated ? quizQuestion.displayedTrDef : quizQuestion.displayedEngDef}"</p>
+                    <div className={`p-6 rounded-[2.5rem] text-center border ${isDark ? 'bg-slate-900/40 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                        <h3 className={`text-3xl font-black mb-3 uppercase tracking-tight ${isDark ? 'text-indigo-400' : 'text-indigo-900'}`}>{quizQuestion.target.word}</h3>
+                        <p className="text-base opacity-50 font-medium italic leading-tight">"{isTranslated ? quizQuestion.displayedTrDef : quizQuestion.displayedEngDef}"</p>
                     </div>
                 )}
                 {appMode === 'quiz_sentence' && (
-                    <div className={`p-8 rounded-[2.5rem] text-white shadow-glow-blue border border-blue-400/30 ${isDark ? 'bg-blue-600/80' : 'bg-blue-700'}`}>
-                        <p className="text-2xl font-black leading-tight tracking-tight text-center">"{quizQuestion.target.trExample}"</p>
+                    <div className={`p-6 rounded-[2.5rem] text-white shadow-glow-blue border border-blue-400/30 ${isDark ? 'bg-blue-600/80' : 'bg-blue-700'}`}>
+                        <p className="text-xl font-black leading-tight tracking-tight text-center">"{quizQuestion.target.trExample}"</p>
                     </div>
                 )}
             </div>
@@ -152,8 +151,8 @@ export const Quiz = ({
                     ))}
                     {appMode === 'quiz_tf' && (
                         <div className="flex gap-4">
+                            <button onClick={() => handleQuizAction(false === quizQuestion.isCorrectPair, t.incorrectBtn, quizQuestion.target.word, null, 'tf')} className="flex-1 py-7 rounded-[2rem] bg-purple-500 text-white font-black text-2xl shadow-glow-purple transition-all hover:scale-105 active:scale-95 uppercase tracking-widest">{t.falseBtn}</button>
                             <button onClick={() => handleQuizAction(true === quizQuestion.isCorrectPair, t.incorrectBtn, quizQuestion.target.word, null, 'tf')} className="flex-1 py-7 rounded-[2rem] bg-emerald-500 text-white font-black text-2xl shadow-glow-emerald transition-all hover:scale-105 active:scale-95 uppercase tracking-widest">{t.trueBtn}</button>
-                            <button onClick={() => handleQuizAction(false === quizQuestion.isCorrectPair, t.incorrectBtn, quizQuestion.target.word, null, 'tf')} className="flex-1 py-7 rounded-[2rem] bg-rose-500 text-white font-black text-2xl shadow-glow-rose transition-all hover:scale-105 active:scale-95 uppercase tracking-widest">{t.falseBtn}</button>
                         </div>
                     )}
                     {appMode === 'quiz_sentence' && (
@@ -174,12 +173,12 @@ export const Quiz = ({
                                 ))}
                                 {selectedTokens.length === 0 && <p className="w-full text-center text-sm font-black uppercase tracking-widest opacity-20 py-8 leading-relaxed px-4">{t.dragTokens}</p>}
                             </div>
-                            <div className="flex flex-wrap gap-3 justify-center mt-8">
+                            <div className="flex flex-wrap gap-2 justify-center mt-6">
                                 {availableTokens.map(tok => (
                                     <button
                                         key={tok.id}
                                         onClick={() => toggleToken(tok, 'available')}
-                                        className={`px-5 py-2.5 font-black rounded-2xl shadow-sm border-2 transition-all hover:scale-105 active:scale-95 uppercase tracking-tight ${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-100 text-slate-600'}`}
+                                        className={`px-4 py-2 font-black rounded-2xl shadow-sm border-2 transition-all hover:scale-105 active:scale-95 uppercase tracking-tight text-xs ${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-100 text-slate-600'}`}
                                     >
                                         {tok.text}
                                     </button>
@@ -188,7 +187,7 @@ export const Quiz = ({
                             <button
                                 onClick={handleSentenceCheck}
                                 disabled={selectedTokens.length === 0}
-                                className="w-full mt-10 py-6 bg-amber-400 disabled:opacity-50 text-slate-900 font-black text-lg rounded-3xl shadow-glow-amber transition-all active:scale-95 uppercase tracking-[0.2em] flex items-center justify-center gap-3"
+                                className="w-full mt-6 py-5 bg-amber-400 disabled:opacity-50 text-slate-900 font-black text-lg rounded-3xl shadow-glow-amber transition-all active:scale-95 uppercase tracking-[0.2em] flex items-center justify-center gap-3"
                             >
                                 <Target size={24} /> {t.checkAnswer}
                             </button>

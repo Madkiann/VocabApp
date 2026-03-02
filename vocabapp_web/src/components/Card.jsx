@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Check,
     Bookmark,
@@ -19,11 +19,14 @@ import {
     Trash2,
     Undo2,
     Lightbulb,
-    MessagesSquare
+    MessagesSquare,
+    Feather,
+    Award
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { shareWordToCanvas } from '../utils/shareWord';
 import { Mascot } from './Mascot';
+import { DiscoveryBar } from './DiscoveryBar';
 
 export const Card = ({
     wordObj,
@@ -46,6 +49,8 @@ export const Card = ({
     setShowDetails,
     showForms,
     setShowForms,
+    showCaseExamples,
+    setShowCaseExamples,
     isDark,
     t,
     appLang,
@@ -61,13 +66,30 @@ export const Card = ({
     onEditWord,
     onUndo,
     canUndo,
+    cardBg,
+    onEvolveBond,
     isSystem = false
 }) => {
     const [isSpeaking, setIsSpeaking] = useState(false);
+    const [showBondDetails, setShowBondDetails] = useState(false);
     const [isExampleTrRevealed, setIsExampleTrRevealed] = useState(false);
     const [isCaseExamplesOpen, setIsCaseExamplesOpen] = useState(false);
     const [revealedCaseExampleIdx, setRevealedCaseExampleIdx] = useState(null);
     const [isMiniCaseTrOpen, setIsMiniCaseTrOpen] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
+
+    const handleShare = async (e) => {
+        if (e) e.stopPropagation();
+        if (isSharing) return;
+        setIsSharing(true);
+        try {
+            await shareWordToCanvas(wordObj, appLang, t, isDark);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsSharing(false);
+        }
+    };
 
     const handleSpeak = (e) => {
         if (e) e.stopPropagation();
@@ -96,22 +118,118 @@ export const Card = ({
         }
     };
 
+    const [revealedCaseEn, setRevealedCaseEn] = useState({});
+
+    useEffect(() => {
+        setRevealedCaseEn({});
+    }, [wordObj.id]);
+
     if (!wordObj || !wordObj.sm2) return null;
 
+    const getBondInfo = () => {
+        const bondXP = wordObj.sm2.bondXP || 0;
+        const lastQuality = wordObj.sm2.lastQualityScore;
+
+        // Stubborn (Dirençli) - Crimson Warning
+        if (lastQuality === 2) {
+            return {
+                id: 'stubborn',
+                name: t.bond_stubborn || 'Dirençli',
+                color: 'text-red-400',
+                bg: 'bg-red-950/60',
+                border: 'border-red-500/50',
+                glow: 'shadow-[0_0_40px_rgba(239,68,68,0.4)]',
+                featherColor: 'text-red-400',
+                cardEffect: 'ring-4 ring-red-500/30 animate-pulse-gentle'
+            };
+        }
+
+        // Stranger (Yabancı) - Minimalist Mist
+        if (bondXP === 0) return {
+            id: 'stranger',
+            name: t.bond_stranger || 'Yabancı',
+            color: 'text-slate-400',
+            bg: 'bg-slate-900/40',
+            border: 'border-slate-700/30',
+            featherColor: 'text-slate-500',
+            cardEffect: 'backdrop-blur-[4px] saturate-[0.95]'
+        };
+
+        // Acquaintance (Tanış) - Rose Quartz
+        if (bondXP < 100) return {
+            id: 'acquaintance',
+            name: t.bond_acquaintance || 'Tanış',
+            color: 'text-rose-300',
+            bg: 'bg-rose-950/40',
+            border: 'border-rose-500/40',
+            glow: 'shadow-[0_0_30px_rgba(244,63,94,0.3)]',
+            featherColor: 'text-rose-400',
+            cardEffect: 'ring-2 ring-rose-500/20'
+        };
+
+        // Confidant (Sırdaş) - Royal Amethyst
+        if (bondXP < 250) return {
+            id: 'confidant',
+            name: t.bond_confidant || 'Sırdaş',
+            color: 'text-purple-300',
+            bg: 'bg-purple-950/50',
+            border: 'border-purple-500/50',
+            glow: 'shadow-[0_0_40px_rgba(168,85,247,0.4)]',
+            featherColor: 'text-purple-400',
+            texture: 'stone',
+            pulse: 'animate-pulse-slow',
+            cardEffect: 'ring-2 ring-purple-500/30'
+        };
+
+        // Companion (Yoldaş) - Radiant Golden Mettle
+        return {
+            id: 'companion',
+            name: t.bond_companion || 'Yoldaş',
+            color: 'text-amber-300',
+            bg: 'bg-amber-950/60',
+            border: 'border-amber-400/60',
+            glow: 'shadow-[0_0_60px_rgba(245,158,11,0.5)]',
+            featherColor: 'text-amber-400',
+            seal: true,
+            texture: 'stone',
+            sound: 'companion',
+            cardEffect: 'ring-4 ring-amber-400/40 shadow-inner-gold'
+        };
+    };
+
+    const bond = getBondInfo();
+    const wisdomProgress = Math.min(100, Math.round(((wordObj.sm2.int || 0) / 21) * 100));
+
     return (
-        <>
-            {/* Embedded Stats - Top Layer Capsule */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-5 py-2.5 rounded-full z-[160] border shadow-2xl pointer-events-none font-black text-[11px] tracking-tight bg-slate-900/60 dark:bg-black/40 border-slate-900/10 dark:border-white/10 text-white/90 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 leading-none">
-                    <BookOpen size={14} className="text-indigo-400 opacity-90" />
-                    <span>{stats?.current} / {stats?.total}</span>
-                </div>
-                <div className="w-px h-3 bg-white/20" />
-                <div className="flex items-center gap-1.5 leading-none">
-                    <Clock size={14} className="text-amber-400 opacity-90" />
-                    <span>{stats?.timeRemaining} {t.minsShort} {t.minsLeft}</span>
-                </div>
-            </div>
+        <div className={`w-full h-full ${cardBg} ${isDark ? 'shadow-black/50' : 'shadow-blue-900/10'} rounded-[2.5rem] shadow-2xl border flex flex-col origin-center overflow-hidden animate-fade-in relative transition-all duration-700`}>
+            {/* High-Impact Interior Paint Layer */}
+            <div className={`absolute inset-0 transition-all duration-1000 ${bond.bg} ${bond.glow} ${bond.cardEffect || ''}`}></div>
+
+            {/* Background Texture Overlays */}
+            {bond.texture === 'stone' && (
+                <div className="absolute inset-0 opacity-[0.05] pointer-events-none grayscale mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stone-wall.png')]"></div>
+            )}
+
+            {bond.id === 'stranger' && (
+                <div className="absolute inset-0 bg-slate-500/5 backdrop-blur-[2px] pointer-events-none z-0"></div>
+            )}
+
+            {/* Feather Bond Badge - Top Left - Now Clickable */}
+            <button
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => { e.stopPropagation(); setShowBondDetails(true); }}
+                className={`absolute top-12 left-6 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg ${bond.bg} ${bond.border} ${bond.color}`}
+            >
+                <Feather size={14} className={`animate-pulse ${bond.featherColor}`} />
+                <span className="text-[9px] font-black uppercase tracking-[0.2em]">{bond.name}</span>
+                <AnimatePresence>
+                    {showBondDetails && (
+                        <div className="absolute top-0 left-0">
+                            {/* Handled in the bottom AnimatePresence to be on top of everything */}
+                        </div>
+                    )}
+                </AnimatePresence>
+            </button>
 
             {/* Top Action Area - Positioned relative to card top */}
             <div className="absolute top-12 right-6 flex gap-2 z-50">
@@ -127,11 +245,12 @@ export const Card = ({
                 )}
                 <button
                     onPointerDown={(e) => e.stopPropagation()}
-                    onClick={(e) => { e.stopPropagation(); shareWordToCanvas(wordObj, appLang, t, isDark); }}
-                    className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isDark ? 'bg-slate-800/40 text-slate-300' : 'bg-white/50 text-slate-500 hover:bg-white/90'} backdrop-blur-md`}
+                    onClick={handleShare}
+                    disabled={isSharing}
+                    className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isSharing ? 'opacity-50' : ''} ${isDark ? 'bg-slate-800/40 text-slate-300' : 'bg-white/50 text-slate-500 hover:bg-white/90'} backdrop-blur-md`}
                     title="Paylaş / Share"
                 >
-                    <Share2 size={16} strokeWidth={2.5} />
+                    {isSharing ? <Loader2 size={16} strokeWidth={2.5} className="animate-spin" /> : <Share2 size={16} strokeWidth={2.5} />}
                 </button>
                 {!isSystem && (
                     <button
@@ -164,16 +283,19 @@ export const Card = ({
                 )}
             </div>
 
-            <div className="flex flex-col h-full animate-fade-in relative z-10 font-sans">
+            <div className="flex flex-col h-full animate-fade-in relative z-10 font-sans p-7">
                 {/* Reveal Overlay - Top Level */}
                 {!isRevealed && (
                     <div
                         className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group text-center bg-transparent select-none active:bg-slate-500/5 transition-colors duration-200"
                         onClick={() => {
                             setIsRevealed(true);
+                            if (bond.sound === 'companion') {
+                                sounds.playCompanion();
+                            }
                         }}
                     >
-                        <h2 className={`font-black tracking-tight mb-4 w-full px-2 leading-none pointer-events-none ${isDark ? 'text-white' : 'text-slate-900'} ${wordObj.word.length > 8 ? (wordObj.word.length > 12 ? 'text-3xl sm:text-4xl' : 'text-4xl sm:text-5xl') : 'text-5xl sm:text-6xl'}`} style={{ wordBreak: 'break-word' }}>
+                        <h2 className={`font-black tracking-tight mb-4 w-full px-2 leading-none pointer-events-none transition-all duration-700 ${isDark ? 'text-white' : 'text-slate-900'} ${wordObj.word.length > 8 ? (wordObj.word.length > 12 ? 'text-3xl sm:text-4xl' : 'text-4xl sm:text-5xl') : 'text-5xl sm:text-6xl'}`} style={{ wordBreak: 'break-word' }}>
                             {wordObj.word.charAt(0).toUpperCase() + wordObj.word.slice(1)}
                         </h2>
                         <div className="flex items-center justify-center gap-2 opacity-50 font-serif text-xl relative z-30" style={{ fontFamily: '"Arial Unicode MS", "Lucida Sans Unicode", "Segoe UI", sans-serif' }}>
@@ -192,7 +314,20 @@ export const Card = ({
                     </div>
                 )}
 
-                <div className={`flex-grow flex flex-col overflow-y-auto scrollbar-hide pr-1 relative min-h-0 pt-20 mask-fade-v transition-all duration-300 ${!isRevealed ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`} style={{ touchAction: 'pan-y' }}>
+                <div
+                    className={`flex-grow flex flex-col overflow-y-auto scrollbar-hide pr-1 relative min-h-0 pt-20 mask-fade-v transition-all duration-500 ${!isRevealed ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'} ${bond.glow || ''} ${bond.pulse || ''}`}
+                    style={{ touchAction: 'pan-y' }}
+                >
+                    {/* Background Texture Overlays */}
+                    {bond.texture === 'stone' && (
+                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none grayscale mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stone-wall.png')]"></div>
+                    )}
+                    {bond.seal && (
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none animate-spin-slow">
+                            <Award size={300} strokeWidth={1} />
+                        </div>
+                    )}
+
                     {/* Persistent POS Tag */}
                     <div className="flex px-8 mb-4">
                         <span className={`px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.2em] shadow-sm ${isDark ? 'bg-indigo-900/50 text-indigo-300 border border-indigo-500/30' : 'bg-indigo-50 text-indigo-600 border border-indigo-100'}`}>
@@ -202,14 +337,6 @@ export const Card = ({
 
                     {isRevealed && (
                         <div className="space-y-8 pb-8">
-                            {/* Mastered Badge */}
-                            {wordObj.sm2.rep > 3 && (
-                                <div className="mb-2">
-                                    <span className="flex items-center w-fit gap-1 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black border border-emerald-500/20">
-                                        <Sparkles size={12} /> {t.mastered || 'MASTERED'}
-                                    </span>
-                                </div>
-                            )}
                             {/* Word & Phonetic */}
                             <div
                                 className="mb-2 relative cursor-pointer group hover:bg-slate-500/5 p-4 -ml-4 rounded-3xl transition-colors"
@@ -280,21 +407,21 @@ export const Card = ({
                             {/* Tools Grid */}
                             <div className="grid grid-cols-2 gap-4 mt-8">
                                 <button
-                                    onClick={() => { setShowWriting(!showWriting); setShowAi(false); setShowForms(false); setShowDetails(false); }}
-                                    className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all hover:scale-105 active:scale-95 ${showWriting ? 'border-amber-400 bg-amber-400/10 text-amber-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400' : 'border-slate-100 glass text-slate-600 shadow-sm')}`}
+                                    onClick={() => { setShowCaseExamples(!showCaseExamples); setShowAi(false); setShowForms(false); setShowDetails(false); setShowWriting(false); }}
+                                    className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all hover:scale-105 active:scale-95 ${showCaseExamples ? 'border-amber-400 bg-amber-400/10 text-amber-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400' : 'border-slate-100 glass text-slate-600 shadow-sm')}`}
                                 >
-                                    <Edit3 size={24} />
-                                    <span className="text-[9px] font-black uppercase tracking-widest leading-none text-center">{t.buildSentence.substring(0, 10)}</span>
+                                    <Lightbulb size={24} />
+                                    <span className="text-[9px] font-black uppercase tracking-widest leading-none text-center">{t.caseExamples}</span>
                                 </button>
                                 <button
-                                    onClick={() => { setShowDetails(!showDetails); setShowAi(false); setShowWriting(false); setShowForms(false); }}
+                                    onClick={() => { setShowDetails(!showDetails); setShowAi(false); setShowWriting(false); setShowForms(false); setShowCaseExamples(false); }}
                                     className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${showDetails ? 'border-emerald-400 bg-emerald-400/10 text-emerald-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400 hover:border-slate-700 hover:text-emerald-400' : 'border-slate-100 glass text-slate-600 shadow-sm hover:border-slate-300 hover:text-emerald-500')}`}
                                 >
                                     <BookOpen size={24} />
                                     <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t.detailsBtn || 'DETAILS'}</span>
                                 </button>
                                 <button
-                                    onClick={() => { if (!showAi) fetchAiData(wordObj.word); setShowAi(!showAi); setShowWriting(false); setShowForms(false); setShowDetails(false); }}
+                                    onClick={() => { if (!showAi) fetchAiData(wordObj.word); setShowAi(!showAi); setShowWriting(false); setShowForms(false); setShowDetails(false); setShowCaseExamples(false); }}
                                     className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${showAi ? 'border-blue-400 bg-blue-400/10 text-blue-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400 hover:border-slate-700 hover:text-blue-400' : 'border-slate-100 glass text-slate-600 shadow-sm hover:border-slate-300 hover:text-blue-500')}`}
                                 >
                                     <Sparkles size={24} />
@@ -302,78 +429,72 @@ export const Card = ({
                                 </button>
 
                                 <button
-                                    onClick={() => { setShowForms(!showForms); setShowAi(false); setShowWriting(false); setShowDetails(false); }}
+                                    onClick={() => { setShowForms(!showForms); setShowAi(false); setShowWriting(false); setShowDetails(false); setShowCaseExamples(false); }}
                                     className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${showForms ? 'border-indigo-400 bg-indigo-400/10 text-indigo-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400 hover:border-slate-700 hover:text-indigo-400' : 'border-slate-100 glass text-slate-600 shadow-sm hover:border-slate-300 hover:text-indigo-500')}`}
                                 >
                                     <Layers size={24} />
                                     <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t.formsBtn || 'FORMS'}</span>
                                 </button>
+
+                                <button
+                                    onClick={() => { setShowWriting(!showWriting); setShowAi(false); setShowForms(false); setShowDetails(false); setShowCaseExamples(false); }}
+                                    className={`col-span-2 flex items-center justify-center gap-3 p-5 rounded-[2rem] border-2 transition-all hover:scale-[1.02] active:scale-95 ${showWriting ? 'border-purple-400 bg-purple-400/10 text-purple-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400' : 'border-slate-100 glass text-slate-600 shadow-sm')}`}
+                                >
+                                    <Edit3 size={20} />
+                                    <span className="text-[10px] font-black uppercase tracking-widest leading-none text-center">{t.writingBtn || 'YAZMA PRATİĞİ'}</span>
+                                </button>
                             </div>
 
-                            {/* Case Examples (Vaka Örnekleri) - Word Mode Accordion */}
-                            {wordObj.details?.caseExamples?.length > 0 && (
-                                <section className="mt-4 mb-4">
-                                    <div
-                                        className={`w-full p-5 rounded-[2.5rem] border-2 relative overflow-hidden text-left shadow-sm cursor-pointer transition-all duration-300 flex flex-col ${isDark ? 'border-amber-500/10 bg-amber-500/5 hover:border-amber-500/30' : 'border-amber-100 bg-amber-50/30 hover:bg-amber-50'}`}
-                                        onClick={(e) => { e.stopPropagation(); setIsCaseExamplesOpen(!isCaseExamplesOpen); }}
-                                    >
-                                        <div className="flex items-center justify-between relative z-10 w-full px-1">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`p-2 rounded-xl ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-500/10 text-amber-600'}`}>
-                                                    <Lightbulb size={20} strokeWidth={2.5} />
-                                                </div>
-                                                <span className={`text-[11px] font-black uppercase tracking-[0.3em] mt-0.5 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>Vaka Örnekleri</span>
-                                            </div>
-                                            <ChevronDown size={20} strokeWidth={2.5} className={`transform transition-transform duration-300 ${isDark ? 'text-amber-400' : 'text-amber-600'} ${isCaseExamplesOpen ? 'rotate-180' : ''}`} />
-                                        </div>
-
-                                        <div className={`grid transition-all duration-300 ease-in-out w-full ${isCaseExamplesOpen ? 'grid-rows-[1fr] opacity-100 mt-6' : 'grid-rows-[0fr] opacity-0 mt-0'}`}>
-                                            <div className="overflow-hidden space-y-4">
-                                                {wordObj.details.caseExamples.map((item, idx) => (
-                                                    <div key={idx} className={`p-5 rounded-3xl border transition-all ${isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
-                                                        <p className={`text-sm font-bold mb-3 leading-relaxed ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
-                                                            {item.tr}
-                                                        </p>
-
-                                                        <AnimatePresence>
-                                                            {revealedCaseExampleIdx === idx && (
-                                                                <motion.div
-                                                                    initial={{ height: 0, opacity: 0 }}
-                                                                    animate={{ height: 'auto', opacity: 1 }}
-                                                                    exit={{ height: 0, opacity: 0 }}
-                                                                    transition={{ duration: 0.3 }}
-                                                                >
-                                                                    <div
-                                                                        className={`p-4 rounded-2xl border-l-[6px] italic text-sm font-medium ${isDark ? 'bg-amber-500/10 border-amber-500/50 text-amber-200' : 'bg-amber-50 border-amber-400 text-amber-900'} cursor-pointer mb-2`}
-                                                                        onClick={(e) => { e.stopPropagation(); setRevealedCaseExampleIdx(null); }}
-                                                                    >
-                                                                        {item.en}
-                                                                    </div>
-                                                                </motion.div>
-                                                            )}
-                                                        </AnimatePresence>
-
-                                                        {revealedCaseExampleIdx !== idx && (
-                                                            <button
-                                                                onClick={(e) => { e.stopPropagation(); setRevealedCaseExampleIdx(idx); }}
-                                                                className="flex items-center gap-2 text-[10px] font-black text-amber-500 hover:text-amber-400 transition-colors uppercase tracking-[0.2em]"
-                                                            >
-                                                                <RefreshCw size={14} /> ÇEVİRİYİ GÖR
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
-                            )}
 
                             {/* Panels */}
                             <div className="space-y-6 pb-6">
-                                {showWriting && (
+                                {showCaseExamples && (
                                     <div className={`p-8 rounded-[3rem] border-2 animate-fade-in ${isDark ? 'bg-slate-900 border-amber-500/20' : 'bg-white border-amber-200 shadow-premium'}`}>
                                         <h4 className="text-xs font-black mb-6 flex items-center gap-2 text-amber-500 uppercase tracking-[0.2em]">
+                                            <Lightbulb size={20} /> {t.caseExamples}
+                                        </h4>
+
+                                        {wordObj.details?.caseExamples?.length > 0 && (
+                                            <div className="mb-0 space-y-4">
+                                                {wordObj.details.caseExamples.map((ex, i) => (
+                                                    <div
+                                                        key={i}
+                                                        onClick={() => setRevealedCaseEn(prev => ({ ...prev, [i]: !prev[i] }))}
+                                                        className={`p-5 rounded-[2rem] border transition-all cursor-pointer group relative overflow-hidden ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-amber-50/50 border-amber-100'}`}
+                                                    >
+                                                        <div className="flex flex-col gap-2">
+                                                            <p className={`text-base font-black leading-tight tracking-tight ${isDark ? 'text-amber-400/90' : 'text-amber-600'}`}>"{ex?.tr || ''}"</p>
+
+                                                            <div className={`grid transition-all duration-300 ease-in-out ${(revealedCaseEn || {})[i] ? 'grid-rows-[1fr] opacity-100 mt-2' : 'grid-rows-[0fr] opacity-0'}`}>
+                                                                <div className="overflow-hidden">
+                                                                    <p className={`text-sm font-bold italic ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                                                                        {ex?.en || ''}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                            {!(revealedCaseEn || {})[i] && (
+                                                                <div className="flex items-center gap-2 mt-1 text-[9px] font-black uppercase tracking-widest opacity-30 group-hover:opacity-60 transition-opacity text-amber-500">
+                                                                    <Eye size={12} /> {t.toEn}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {showWriting && (
+                                    <div className={`p-8 rounded-[3rem] border-2 animate-fade-in ${isDark ? 'bg-slate-900 border-purple-500/20' : 'bg-white border-purple-200 shadow-premium'}`}>
+                                        <h4 className="text-xs font-black mb-6 flex items-center gap-2 text-purple-500 uppercase tracking-[0.2em]">
+                                            <Edit3 size={20} /> {t.writingBtn || 'YAZMA PRATİĞİ'}
+                                        </h4>
+
+                                        <div className="h-px bg-amber-500/10 mb-8"></div>
+
+                                        <h4 className="text-xs font-black mb-6 flex items-center gap-2 text-purple-500 uppercase tracking-[0.2em]">
                                             <Target size={20} /> {t.translateThis}
                                         </h4>
                                         <p className="text-lg font-black mb-6 opacity-90 leading-tight">"{wordObj.trExample}"</p>
@@ -387,7 +508,7 @@ export const Card = ({
                                         <button
                                             onClick={() => evaluateSentence(wordObj.word)}
                                             disabled={isEvaluating || !userSentence.trim()}
-                                            className="w-full py-5 bg-amber-400 hover:bg-amber-500 disabled:opacity-50 text-slate-900 font-black rounded-3xl shadow-glow-amber transition-all active:scale-95 flex items-center justify-center gap-3"
+                                            className="w-full py-5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white font-black rounded-3xl shadow-glow-purple transition-all active:scale-95 flex items-center justify-center gap-3"
                                         >
                                             {isEvaluating ? <Loader2 className="animate-spin" size={20} /> : <Target size={20} />} {t.sendToTeacher}
                                         </button>
@@ -398,7 +519,7 @@ export const Card = ({
                                                         <Mascot isDark={isDark} size="sm" look={writingFeedback.score >= 8 ? "happy" : "neutral"} isAdmin={isAdmin} />
                                                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500">{t.teacherNotes}</span>
                                                     </div>
-                                                    <div className="flex gap-1.5 items-center px-4 py-2 bg-amber-400 rounded-full font-black text-xs text-slate-900 shadow-sm">
+                                                    <div className="flex gap-1.5 items-center px-4 py-2 bg-purple-500 rounded-full font-black text-xs text-white shadow-sm">
                                                         <Target size={14} /> {writingFeedback.score}/10
                                                     </div>
                                                 </div>
@@ -519,8 +640,19 @@ export const Card = ({
                                             )}
 
 
-
-
+                                            {wordObj.details?.moreExamples?.length > 0 && (
+                                                <div className="pt-4 border-t border-emerald-500/10">
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-4 block">{t.moreExamples || 'MORE EXAMPLES'}</span>
+                                                    <div className="space-y-4">
+                                                        {wordObj.details.moreExamples.map((ex, i) => (
+                                                            <div key={i} className={`p-4 rounded-2xl ${isDark ? 'bg-emerald-950/20' : 'bg-emerald-50'}`}>
+                                                                <p className="text-sm font-bold mb-1 leading-tight tracking-tight">"{ex.en}"</p>
+                                                                <p className="text-[10px] opacity-60 font-medium italic">{ex.tr}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -540,6 +672,70 @@ export const Card = ({
                     )}
                 </div>
             </div>
-        </>
+            {/* Bond Details Overlay */}
+            <AnimatePresence>
+                {showBondDetails && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={(e) => { e.stopPropagation(); setShowBondDetails(false); }}
+                        className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-md p-6"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className={`w-full max-w-sm rounded-[3rem] p-8 border shadow-2xl ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'}`}
+                        >
+                            <div className="flex flex-col items-center text-center">
+                                <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center mb-6 shadow-xl ${bond.bg} ${bond.border}`}>
+                                    <Feather size={40} className={bond.color} />
+                                </div>
+
+                                <span className={`text-[11px] font-black uppercase tracking-[0.3em] opacity-40 mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>{t.mindBonds || 'Zihin Bağları'}</span>
+                                <h3 className={`text-4xl font-black mb-4 ${bond.color}`}>{bond.name}</h3>
+
+                                <p className={`text-sm font-medium italic mb-8 opacity-60`}>"{bond.desc}"</p>
+
+                                <div className={`w-full p-6 rounded-3xl border ${isDark ? 'bg-white/5 border-white/5' : 'bg-black/5 border-black/5'}`}>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{t.wisdomBar || 'Bilgelik Barı'}</span>
+                                        <span className="text-xl font-black opacity-60">%{wisdomProgress}</span>
+                                    </div>
+
+                                    <div className="w-full h-3 bg-slate-500/10 rounded-full overflow-hidden mb-2">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${wisdomProgress}%` }}
+                                            transition={{ duration: 1, ease: "easeOut" }}
+                                            className={`h-full rounded-full ${bond.id === 'companion' ? 'bg-gradient-to-r from-amber-400 to-orange-400' : (wisdomProgress > 70 ? 'bg-purple-400' : 'bg-indigo-400')}`}
+                                        />
+                                    </div>
+                                    <p className="text-[9px] font-bold opacity-30 uppercase tracking-widest text-right">{t.maxLevelCompanion || 'Maksimum Seviye: Yoldaş (%100)'}</p>
+                                </div>
+
+                                {isAdmin && (
+                                    <button
+                                        onClick={() => onEvolveBond(wordObj.id)}
+                                        className="mt-4 px-6 py-2 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30 text-[10px] font-black uppercase tracking-widest hover:bg-amber-500/30 active:scale-95 transition-all"
+                                    >
+                                        DEBUG: EVOLVE BOND
+                                    </button>
+                                )}
+
+                                <button
+                                    onClick={() => setShowBondDetails(false)}
+                                    className="mt-8 px-10 py-4 rounded-full bg-indigo-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-indigo-500/20 active:scale-95 transition-all"
+                                >
+                                    {t.gotIt || 'ANLADIM'}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
     );
 };

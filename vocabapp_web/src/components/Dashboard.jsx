@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BarChart3, Moon, Clock, Brain, RefreshCw, Zap, Hourglass, Share2, MoreHorizontal, Target, TrendingUp, Copy, ArrowRight, Trophy, Lock, ChevronDown, Award, FileText, Check, X, Languages, ChevronRight } from 'lucide-react';
+﻿import React, { useState } from 'react';
+import { BarChart3, Moon, Clock, Brain, RefreshCw, Zap, Hourglass, Share2, MoreHorizontal, Target, TrendingUp, Copy, ArrowRight, Trophy, Lock, ChevronDown, Award, FileText, Check, X, Languages, ChevronRight, Feather, RotateCcw } from 'lucide-react';
 import { Mascot } from './Mascot';
 import AbstractIcon from './AchievementIcons';
 
@@ -14,8 +14,7 @@ export const Dashboard = ({
     vocab,
     totalReviewsAll,
     globalRetention,
-    familiarCount,
-    learningCount,
+    bondStats,
     strongCount,
     weakWordsArray,
     bgMain,
@@ -103,7 +102,12 @@ export const Dashboard = ({
                             </div>
                             <div className="flex flex-col">
                                 <h3 className={`text-2xl font-black tracking-tight flex items-baseline gap-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                                    {streak} <span className="text-xl opacity-60 font-medium">{t.dayWord || "Gün"}</span>
+                                    <span className="flex items-center gap-3">
+                                        {streak} <span className="text-xl opacity-60 font-medium">{t.dayWord || "Gün"}</span>
+                                        <div className="scale-75 origin-left opacity-90 animate-float-subtle">
+                                            <Mascot isDark={isDark} size="sm" variant="3d" look="glasses" animated={true} />
+                                        </div>
+                                    </span>
                                 </h3>
                                 <p className={`text-[11px] font-bold uppercase tracking-widest opacity-60`}>{t.continuousStreak || "Aralıksız Seri"}</p>
                                 <div className="mt-1 flex gap-2">
@@ -180,7 +184,7 @@ export const Dashboard = ({
                                             {(stats.correct > 0 || stats.wrong > 0) && (
                                                 <div className="absolute -bottom-1 -right-1 flex gap-0.5">
                                                     {stats.correct > 0 && <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 border border-white dark:border-slate-900" title={`${stats.correct} Doğru`} />}
-                                                    {stats.wrong > 0 && <div className="w-1.5 h-1.5 rounded-full bg-rose-500 border border-white dark:border-slate-900" title={`${stats.wrong} Yanlış`} />}
+                                                    {stats.wrong > 0 && <div className="w-1.5 h-1.5 rounded-full bg-amber-500 border border-white dark:border-slate-900" title={`${stats.wrong} Tekrar`} />}
                                                 </div>
                                             )}
                                         </div>
@@ -214,36 +218,111 @@ export const Dashboard = ({
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3">
-                        <div className={`p-4 rounded-[1.8rem] flex flex-col justify-between aspect-square shadow-sm border cursor-pointer transition-all hover:scale-[1.05] active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`} onClick={() => onVaultClick && onVaultClick('Mastered')}>
-                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-600'}`}>
-                                <Brain size={18} />
+                    <div className="grid grid-cols-3 gap-3 mb-6">
+                        <div
+                            onClick={() => onVaultClick && onVaultClick('Mastered')}
+                            className={`p-4 rounded-[2rem] flex flex-col items-center justify-between aspect-square border cursor-pointer transition-all hover:scale-105 active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}
+                        >
+                            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${isDark ? 'bg-emerald-500/10 text-emerald-500' : 'bg-emerald-50 text-emerald-500'}`}>
+                                <Brain size={20} />
                             </div>
-                            <div>
-                                <div className="text-xl font-black">{strongCount}</div>
-                                <div className="text-[8px] font-bold uppercase opacity-40 tracking-widest">{t.mastered || "Mastered"}</div>
+                            <div className="flex flex-col items-center">
+                                <div className="text-2xl font-black tracking-tighter">{strongCount}</div>
+                                <div className="text-[7px] font-black uppercase tracking-widest opacity-40 text-center">{t.mastered || "UZMANLAŞILDI"}</div>
                             </div>
+                        </div>
+                        <div
+                            onClick={() => onVaultClick && onVaultClick('Learning')}
+                            className={`p-4 rounded-[2rem] flex flex-col items-center justify-between aspect-square border cursor-pointer transition-all hover:scale-105 active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}
+                        >
+                            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${isDark ? 'bg-amber-500/10 text-amber-500' : 'bg-amber-50 text-amber-500'}`}>
+                                <Zap size={20} />
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <div className="text-2xl font-black tracking-tighter">{learnedCount}</div>
+                                <div className="text-[7px] font-black uppercase tracking-widest opacity-40 text-center">{t.learned || "ÖĞRENİLENLER"}</div>
+                            </div>
+                        </div>
+                        <div
+                            onClick={() => setShowQuizHistory && setShowQuizHistory(true)}
+                            className={`p-4 rounded-[2rem] flex flex-col items-center justify-between aspect-square border cursor-pointer transition-all hover:scale-105 active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}
+                        >
+                            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${isDark ? 'bg-indigo-500/10 text-indigo-500' : 'bg-indigo-50 text-indigo-500'}`}>
+                                <Trophy size={20} />
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <div className="text-2xl font-black tracking-tighter">{quizLog.total}</div>
+                                <div className="text-[7px] font-black uppercase tracking-widest opacity-40 text-center">QUIZ ({quizLog.total === 0 ? 0 : Math.round((quizLog.correct / quizLog.total) * 100)}%)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Mind Bonds Ecosystem Section */}
+                    <div className="mb-10 px-2">
+                        <div className="flex justify-between items-center mb-6">
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.25em] opacity-40 flex items-center gap-2">
+                                {t.mindBonds || "Zihin Bağları"} <Feather size={11} className="text-amber-400" />
+                            </h4>
                         </div>
 
-                        <div className={`p-4 rounded-[1.8rem] flex flex-col justify-between aspect-square shadow-sm border cursor-pointer transition-all hover:scale-[1.05] active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`} onClick={() => onVaultClick && onVaultClick('Learning')}>
-                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-amber-500/10 text-amber-400' : 'bg-amber-50 text-amber-600'}`}>
-                                <Zap size={18} />
-                            </div>
-                            <div>
-                                <div className="text-xl font-black">{learnedCount}</div>
-                                <div className="text-[8px] font-bold uppercase opacity-40 tracking-widest">{t.learningSection || "Learning"}</div>
-                            </div>
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                            {[
+                                { id: 'stranger', name: t.bond_stranger || 'Yabancı', count: bondStats.stranger, color: 'text-slate-400', bg: 'bg-slate-400/10', border: 'border-slate-400/20' },
+                                { id: 'acquaintance', name: t.bond_acquaintance || 'Tanış', count: bondStats.acquaintance, color: 'text-indigo-400', bg: 'bg-indigo-400/10', border: 'border-indigo-400/20' },
+                                { id: 'confidant', name: t.bond_confidant || 'Sırdaş', count: bondStats.confidant, color: 'text-purple-400', bg: 'bg-purple-400/10', border: 'border-purple-400/20' },
+                                { id: 'companion', name: t.bond_companion || 'Yoldaş', count: bondStats.companion, color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/20' },
+                            ].map((bond) => (
+                                <div
+                                    key={bond.id}
+                                    className={`p-5 rounded-[2.2rem] border transition-all hover:scale-[1.03] active:scale-95 flex flex-col items-center justify-center text-center shadow-sm ${bond.bg} ${bond.border}`}
+                                >
+                                    <Feather size={18} className={`mb-3 ${bond.color}`} />
+                                    <div className={`text-2xl font-black mb-0.5 ${bond.color}`}>{bond.count}</div>
+                                    <div className="text-[9px] font-black uppercase tracking-widest opacity-60 leading-tight">{bond.name}</div>
+                                </div>
+                            ))}
                         </div>
 
-                        <div className={`p-4 rounded-[1.8rem] flex flex-col justify-between aspect-square shadow-sm border cursor-pointer transition-all hover:scale-[1.05] active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`} onClick={() => setShowQuizHistory(true)}>
-                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
-                                <Trophy size={18} />
+                        {/* Special Stubborn Row */}
+                        <div
+                            className={`p-5 rounded-[2.2rem] border transition-all hover:scale-[1.01] flex items-center justify-between px-8 bg-rose-400/5 border-rose-400/10 group`}
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-rose-400 rounded-2xl text-white shadow-glow-rose relative">
+                                    <RotateCcw size={18} strokeWidth={3} />
+                                    <div className="absolute -top-4 -left-4 scale-[0.6] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                        <Mascot isDark={isDark} size="sm" variant="3d" look="tired" animated={true} />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <div className="text-sm font-black text-rose-500 uppercase tracking-tight">{t.bond_stubborn || 'Dirençli Kelimeler'}</div>
+                                    <div className="text-[9px] font-bold opacity-50 uppercase tracking-widest">Sana Meydan Okuyanlar</div>
+                                </div>
                             </div>
-                            <div>
-                                <div className="text-xl font-black">{quizLog.total}</div>
-                                <div className="text-[8px] font-bold uppercase opacity-40 tracking-widest">Quiz ({Math.round((quizLog.correct / (quizLog.total || 1)) * 100)}%)</div>
+                            <div className="flex items-center gap-3">
+                                <div className="text-3xl font-black text-rose-500">{bondStats.stubborn}</div>
+                                <div className="opacity-40 animate-float-subtle">
+                                    <Mascot isDark={isDark} size="sm" variant="3d" look="tired" />
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Level Test Banner */}
+                    <div
+                        onClick={(e) => { e.stopPropagation(); onLevelTestClick && onLevelTestClick(); }}
+                        className={`w-full p-6 rounded-[2.5rem] mb-10 flex items-center justify-between cursor-pointer transition-all hover:scale-[1.02] active:scale-95 border ${isDark ? 'bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-amber-500/20 shadow-glow-amber/5' : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-100 shadow-sm'}`}
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center text-white shadow-glow-amber">
+                                <Trophy size={24} />
+                            </div>
+                            <div className="flex flex-col">
+                                <h4 className="font-black text-sm uppercase tracking-tight">{t.levelTestTitle || "Seviye Tespit"}</h4>
+                                <p className="text-[10px] font-bold opacity-60 leading-tight">{t.levelTestDesc || "Kelime dağarcığını ölç ve seviyeni öğren!"}</p>
+                            </div>
+                        </div>
+                        <ChevronRight size={20} className="text-amber-500" />
                     </div>
                 </div>
 
@@ -285,7 +364,7 @@ export const Dashboard = ({
                             { id: 'hard_worker', title: t.ach_hard_worker_title, desc: t.ach_hard_worker_desc, requirement: 50, progress: totalReviewsAll, barColor: 'bg-indigo-500' },
                             { id: 'consistent_7', title: t.ach_consistent_7_title, desc: t.ach_consistent_7_desc, requirement: 7, progress: streak, barColor: 'bg-amber-500' },
                             { id: 'master_1', title: t.ach_master_1_title, desc: t.ach_master_1_desc, requirement: 10, progress: strongCount, barColor: 'bg-emerald-500' },
-                            { id: 'consistent_15', title: t.ach_consistent_15_title, desc: t.ach_consistent_15_desc, requirement: 15, progress: streak, barColor: 'bg-rose-500' },
+                            { id: 'consistent_15', title: t.ach_consistent_15_title, desc: t.ach_consistent_15_desc, requirement: 15, progress: streak, barColor: 'bg-amber-500' },
                             { id: 'quiz_expert', title: t.ach_quiz_expert_title, desc: t.ach_quiz_expert_desc, requirement: 10, progress: quizLog.total, barColor: 'bg-indigo-500' },
                             { id: 'mastery_focus', title: t.ach_mastery_focus_title, desc: t.ach_mastery_focus_desc, requirement: 50, progress: strongCount, barColor: 'bg-emerald-500' },
                             { id: 'focus_guru', title: t.ach_focus_guru_title, desc: t.ach_focus_guru_desc, requirement: 10800, progress: totalSecondsSpent, barColor: 'bg-amber-400' },
@@ -353,9 +432,9 @@ export const Dashboard = ({
                                         <div className="text-2xl font-black text-emerald-500">{selectedDayStats.stats.correct}</div>
                                         <div className="text-[9px] font-bold uppercase opacity-60 tracking-wider">Doğru Karar</div>
                                     </div>
-                                    <div className={`p-5 rounded-[1.8rem] border ${isDark ? 'bg-rose-500/5 border-rose-500/10' : 'bg-rose-50/30 border-rose-100'}`}>
-                                        <div className="text-2xl font-black text-rose-500">{selectedDayStats.stats.wrong}</div>
-                                        <div className="text-[9px] font-bold uppercase opacity-60 tracking-wider">Yanlış Karar</div>
+                                    <div className={`p-5 rounded-[1.8rem] border ${isDark ? 'bg-amber-500/5 border-amber-500/10' : 'bg-amber-50/30 border-amber-100'}`}>
+                                        <div className="text-2xl font-black text-amber-500">{selectedDayStats.stats.wrong}</div>
+                                        <div className="text-[9px] font-bold uppercase opacity-60 tracking-wider">Tekrar İsteği</div>
                                     </div>
                                 </div>
                             </div>
@@ -460,13 +539,13 @@ export const Dashboard = ({
                         <div className="flex items-center gap-8 mb-8 px-4">
                             <div><div className="text-xl font-black">{quizLog.total}</div><div className="text-[8px] font-bold uppercase opacity-40">Total</div></div>
                             <div><div className="text-xl font-black text-emerald-500">{quizLog.correct}</div><div className="text-[8px] font-bold uppercase opacity-40">Doğru</div></div>
-                            <div><div className="text-xl font-black text-rose-500">{quizLog.total - quizLog.correct}</div><div className="text-[8px] font-bold uppercase opacity-40">Yanlış</div></div>
+                            <div><div className="text-xl font-black text-amber-500">{quizLog.total - quizLog.correct}</div><div className="text-[8px] font-bold uppercase opacity-40">Tekrar</div></div>
                         </div>
 
                         <div className={`p-1 rounded-2xl mb-4 grid grid-cols-4 gap-1 ${isDark ? 'bg-slate-900/50' : 'bg-slate-100'}`}>
                             {['all', 'correct', 'wrong', 'reviewed'].map(tab => (
                                 <button key={tab} onClick={() => setQuizHistoryTab(tab)} className={`py-2 rounded-xl text-[7px] font-black uppercase tracking-widest transition-all ${quizHistoryTab === tab ? 'bg-indigo-500 text-white shadow-lg' : 'opacity-40'}`}>
-                                    {tab === 'all' ? t.all : tab === 'correct' ? 'DOĞRU' : tab === 'wrong' ? 'YANLIŞ' : t.reviewedTab}
+                                    {tab === 'all' ? t.all : tab === 'correct' ? 'DOĞRU' : tab === 'wrong' ? 'TEKRAR' : t.reviewedTab}
                                 </button>
                             ))}
                         </div>
@@ -480,11 +559,14 @@ export const Dashboard = ({
                             }).map(entry => (
                                 <div key={entry.id} className={`p-4 rounded-3xl flex items-center justify-between border ${isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
                                     <div className="flex items-center gap-4">
-                                        <div className={`p-2 rounded-xl ${entry.isCorrect ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
-                                            {entry.isCorrect ? <Check size={18} /> : <X size={18} />}
+                                        <div className={`p-2 rounded-xl ${entry.isCorrect ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
+                                            {entry.isCorrect ? <Check size={18} /> : <RotateCcw size={18} />}
                                         </div>
                                         <div>
-                                            <div className="font-bold capitalize flex items-center gap-1">{entry.word} {entry.reviewed && <Check size={12} />}</div>
+                                            <div className="font-bold capitalize flex items-center gap-1">
+                                                {typeof entry.word === 'string' ? entry.word : (entry.word?.en || JSON.stringify(entry.word))}
+                                                {entry.reviewed && <Check size={12} />}
+                                            </div>
                                             <div className="text-[10px] opacity-40 uppercase font-black">{entry.type}</div>
                                         </div>
                                     </div>

@@ -1,11 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Volume2, ChevronDown, Hand, Sparkles, BookOpen, Users, Compass, RefreshCw, Clock, Edit3, Trash2 } from 'lucide-react';
+import { Volume2, ChevronDown, Hand, Sparkles, BookOpen, Users, Compass, RefreshCw, Clock, Edit3, Trash2, Wind, Shuffle, SortAsc, Info, Music2, X, Flame, CloudRain, Waves } from 'lucide-react';
+import { motion, AnimatePresence, useSpring, useMotionValue, useTransform } from 'framer-motion';
 import FlamingoImg from '../assets/Mascot/Flamingoo.png';
+import { Mascot } from './Mascot';
+import { ChillModeAudio } from './ChillModeAudio';
 
-const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isAdmin, onDeleteWord, onEditWord }) => {
+// Audio Assets
+import FireSound from '../assets/audio/234288__leosalom__fireplace.wav';
+import RainSound from '../assets/audio/346642__inspectorj__rain-on-windows-interior-a.wav';
+import WavesSound from '../assets/audio/462592__eelke__calm-seawaves.wav';
+import StormSound from '../assets/audio/531947__straget__the-rain-falls-against-the-parasol.wav';
+
+const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isAdmin, onDeleteWord, onEditWord, chillSortMode, setChillSortMode, showAmbientLounge, setShowAmbientLounge }) => {
     if (!wordObj) return null;
     const [isRevealed, setIsRevealed] = useState(false);
     const [isExampleTrRevealed, setIsExampleTrRevealed] = useState(false);
+    const [showSortMenu, setShowSortMenu] = useState(false);
     const [isDefTrRevealed, setIsDefTrRevealed] = useState(false);
     const [openSections, setOpenSections] = useState({
         family: false,
@@ -45,18 +55,6 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                     </button>
                 </div>
             )}
-            {/* Embedded Stats - Top Layer Capsule */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-5 py-2.5 rounded-full z-[160] border shadow-2xl pointer-events-none font-black text-[11px] tracking-tight bg-slate-900/60 dark:bg-black/40 border-slate-900/10 dark:border-white/10 text-white/90 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 leading-none">
-                    <BookOpen size={14} className="text-indigo-400 opacity-90" />
-                    <span>{index} / {total}</span>
-                </div>
-                <div className="w-px h-3 bg-white/20" />
-                <div className="flex items-center gap-2">
-                    <Clock size={16} className="text-amber-400 opacity-90" />
-                    <span>{minsRemaining} {t.minsShort} {t.minsLeft}</span>
-                </div>
-            </div>
             {/* Background Concept Art Mascot Watermark */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0">
                 <img
@@ -99,11 +97,48 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                 ) : (
                     <div className={`w-full p-7 sm:p-10 rounded-[3.5rem] border backdrop-blur-xl shadow-[0_30px_60px_rgba(0,0,0,0.3)] relative animate-fade-in-up transition-all duration-500 overflow-y-auto max-h-[85dvh] scrollbar-hide ${isDark ? 'bg-slate-900/80 border-slate-700/50' : 'bg-white/80 border-slate-200'}`} onClick={(e) => e.stopPropagation()}>
 
+                        {/* Premium Info & Sorting Portal */}
+                        <div className="absolute top-6 right-6 z-40 flex flex-col items-end gap-2">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setShowSortMenu(!showSortMenu); }}
+                                className={`p-3 rounded-2xl border backdrop-blur-md transition-all active:scale-95 shadow-lg ${isDark ? 'bg-slate-900/60 border-slate-700/50 text-slate-400' : 'bg-white/60 border-slate-200 text-slate-500'}`}
+                            >
+                                <Info size={20} className={showSortMenu ? 'text-indigo-500' : ''} />
+                            </button>
+
+                            <AnimatePresence>
+                                {showSortMenu && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                                        animate={{ opacity: 1, scale: 1, x: 0 }}
+                                        exit={{ opacity: 0, scale: 0.9, x: 20 }}
+                                        className={`p-2 rounded-3xl border shadow-2xl backdrop-blur-2xl flex flex-col gap-1 pointer-events-auto ${isDark ? 'bg-slate-900/90 border-slate-700' : 'bg-white/90 border-slate-100'}`}
+                                    >
+                                        {[
+                                            { id: 'random', icon: Shuffle, label: 'Rastgele' },
+                                            { id: 'alphabetical', icon: SortAsc, label: 'A-Z' },
+                                            { id: 'newest', icon: Clock, label: 'Yeni' }
+                                        ].map((mode) => (
+                                            <button
+                                                key={mode.id}
+                                                onClick={(e) => { e.stopPropagation(); setChillSortMode(mode.id); setShowSortMenu(false); }}
+                                                className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${chillSortMode === mode.id ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'hover:bg-indigo-500/10 opacity-60 hover:opacity-100'}`}
+                                            >
+                                                <mode.icon size={16} />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">{mode.label}</span>
+                                            </button>
+                                        ))}
+
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
                         {/* Word in revealed mode - Minimal version inside card */}
                         <div className="mb-8 text-center">
                             <div className="flex justify-center mb-3">
                                 <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] opacity-80 shadow-sm ${isDark ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'bg-indigo-50 text-indigo-600 border border-indigo-100'}`}>
-                                    {appLang === 'tr' ? (wordObj.posTr || wordObj.pos) : (wordObj.pos || 'VOCAB')}
+                                    {wordObj.targetMode === 'phrasal' ? (appLang === 'tr' ? 'DEYİMSEL FİİL' : 'PHRASAL VERB') : (appLang === 'tr' ? (wordObj.posTr || wordObj.pos) : (wordObj.pos || 'VOCAB'))}
                                 </span>
                             </div>
                             <h2 className={`font-black tracking-tight leading-none mb-1 text-3xl ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -167,21 +202,26 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                             </div>
 
                             {/* Collapsible: Family (Kelime Ailesi) */}
-                            {wordObj.wordForms && wordObj.wordForms.length > 0 && (
+                            {(wordObj.wordForms || wordObj.wordFamily) && (
                                 <div className={`rounded-2xl border transition-all overflow-hidden ${isDark ? 'border-slate-800 bg-slate-900/30' : 'border-slate-100 bg-white/30'}`}>
                                     <button
                                         onClick={(e) => toggleSection('family', e)}
                                         className="w-full px-5 py-4 flex items-center justify-between text-[11px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity"
                                     >
-                                        <span className="flex items-center gap-2"><Users size={14} className="text-indigo-400" /> {t.wordForms || 'Family'}</span>
+                                        <span className="flex items-center gap-2"><Users size={14} className="text-indigo-400" /> {t.wordForms || 'KELİME AİLESİ'}</span>
                                         <ChevronDown size={16} className={`transition-transform duration-300 ${openSections.family ? 'rotate-180' : ''}`} />
                                     </button>
                                     <div className={`grid transition-all duration-300 ease-in-out ${openSections.family ? 'grid-rows-[1fr] opacity-100 pb-4 px-5' : 'grid-rows-[0fr] opacity-0'}`}>
                                         <div className="overflow-hidden">
                                             <div className="flex flex-wrap gap-2">
-                                                {wordObj.wordForms.map((wf, idx) => (
+                                                {wordObj.wordForms?.map((wf, idx) => (
                                                     <span key={idx} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg ${isDark ? 'bg-indigo-500/10 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>
                                                         {wf.form} <span className="opacity-40 font-normal">({appLang === 'tr' ? wf.posTr : wf.pos})</span>
+                                                    </span>
+                                                ))}
+                                                {wordObj.wordFamily && Object.entries(wordObj.wordFamily).map(([pos, word], idx) => (
+                                                    <span key={`f-${idx}`} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg ${isDark ? 'bg-indigo-500/10 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>
+                                                        {word} <span className="opacity-40 font-normal">({pos})</span>
                                                     </span>
                                                 ))}
                                             </div>
@@ -251,24 +291,40 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                                             {/* Mini Case */}
                                             {wordObj.details.miniCase && (
                                                 <div className="pt-4 border-t border-slate-700/10">
-                                                    <span className="text-[9px] font-black uppercase tracking-widest opacity-30 mb-3 block">{t.teacherNotes}</span>
+                                                    <span className="text-[9px] font-black uppercase tracking-widest opacity-30 mb-3 block">{t.teacherNotes || 'HOCA NOTLARI'}</span>
                                                     <p className={`text-xs font-bold leading-relaxed mb-3 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                                        {wordObj.details.miniCase}
+                                                        {typeof wordObj.details.miniCase === 'object' ? (wordObj.details.miniCase.en || wordObj.details.miniCase.tr) : (wordObj.details.miniCase || "")}
                                                     </p>
-                                                    <div className={`p-3 rounded-xl italic text-[10px] ${isDark ? 'bg-black/30 text-slate-400 border-l-2 border-amber-500/50' : 'bg-white/50 text-slate-600 border-l-2 border-amber-400'}`}>
-                                                        {wordObj.details.trMiniCase}
-                                                    </div>
+                                                    {(wordObj.details.trMiniCase || wordObj.details.miniCase?.tr) && (
+                                                        <div className={`p-3 rounded-xl italic text-[10px] ${isDark ? 'bg-black/30 text-slate-400 border-l-2 border-amber-500/50' : 'bg-white/50 text-slate-600 border-l-2 border-amber-400'}`}>
+                                                            {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : (wordObj.details.trMiniCase || wordObj.details.miniCase?.tr || "")}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
 
                                             {/* More Examples */}
                                             {wordObj.details.moreExamples?.length > 0 && (
                                                 <div className="pt-4 border-t border-slate-700/10">
-                                                    <span className="text-[9px] font-black uppercase tracking-widest opacity-30 mb-3 block">{t.moreExamples}</span>
+                                                    <span className="text-[9px] font-black uppercase tracking-widest opacity-30 mb-3 block">{t.moreExamples || 'EK ÖRNEKLER'}</span>
                                                     <ul className="space-y-3">
                                                         {wordObj.details.moreExamples.map((ex, idx) => (
                                                             <li key={idx} className="text-xs font-bold italic leading-relaxed opacity-80 border-l-2 border-blue-500/30 pl-3">
-                                                                "{ex}"
+                                                                "{typeof ex === 'object' ? (ex.en || ex.tr || JSON.stringify(ex)) : ex}"
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {/* Case Examples (Vaka Örnekleri) */}
+                                            {(wordObj.details.caseExamples?.length > 0 || wordObj.details.trMiniCaseExamples?.length > 0) && (
+                                                <div className="pt-4 border-t border-slate-700/10">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest opacity-30 mb-3 block">{t.caseExamples || 'VAKA ÖRNEKLERİ'}</span>
+                                                    <ul className="space-y-3">
+                                                        {(wordObj.details.caseExamples || wordObj.details.trMiniCaseExamples).map((ex, idx) => (
+                                                            <li key={idx} className="text-xs font-bold leading-relaxed opacity-80 border-l-2 border-amber-500/30 pl-3">
+                                                                {typeof ex === 'string' ? ex : (ex.tr || ex.en)}
                                                             </li>
                                                         ))}
                                                     </ul>
@@ -303,9 +359,50 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
     );
 };
 
-export const ChillMode = ({ vocab, isDark, appLang, t, dueTodayCount, dueTodayMins, isAdmin, onDeleteWord, onEditWord }) => {
+export const ChillMode = ({ vocab, isDark, appLang, t, dueTodayCount, dueTodayMins, isAdmin, onDeleteWord, onEditWord, chillSortMode, setChillSortMode }) => {
     const [currentIndex, setCurrentIndex] = useState(1);
+    const [showAmbientLounge, setShowAmbientLounge] = useState(false);
+    const [activeSound, setActiveSound] = useState(null);
     const containerRef = useRef(null);
+    const audioRef = useRef(null);
+
+    const sounds = [
+        { id: 'fire', icon: <Flame size={20} />, label: 'HUZUR', file: FireSound, color: 'text-orange-400' },
+        { id: 'rain', icon: <CloudRain size={20} />, label: 'YAĞMUR', file: RainSound, color: 'text-blue-400' },
+        { id: 'waves', icon: <Waves size={20} />, label: 'DENİZ', file: WavesSound, color: 'text-cyan-400' },
+        { id: 'storm', icon: <Wind size={20} />, label: 'TERAS', file: StormSound, color: 'text-slate-400' },
+    ];
+
+    const toggleSound = (soundId) => {
+        if (activeSound === soundId) {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+            setActiveSound(null);
+        } else {
+            if (audioRef.current) {
+                audioRef.current.pause();
+            }
+            const soundObj = sounds.find(s => s.id === soundId);
+            const audio = new Audio(soundObj.file);
+            audio.loop = true;
+            audio.volume = 0.5;
+            audio.play().catch(err => console.error("Audio play failed:", err));
+            audioRef.current = audio;
+            setActiveSound(soundId);
+        }
+    };
+
+    useEffect(() => {
+        // Cleanup audio on unmount
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -337,28 +434,99 @@ export const ChillMode = ({ vocab, isDark, appLang, t, dueTodayCount, dueTodayMi
     };
 
     return (
-        <div
-            ref={containerRef}
-            className={`absolute inset-0 z-[60] overflow-y-auto snap-y snap-mandatory custom-scrollbar ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} hide-scrollbar`}
-        >
+        <div className="absolute inset-0 z-[150] overflow-hidden pointer-events-none">
+            {/* Mascot Toggle Button - Absolute within the root container (NOT scrolling) */}
+            <motion.button
+                onClick={() => setShowAmbientLounge(!showAmbientLounge)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className={`absolute bottom-5 left-5 z-[400] p-4 rounded-[2.5rem] border-2 shadow-2xl backdrop-blur-xl transition-all duration-500 pointer-events-auto ${showAmbientLounge ? 'bg-indigo-500 border-indigo-400 rotate-12 scale-110' : (isDark ? 'bg-slate-900/80 border-slate-700/50 hover:border-indigo-500/50 shadow-black/40' : 'bg-white/95 border-slate-200 hover:border-indigo-400 shadow-xl')}`}
+            >
+                <div className="relative">
+                    <Mascot isDark={isDark} size="sm" variant="3d" look={showAmbientLounge ? "happy" : "chill"} animated={activeSound !== null} />
+                    {activeSound && (
+                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                        </span>
+                    )}
+                </div>
+            </motion.button>
 
+            {/* Ambient Lounge Global Overlay */}
+            <AnimatePresence>
+                {showAmbientLounge && (
+                    <div className="absolute inset-0 z-[405] pointer-events-none flex items-center justify-start p-6 sm:p-12">
+                        <motion.div
+                            initial={{ x: -100, opacity: 0, scale: 0.3, rotate: -10 }}
+                            animate={{ x: 0, opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ x: -100, opacity: 0, scale: 0.3, rotate: -10 }}
+                            transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+                            className="w-full max-w-sm pointer-events-auto"
+                        >
+                            <div className={`p-8 rounded-[4rem] border-4 backdrop-blur-3xl shadow-[0_50px_100px_rgba(0,0,0,0.5)] flex flex-col gap-8 transition-all duration-500 ${isDark ? 'bg-slate-950/95 border-indigo-500/40' : 'bg-white/95 border-indigo-200'}`}>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-5">
+                                        <div className={`p-1 rounded-[2rem] transition-transform duration-700 ${activeSound ? 'scale-110' : ''}`}>
+                                            <Mascot isDark={isDark} size="md" variant="3d" look="happy" animated={true} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <h4 className={`text-[14px] font-black uppercase tracking-[0.25em] ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}>Ambient Lounge</h4>
+                                            <p className="text-[9px] font-bold opacity-40 uppercase tracking-widest">Studying with focus</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowAmbientLounge(false)}
+                                        className={`w-12 h-12 rounded-[1.5rem] flex items-center justify-center hover:bg-rose-500/10 hover:text-rose-500 transition-all opacity-40 hover:opacity-100 active:scale-90 border-2 border-transparent hover:border-rose-500/20`}
+                                    >
+                                        <X size={24} />
+                                    </button>
+                                </div>
 
-            <div className="flex flex-col w-full">
-                {vocab.map((wordObj, i) => (
-                    <ChillCard
-                        key={`${wordObj.word}-${i}`}
-                        wordObj={wordObj}
-                        isDark={isDark}
-                        appLang={appLang}
-                        t={t}
-                        handleSpeak={handleSpeak}
-                        index={i + 1}
-                        total={vocab.length}
-                        isAdmin={isAdmin}
-                        onDeleteWord={onDeleteWord}
-                        onEditWord={onEditWord}
-                    />
-                ))}
+                                <div className="px-1">
+                                    <ChillModeAudio
+                                        isDark={isDark}
+                                        activeSound={activeSound}
+                                        toggleSound={toggleSound}
+                                        sounds={sounds}
+                                    />
+                                </div>
+
+                                <div className={`mt-2 p-4 rounded-3xl text-center text-[10px] font-black uppercase tracking-widest transition-all ${activeSound ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-500/10 text-slate-500'}`}>
+                                    {activeSound ? `Şu an aktif: ${sounds.find(s => s.id === activeSound)?.label}` : 'Başlamak için bir ortam seç'}
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Scrollable Container (Interactive) */}
+            <div
+                ref={containerRef}
+                className={`absolute inset-0 overflow-y-auto snap-y snap-mandatory custom-scrollbar pointer-events-auto ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} hide-scrollbar`}
+            >
+                <div className="flex flex-col w-full">
+                    {vocab.map((wordObj, i) => (
+                        <ChillCard
+                            key={`${wordObj.word}-${i}`}
+                            wordObj={wordObj}
+                            isDark={isDark}
+                            appLang={appLang}
+                            t={t}
+                            handleSpeak={handleSpeak}
+                            index={i + 1}
+                            total={vocab.length}
+                            isAdmin={isAdmin}
+                            onDeleteWord={onDeleteWord}
+                            onEditWord={onEditWord}
+                            chillSortMode={chillSortMode}
+                            setChillSortMode={setChillSortMode}
+                            showAmbientLounge={showAmbientLounge}
+                            setShowAmbientLounge={setShowAmbientLounge}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );

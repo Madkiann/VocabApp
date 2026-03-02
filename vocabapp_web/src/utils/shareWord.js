@@ -109,32 +109,44 @@ export const shareWordToCanvas = async (wordObj, appLang, t, isDark, showPractic
             });
         }
 
-        // Mascot Placement
+        // Mascot Placement - Anchored to bottom right of the card
         const mascotImg = new Image();
         mascotImg.src = Flamingo3D;
         await new Promise(r => { mascotImg.onload = r; mascotImg.onerror = r; });
         if (mascotImg.complete && mascotImg.naturalWidth > 0) {
-            const mSize = 340;
-            const mascotY = Math.min(1380, y + 20); // Dynamic push down but avoid overflow
-            ctx.drawImage(mascotImg, 720, mascotY, mSize, mSize);
+            const mSize = 320;
+            // Anchor to the bottom right corner of the card (ends at 1700)
+            const mascotX = 760;
+            const mascotY = 1380;
+            ctx.drawImage(mascotImg, mascotX, mascotY, mSize, mSize);
         }
 
         // Footer
-        ctx.textAlign = 'center';
-        ctx.fillStyle = isDark ? '#fbbf24' : '#f59e0b';
-        ctx.font = '900 65px "Segoe UI", sans-serif';
-        ctx.fillText("Ferhat Hoca ile İngilizce", cx, 1780);
-        ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
-        ctx.font = '500 40px "Segoe UI", sans-serif';
         ctx.fillText("ferhathocaingilizce.com", cx, 1860);
 
-        canvas.toBlob(blob => shareImage(blob, wordObj.word, textToShare), 'image/png', 0.95);
-    } catch (e) { console.error(e); }
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    reject(new Error("Blob creation failed"));
+                    return;
+                }
+                try {
+                    await shareImage(blob, wordObj.word, textToShare);
+                    resolve();
+                } catch (err) {
+                    reject(err);
+                }
+            }, 'image/png', 0.95);
+        });
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
 };
 
 export const sharePhrasalToCanvas = async (wordObj, appLang, isDark, showPractice = false) => {
     try {
-        const textToShare = `🔥 Phrasal Verb: ${wordObj.word}\n📖: ${appLang === 'tr' ? wordObj.trWord : wordObj.engDef}\n\n🎯 Ferhat Hoca ile İngilizce`;
+        const textToShare = `🔥 Phrasal Verb: ${wordObj.word}\n📖: ${appLang === 'tr' ? wordObj.trWord : wordObj.engDef}\n✨ Vaka Örnekleri Dahil!\n\n🎯 Ferhat Hoca ile İngilizce`;
         const canvas = document.createElement('canvas');
         canvas.width = 1080; canvas.height = 1920;
         const ctx = canvas.getContext('2d');
@@ -175,7 +187,7 @@ export const sharePhrasalToCanvas = async (wordObj, appLang, isDark, showPractic
         y = drawText(ctx, `"${wordObj.engExample}"`, cx, y, 840, 65, 'italic bold 50px "Segoe UI"', isDark ? '#fcd34d' : '#d97706');
         y += 100;
 
-        // Mini Case (Floating Box)
+        // Mini Case (Floating Box) with Intelligent Truncation
         if (wordObj.details?.miniCase) {
             const caseStartY = y;
             ctx.fillStyle = isDark ? '#38bdf8' : '#0284c7';
@@ -183,15 +195,74 @@ export const sharePhrasalToCanvas = async (wordObj, appLang, isDark, showPractic
             ctx.fillText("Mini Case Story", 140, y);
             y += 65;
 
-            y = drawText(ctx, wordObj.details.miniCase, 140, y, 800, 44, '500 34px "Segoe UI"', isDark ? '#e2e8f0' : '#334155', 'left');
-            y += 40;
-            y = drawText(ctx, wordObj.details.trMiniCase, 140, y, 800, 40, 'italic 500 30px "Segoe UI"', isDark ? '#94a3b8' : '#64748b', 'left');
+            let miniEng = wordObj.details.miniCase || "";
+            let miniTr = wordObj.details.trMiniCase || "";
+
+            // If we have Vaka Örnekleri, we must ensure the story box doesn't push them out
+            const caseExs = wordObj.details?.caseExamples || wordObj.details?.trMiniCaseExamples || [];
+            const needsSpace = caseExs.length > 0;
+            const maxStoryHeight = needsSpace ? 400 : 700; // Target height budget for story box
+
+            // Truncate by sentence if needed
+            const truncateSentences = (textEn, textTr) => {
+                let enS = textEn.split('.').filter(s => s.trim().length > 0);
+                let trS = textTr.split('.').filter(s => s.trim().length > 0);
+
+                // Keep removing last sentences while either text is too long (over 300 chars usually means 3+ lines)
+                // or if we strictly need to fit in a box and text looks too full
+                while (enS.length > 1 && (textEn.length > 300 || enS.length > trS.length)) {
+                    enS.pop();
+                    textEn = enS.join('.') + '.';
+                }
+                while (trS.length > 1 && (textTr.length > 250 || trS.length > enS.length)) {
+                    trS.pop();
+                    textTr = trS.join('.') + '.';
+                }
+                // Sync lengths
+                while (enS.length > trS.length && enS.length > 1) { enS.pop(); textEn = enS.join('.') + '.'; }
+                while (trS.length > enS.length && trS.length > 1) { trS.pop(); textTr = trS.join('.') + '.'; }
+
+                return [textEn, textTr];
+            };
+
+            if (miniEng.length > 250 || miniTr.length > 200) {
+                [miniEng, miniTr] = truncateSentences(miniEng, miniTr);
+            }
+
+            // Drawing text and tracking height
+            y = drawText(ctx, miniEng, 140, y, 800, 44, '500 34px "Segoe UI"', isDark ? '#e2e8f0' : '#334155', 'left');
+            y += 25;
+            y = drawText(ctx, miniTr, 140, y, 800, 34, 'italic 500 28px "Segoe UI"', isDark ? '#94a3b8' : '#64748b', 'left');
 
             ctx.globalCompositeOperation = 'destination-over';
             ctx.fillStyle = isDark ? 'rgba(15, 23, 42, 0.5)' : 'rgba(241, 245, 249, 0.8)';
-            if (ctx.roundRect) ctx.beginPath(), ctx.roundRect(100, caseStartY - 45, 880, (y - caseStartY) + 90, 40), ctx.fill();
+            if (ctx.roundRect) ctx.beginPath(), ctx.roundRect(100, caseStartY - 45, 880, (y - caseStartY) + 80, 40), ctx.fill();
             ctx.globalCompositeOperation = 'source-over';
-            y += 100;
+            y += 80;
+        }
+
+        // Case Examples (Vaka Örnekleri) - Only Turkish
+        const caseExs = wordObj.details?.caseExamples || wordObj.details?.trMiniCaseExamples || [];
+        if (caseExs.length > 0 && y < 1680) {
+            const caseStartY = y;
+            ctx.fillStyle = isDark ? '#fbbf24' : '#d97706';
+            ctx.font = 'bold 38px "Segoe UI"'; ctx.textAlign = 'left';
+            ctx.fillText("Vaka Örnekleri", 140, y);
+            y += 65;
+
+            caseExs.slice(0, 2).forEach((item, i) => {
+                const tr = typeof item === 'string' ? item : item.tr;
+                if (y < 1780) {
+                    y = drawText(ctx, `• ${tr}`, 140, y, 800, 40, '500 32px "Segoe UI"', isDark ? '#e2e8f0' : '#334155', 'left');
+                    y += 12;
+                }
+            });
+
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = isDark ? 'rgba(217, 119, 6, 0.05)' : 'rgba(251, 191, 36, 0.1)';
+            if (ctx.roundRect) ctx.beginPath(), ctx.roundRect(100, caseStartY - 45, 880, (y - caseStartY) + 70, 40), ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            y += 80;
         }
 
         // Practice (Optional / Add-ready)
@@ -208,12 +279,15 @@ export const sharePhrasalToCanvas = async (wordObj, appLang, isDark, showPractic
             });
         }
 
+        // Mascot Placement - Anchored to bottom right of the card
         const mascotImg = new Image(); mascotImg.src = Flamingo3D;
         await new Promise(r => { mascotImg.onload = r; mascotImg.onerror = r; });
         if (mascotImg.complete) {
-            const mSize = 360;
-            const mascotY = Math.max(1200, Math.min(1420, y - 50));
-            ctx.drawImage(mascotImg, 720, mascotY, mSize, mSize);
+            const mSize = 320;
+            // Anchor to the bottom right corner of the card (ends at 1700)
+            const mascotX = 760;
+            const mascotY = 1380;
+            ctx.drawImage(mascotImg, mascotX, mascotY, mSize, mSize);
         }
 
         ctx.textAlign = 'center';
@@ -222,17 +296,44 @@ export const sharePhrasalToCanvas = async (wordObj, appLang, isDark, showPractic
         ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
         ctx.font = '500 40px "Segoe UI"'; ctx.fillText("ferhathocaingilizce.com", cx, 1860);
 
-        canvas.toBlob(blob => shareImage(blob, wordObj.word, textToShare), 'image/png', 0.95);
-    } catch (e) { console.error(e); }
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    reject(new Error("Blob creation failed"));
+                    return;
+                }
+                try {
+                    await shareImage(blob, wordObj.word, textToShare);
+                    resolve();
+                } catch (err) {
+                    reject(err);
+                }
+            }, 'image/png', 0.95);
+        });
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
 };
 
 const shareImage = async (blob, word, textToShare) => {
-    const file = new File([blob], `vocab-${word}.png`, { type: 'image/png' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ title: word, text: textToShare, files: [file] }).catch(() => { });
-    } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `vocab-${word}.png`; a.click();
-        URL.revokeObjectURL(url);
+    try {
+        const file = new File([blob], `vocab-${word}.png`, { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ title: word, text: textToShare, files: [file] });
+        } else {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vocab-${word}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            // Delay revocation to ensure download starts
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+    } catch (err) {
+        console.error("shareImage failed:", err);
+        throw err;
     }
 };

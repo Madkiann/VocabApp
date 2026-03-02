@@ -64,6 +64,10 @@ export const rawVocabulary = [
             "caseExamples": [
                 { "tr": "Fikirlerini savunurken daha özgüvenli olmalısın.", "en": "You should be more assertive when defending your ideas." },
                 { "tr": "Yöneticilik özelliklerinden biri de nazik ama kararlı olmaktır.", "en": "One of the management traits is being polite but assertive." }
+            ],
+            "moreExamples": [
+                { "en": "An assertive woman who always stands up for her rights.", "tr": "Haklarını her zaman savunan özgüvenli bir kadın." },
+                { "en": "He has an assertive management style.", "tr": "Onun baskın/kararlı bir yönetim tarzı var." }
             ]
         },
         "wordFamily": { "verb": "assert", "noun": "assertion", "adverb": "assertively" }
@@ -87,6 +91,10 @@ export const rawVocabulary = [
             "caseExamples": [
                 { "tr": "Duygularını ifade etmekte çok başarılıdır.", "en": "She is very articulate in expressing her feelings." },
                 { "tr": "Rapor, projenin amaçlarını açık bir şekilde ortaya koyuyor.", "en": "The report provides an articulate description of the project's goals." }
+            ],
+            "moreExamples": [
+                { "en": "They are articulate people who know what they want.", "tr": "Onlar ne istediklerini bilen, kendilerini iyi ifade eden insanlardır." },
+                { "en": "The baby is starting to be more articulate.", "tr": "Bebek kendini daha iyi ifade etmeye/anlaşılır sesler çıkarmaya başlıyor." }
             ]
         },
         "wordFamily": { "verb": "articulate", "noun": "articulation", "adverb": "articulately" }
@@ -110,6 +118,10 @@ export const rawVocabulary = [
             "caseExamples": [
                 { "tr": "Onun samimi tavrı herkesin güvenini kazandı.", "en": "His candid attitude won everyone's trust." },
                 { "tr": "Sorunlarımız hakkında samimi bir tartışma yaptık.", "en": "We had a candid discussion about our problems." }
+            ],
+            "moreExamples": [
+                { "en": "I was very candid with him about my plans.", "tr": "Planlarım konusunda ona karşı çok samimiydim." },
+                { "en": "She gives a candid account of her childhood.", "tr": "Çocukluğunu samimiyetle anlatıyor." }
             ]
         },
         "wordFamily": { "noun": "candor", "adverb": "candidly" }
@@ -133,6 +145,10 @@ export const rawVocabulary = [
             "caseExamples": [
                 { "tr": "Maaş konusunda orta bir yolda uzlaştık.", "en": "We reached a compromise regarding the salary." },
                 { "tr": "Kaliteden asla ödün vermemeliyiz.", "en": "We should never compromise on quality." }
+            ],
+            "moreExamples": [
+                { "en": "They are unwilling to compromise on their principles.", "tr": "İlkelerinden taviz vermeye isteksizler." },
+                { "en": "Is there any scope for compromise?", "tr": "Uzlaşma için herhangi bir imkan var mı?" }
             ]
         },
         "wordFamily": { "verb": "compromise" }
@@ -156,6 +172,10 @@ export const rawVocabulary = [
             "caseExamples": [
                 { "tr": "Olaylara tarafsız bir gözle bakmaya çalışıyor.", "en": "He tries to look at things with a detached eye." },
                 { "tr": "Eklenti ana dosyadan tamamen ayrılmıştır.", "en": "The attachment is completely detached from the main file." }
+            ],
+            "moreExamples": [
+                { "en": "The house features a detached garage.", "tr": "Evde müstakil bir garaj bulunuyor." },
+                { "en": "She seemed strangely detached from what was happening.", "tr": "Olan bitenden garip bir şekilde kopuk görünüyordu." }
             ]
         },
         "wordFamily": { "verb": "detach", "noun": "detachment", "adjective": "detachable" }
@@ -202,6 +222,10 @@ export const rawVocabulary = [
             "caseExamples": [
                 { "tr": "Giyim tarzı her zaman biraz sıra dışı olmuştur.", "en": "Her style of dress has always been a bit eccentric." },
                 { "tr": "Milyarder iş adamı tuhaf alışkanlıklarıyla tanınıyor.", "en": "The billionaire businessman is known for his eccentric habits." }
+            ],
+            "moreExamples": [
+                { "en": "A person of eccentric character.", "tr": "Eksantrik/sıra dışı karakterli bir kişi." },
+                { "en": "The movement of the planets is eccentric.", "tr": "Gezegenlerin hareketi eksantrik/merkez dışıdır." }
             ]
         },
         "wordFamily": { "noun": "eccentricity", "adverb": "eccentrically" }
@@ -1012,9 +1036,14 @@ export const rawPhrasalVerbs = [
         "engExample": "The architect laid out the plans for the new house.",
         "trExample": "Mimar yeni ev için planları detaylıca açıkladı/serdi.",
         "details": {
-            "miniCase": "She laid out the rules on the first day of class.",
-            "trMiniCase": "Dersin ilk gününde kuralları detaylıca açıkladı."
+            "miniCase": "The architect spent hours to lay out the floor plans for the new hospital. He had to ensure that the emergency room was easily accessible from the main entrance. His clear layout helped the construction crew understand the project flow immediately.",
+            "trMiniCase": "Mimar, yeni hastanenin kat planlarını düzenlemek için saatlerini harcadı. Acil servisin ana girişten kolayca erişilebilir olduğundan emin olması gerekiyordu. Hazırladığı net düzen, inşaat ekibinin proje akışını hemen anlamasına yardımcı oldu.",
+            "caseExamples": [
+                { "tr": "Raporun sonuçlarını net bir şekilde ortaya koydu.", "en": "He laid out the findings of the report very clearly." },
+                { "tr": "Bahçeyi düzenlemek için bir plan yapmalıyız.", "en": "We should lay out a plan to arrange the garden." }
+            ]
         },
+        "wordFamily": { "noun": "layout" },
         "targetMode": "Phrasal Verbs"
     },
     {
@@ -1029,8 +1058,12 @@ export const rawPhrasalVerbs = [
         "engExample": "The police are looking into the cause of the accident.",
         "trExample": "Polis kazanın nedenini inceliyor/araştırıyor.",
         "details": {
-            "miniCase": "I will look into the matter and let you know my decision.",
-            "trMiniCase": "Meseleyi inceleyeceğim ve kararımı size bildireceğim."
+            "miniCase": "The detective promised to look into every single lead regarding the missing jewelry. He interviewed all the employees and checked the security footage from the last 48 hours. After thorough investigation, he discovered a suspicious figure entering the building at midnight.",
+            "trMiniCase": "Dedektif, kayıp mücevherlerle ilgili her bir ipucunu inceleme sözü verdi. Tüm çalışanlarla görüştü ve son 48 saatin güvenlik görüntülerini inceledi. Detaylı bir araştırmadan sonra, gece yarısı binaya giren şüpheli bir figür keşfetti.",
+            "caseExamples": [
+                { "tr": "Şirket bu sorunu çözmek için konuyu araştırıyor.", "en": "The company is looking into the matter to solve this problem." },
+                { "tr": "Biraz araştırıp size geri döneceğim.", "en": "I'll look into it and get back to you." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1046,8 +1079,12 @@ export const rawPhrasalVerbs = [
         "engExample": "We can't rule out the possibility of a mistake.",
         "trExample": "Hata olasılığını eleyemeyiz/göz ardı edemeyiz.",
         "details": {
-            "miniCase": "The doctors ruled out surgery as a treatment option.",
-            "trMiniCase": "Doktorlar tedavi seçeneği olarak ameliyatı elediler."
+            "miniCase": "After conducting several tests, the specialists were able to rule out any serious illnesses for the patient's symptoms. It turned out that the fatigue was simply caused by stress and lack of sleep. Relieved by the news, the patient promised to focus more on their well-being.",
+            "trMiniCase": "Birkaç test yaptıktan sonra uzmanlar, hastanın semptomları için herhangi bir ciddi hastalığı elemeyi başardılar. Yorgunluğun sadece stres ve uykusuzluktan kaynaklandığı ortaya çıktı. Haberle rahatlayan hasta, sağlığına daha fazla odaklanma sözü verdi.",
+            "caseExamples": [
+                { "tr": "Polis henüz hiçbir şüpheliyi elemedi.", "en": "The police haven't ruled out any suspects yet." },
+                { "tr": "Kötü hava olasılığını göz ardı edemeyiz.", "en": "We cannot rule out the possibility of bad weather." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1063,9 +1100,14 @@ export const rawPhrasalVerbs = [
         "engExample": "He will take over the family business when his father retires.",
         "trExample": "Babası emekli olduğunda aile işini devralacak.",
         "details": {
-            "miniCase": "The company was taken over by a large corporation.",
-            "trMiniCase": "Şirket büyük bir kurum tarafından devralındı."
+            "miniCase": "The vice president is expected to take over the company once the current CEO retires next year. He has been preparing for this transition for months by working closely with different departments. His goal is to maintain the company's core values while introducing fresh ideas.",
+            "trMiniCase": "Mevcut CEO gelecek yıl emekli olduğunda, başkan yardımcısının şirketi devralması bekleniyor. Farklı departmanlarla yakından çalışarak aylardır bu geçişe hazırlanıyor. Hedefi, bir yandan taze fikirler sunarken diğer yandan şirketin temel değerlerini korumaktır.",
+            "caseExamples": [
+                { "tr": "Kontrolü ne zaman devralacaksın?", "en": "When will you take over the control?" },
+                { "tr": "Ordu yönetimi devraldı.", "en": "The army took over the government." }
+            ]
         },
+        "wordFamily": { "noun": "takeover" },
         "targetMode": "Phrasal Verbs"
     },
     {
@@ -1080,8 +1122,12 @@ export const rawPhrasalVerbs = [
         "engExample": "We need to wind up the meeting soon.",
         "trExample": "Toplantıyı yakında sonlandırmamız gerekiyor.",
         "details": {
-            "miniCase": "He wound up in jail after the robbery.",
-            "trMiniCase": "Soygundan sonra kendini hapiste buldu."
+            "miniCase": "The debate was getting quite heated, so the moderator decided to wind up the discussion before things got out of hand. She summarized the main points and thanked everyone for their participation. Most attendees felt that the session was productive despite the intensity.",
+            "trMiniCase": "Tartışma oldukça hararetli bir hal alıyordu, bu yüzden moderatör işler kontrolden çıkmadan önce tartışmayı sonlandırmaya karar verdi. Ana noktaları özetledi ve herkese katılımları için teşekkür etti. Katılımcıların çoğu, yoğunluğa rağmen oturumun verimli olduğunu hissetti.",
+            "caseExamples": [
+                { "tr": "Toplantıyı birkaç dakika içinde sonlandırmalıyız.", "en": "We should wind up the meeting in a few minutes." },
+                { "tr": "Nasıl oldu da burada kendini buldun?", "en": "How did you wind up here?" }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1097,8 +1143,12 @@ export const rawPhrasalVerbs = [
         "engExample": "He came across as very confident during the interview.",
         "trExample": "Mülakat sırasında çok özgüvenli bir izlenim bıraktı.",
         "details": {
-            "miniCase": "While cleaning the attic, I came across some old photos.",
-            "trMiniCase": "Tavan arasını temizlerken bazı eski fotoğraflarla karşılaştım."
+            "miniCase": "While exploring the old library, the researcher came across an ancient document that changed his perspective on the local history. It was hidden inside a dusty book that hadn't been touched for decades. This unexpected discovery led to a major breakthrough in his research project.",
+            "trMiniCase": "Eski kütüphaneyi keşfederken araştırmacı, yerel tarih hakkındaki bakış açısını değiştiren antik bir belgeyle karşılaştı. Onlarca yıldır dokunulmamış tozlu bir kitabın içine gizlenmişti. Bu beklenmedik keşif, araştırma projesinde büyük bir atılıma yol açtı.",
+            "caseExamples": [
+                { "tr": "Dün yolda eski bir dostla karşılaştım.", "en": "I came across an old friend on the road yesterday." },
+                { "tr": "Dışarıdan çok sert biri gibi görünüyor.", "en": "He comes across as a very tough person." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1114,8 +1164,12 @@ export const rawPhrasalVerbs = [
         "engExample": "You can count on me if you need help.",
         "trExample": "Yardıma ihtiyacın olursa bana güvenebilirsin.",
         "details": {
-            "miniCase": "We are counting on the weather being fine for the picnic.",
-            "trMiniCase": "Piknik için havanın güzel olacağına bel bağlıyoruz."
+            "miniCase": "The success of the outdoor wedding really counts on the weather being sunny and clear. The couple checked the forecast every day leading up to the ceremony, hoping for the best. Luckily, the clouds cleared just as the guests started to arrive at the garden venue.",
+            "trMiniCase": "Açık hava düğününün başarısı gerçekten havanın güneşli ve açık olmasına bağlıdır. Çift, en iyisini umarak törene kadar her gün hava durumunu kontrol etti. Şans eseri, konuklar bahçedeki mekana gelmeye başladığında bulutlar dağıldı.",
+            "caseExamples": [
+                { "tr": "Zor zamanlarımda sana güvenebileceğimi biliyorum.", "en": "I know I can count on you during my hard times." },
+                { "tr": "Hala desteğine güveniyoruz.", "en": "We're still counting on your support." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1131,9 +1185,14 @@ export const rawPhrasalVerbs = [
         "engExample": "The phone line was cut off during our conversation.",
         "trExample": "Konuşmamız sırasında telefon hattı kesildi.",
         "details": {
-            "miniCase": "He cut off all ties with his family after the argument.",
-            "trMiniCase": "Tartışmadan sonra ailesiyle bütün bağlarını kopardı."
+            "miniCase": "The sudden power failure cut off the communication between the flight control tower and the pilots for several tense minutes. Technicians worked frantically to restore the backup generators and re-establish the link. Safety protocols were followed strictly until the situation was fully under control again.",
+            "trMiniCase": "Ani güç kesintisi, uçuş kontrol kulesi ile pilotlar arasındaki iletişimi birkaç gergin dakika boyunca kesti. Teknisyenler yedek jeneratörleri geri yüklemek ve bağlantıyı yeniden kurmak için çılgınca çalıştılar. Durum tekrar tamamen kontrol altına alınana kadar güvenlik protokolleri sıkı bir şekilde takip edildi.",
+            "caseExamples": [
+                { "tr": "Lütfen sözümü kesme.", "en": "Please don't cut me off." },
+                { "tr": "Faturaları ödemeyince elektriği kestiler.", "en": "They cut off the electricity when he didn't pay the bills." }
+            ]
         },
+        "wordFamily": { "noun": "cutoff" },
         "targetMode": "Phrasal Verbs"
     },
     {
@@ -1148,8 +1207,12 @@ export const rawPhrasalVerbs = [
         "engExample": "They drifted apart after they went to different universities.",
         "trExample": "Farklı üniversitelere gittikten sonra birbirlerinden uzaklaştılar.",
         "details": {
-            "miniCase": "Old friends sometimes drift apart as they grow older.",
-            "trMiniCase": "Eski arkadaşlar bazen yaşlandıkça birbirinden uzaklaşır."
+            "miniCase": "After graduation, many high school friends slowly drift apart as they move to different cities for work or university. Life's new responsibilities and priorities often leave less time for keeping in touch with everyone from the past. However, true friendships can survive even long periods of silence.",
+            "trMiniCase": "Mezuniyetten sonra birçok lise arkadaşı, iş veya üniversite için farklı şehirlere taşındıkça yavaş yavaş birbirinden uzaklaşır. Hayatın yeni sorumlulukları ve öncelikleri genellikle geçmişteki herkesle iletişimde kalmak için daha az zaman bırakır. Ancak gerçek dostluklar uzun sessizlik dönemlerinde bile hayatta kalabilir.",
+            "caseExamples": [
+                { "tr": "Zamanla birbirimizden uzaklaştığımızı hissediyorum.", "en": "I feel like we are drifting apart over time." },
+                { "tr": "İlgi alanları değiştikçe gruptan uzaklaştı.", "en": "As interests changed, he drifted apart from the group." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1165,8 +1228,12 @@ export const rawPhrasalVerbs = [
         "engExample": "I get along very well with my neighbors.",
         "trExample": "Komşularımla çok iyi geçiniyorum.",
         "details": {
-            "miniCase": "They don't get along with each other at all.",
-            "trMiniCase": "Birbirleriyle hiç iyi geçinemiyorlar."
+            "miniCase": "It's essential to get along with your colleagues if you want to maintain a productive and positive work environment. Constant conflicts not only decrease efficiency but also affect the overall morale of the entire office. A little bit of mutual respect and communication can solve most workplace misunderstandings.",
+            "trMiniCase": "Üretken ve olumlu bir çalışma ortamı sürdürmek istiyorsanız meslektaşlarınızla iyi geçinmeniz çok önemlidir. Sürekli çatışmalar sadece verimliliği düşürmekle kalmaz, aynı zamanda tüm ofisin genel moralini de etkiler. Biraz karşılıklı saygı ve iletişim, iş yerindeki çoğu yanlış anlaşılmayı çözebilir.",
+            "caseExamples": [
+                { "tr": "Yeni oda arkadaşınla iyi geçiniyor musun?", "en": "Are you getting along well with your new roommate?" },
+                { "tr": "Kardeşler nadiren iyi geçinir.", "en": "Siblings rarely get along." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1182,8 +1249,12 @@ export const rawPhrasalVerbs = [
         "engExample": "He has always looked up to his older brother.",
         "trExample": "Her zaman ağabeyini örnek aldı/ona hayranlık duydu.",
         "details": {
-            "miniCase": "Many young players look up to him as a role model.",
-            "trMiniCase": "Birçok genç oyuncu onu bir rol model olarak örnek alır."
+            "miniCase": "Throughout her childhood, Jane would always look up to her grandmother, who was a pioneering scientist in her time. She admired her dedication to discovery and her resilience in the face of many social challenges. Inspired by her legacy, Jane decided to pursue a career in physics herself.",
+            "trMiniCase": "Çocukluğu boyunca Jane, zamanının öncü bilim insanlarından biri olan büyükannesine hep hayranlık duydu. Onun keşif tutkusuna ve birçok sosyal zorluk karşısındaki direncine hayran kaldı. Onun mirasından ilham alan Jane, kendisi de fizik alanında kariyer yapmaya karar verdi.",
+            "caseExamples": [
+                { "tr": "Gençler başarılı sporcuları örnek alırlar.", "en": "Young people look up to successful athletes." },
+                { "tr": "Ona her zaman bir kahraman gibi hayranlık duydum.", "en": "I've always looked up to him as a hero." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1199,9 +1270,14 @@ export const rawPhrasalVerbs = [
         "engExample": "They had a fight but they made up quickly.",
         "trExample": "Kavga ettiler ama çabuk barıştılar.",
         "details": {
-            "miniCase": "He made up an excuse for being late.",
-            "trMiniCase": "Geç kalmak için bir mazeret uydurdu."
+            "miniCase": "The two brothers decided to make up after not speaking for over three years due to a silly family argument. They met at a small cafe to discuss their differences and realized how much they had missed each other's company. It was a long journey, but they were finally ready to be a family again.",
+            "trMiniCase": "İki kardeş, saçma bir aile tartışması yüzünden üç yılı aşkın süredir konuşmadıktan sonra barışmaya karar verdiler. Farklılıklarını tartışmak için küçük bir kafede buluştular ve birbirlerinin arkadaşlığını ne kadar özlediklerini fark ettiler. Uzun bir yolculuktu ama sonunda tekrar aile olmaya hazırdılar.",
+            "caseExamples": [
+                { "tr": "Barışmak için çok geç değil.", "en": "It's not too late to make up." },
+                { "tr": "Geç kalması için bir hikaye uydurdu.", "en": "He made up a story about why he was late." }
+            ]
         },
+        "wordFamily": { "noun": "makeup" },
         "targetMode": "Phrasal Verbs"
     },
     {
@@ -1216,8 +1292,12 @@ export const rawPhrasalVerbs = [
         "engExample": "With those glasses, he could pass for a professor.",
         "trExample": "O gözlüklerle bir profesör gibi görünebilir/sanılabilir.",
         "details": {
-            "miniCase": "The fake diamonds were so good they could pass for real ones.",
-            "trMiniCase": "Sahte elmaslar o kadar iyiydi ki gerçek sanılabilirlerdi."
+            "miniCase": "With his fluent accent and deep knowledge of the local culture, the tourist could easily pass for a native resident of the city. He spent weeks wandering through the narrow streets, talking to shopkeepers and learning their stories. Most people didn't believe him when he eventually revealed his true identity.",
+            "trMiniCase": "Akıcı aksanı ve yerel kültüre dair derin bilgisiyle, turist şehrin yerli bir sakini gibi kolayca algılanabiliyordu. Dar sokaklarda dolaşarak, dükkan sahipleriyle konuşarak ve hikayelerini öğrenerek haftalar geçirdi. Sonunda gerçek kimliğini açıkladığında çoğu kişi ona inanmadı.",
+            "caseExamples": [
+                { "tr": "Bu sahte para gerçek sanılabilir.", "en": "This counterfeit money could pass for real." },
+                { "tr": "Onu kardeşim sanabilirsin.", "en": "You could pass him for my brother." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1233,8 +1313,12 @@ export const rawPhrasalVerbs = [
         "engExample": "I can't put up with his constant complaining.",
         "trExample": "Onun sürekli şikayet etmesine katlanamıyorum/tahammül edemiyorum.",
         "details": {
-            "miniCase": "She has put up with a lot of stress at work recently.",
-            "trMiniCase": "Son zamanlarda işte çok fazla strese katlandı."
+            "miniCase": "Living next to a construction site for six months was exhausting, but the residents had to put up with the noise and dust every day. Most of them bought noise-canceling headphones to keep their sanity during the loudest hours. They were all counting down the days until the project was finally completed.",
+            "trMiniCase": "Altı ay boyunca bir şantiyenin yanında yaşamak yorucuydu ancak sakinler her gün gürültüye ve toza katlanmak zorunda kaldılar. Çoğu, en gürültülü saatlerde akıl sağlıklarını korumak için gürültü önleyici kulaklıklar satın aldı. Hepsi projenin nihayet tamamlanacağı günleri sayıyorlardı.",
+            "caseExamples": [
+                { "tr": "Onun kaba davranışlarına daha fazla katlanamam.", "en": "I can't put up with his rude behavior anymore." },
+                { "tr": "Bu şartlara tahammül etmek çok zor.", "en": "It's very hard to put up with these conditions." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1250,8 +1334,12 @@ export const rawPhrasalVerbs = [
         "engExample": "The red dress made her stand out in the crowd.",
         "trExample": "Kırmızı elbise onun kalabalıkta göze çarpmasını/fark edilmesini sağladı.",
         "details": {
-            "miniCase": "He stands out as one of the best students in the class.",
-            "trMiniCase": "Sınıftaki en iyi öğrencilerden biri olarak göze çarpıyor."
+            "miniCase": "In such a competitive job market, you really need a unique set of skills to stand out from the other candidates. Simply having a degree is no longer enough; employers are looking for real-world experience and a proactive attitude. Those who show extra initiative during the interview are much more likely to be hired.",
+            "trMiniCase": "Böylesine rekabetçi bir iş piyasasında, diğer adaylar arasından sıyrılmak/göze çarpmak için gerçekten benzersiz bir beceri setine ihtiyacınız var. Sadece bir diplomaya sahip olmak artık yeterli değil; işverenler gerçek dünya deneyimi ve proaktif bir tutum arıyorlar. Mülakat sırasında ekstra inisiyatif gösterenlerin işe alınma olasılığı çok daha yüksektir.",
+            "caseExamples": [
+                { "tr": "Onu gruptaki diğerlerinden ayıran özelliği neydi?", "en": "What made her stand out from the rest of the group?" },
+                { "tr": "Boyuyla kalabalıkta hemen fark ediliyor.", "en": "He stands out in a crowd because of his height." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1267,8 +1355,12 @@ export const rawPhrasalVerbs = [
         "engExample": "She talked me into going to the party.",
         "trExample": "Beni partiye gitmeye ikna etti.",
         "details": {
-            "miniCase": "I didn't want to buy the car, but the salesman talked me into it.",
-            "trMiniCase": "Arabayı almak istemiyordum ama satıcı beni buna ikna etti."
+            "miniCase": "Sarah didn't want to go to the karaoke bar at first, but her friends eventually managed to talk her into it by promising it would be fun. To her surprise, she ended up having a great time and even sang three songs by the end of the night. It's often worth trying things outside of your comfort zone.",
+            "trMiniCase": "Sarah başlangıçta karaoke bara gitmek istemedi ancak arkadaşları sonunda eğlenceli olacağına dair söz vererek onu buna ikna etmeyi başardılar. Şaşırtıcı bir şekilde, harika vakit geçirdi ve hatta gecenin sonunda üç şarkı söyledi. Konfor alanınızın dışındaki şeyleri denemek genellikle buna değer.",
+            "caseExamples": [
+                { "tr": "Beni bu işe girmeye nasıl ikna ettin?", "en": "How did you talk me into taking this job?" },
+                { "tr": "Babamı tatile gitmeye ikna etmeye çalışıyoruz.", "en": "We are trying to talk my father into going on a vacation." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1284,9 +1376,14 @@ export const rawPhrasalVerbs = [
         "engExample": "He turned down the job offer because the salary was too low.",
         "trExample": "Maaş çok düşük olduğu için iş teklifini reddetti.",
         "details": {
-            "miniCase": "Could you turn the music down, please?",
-            "trMiniCase": "Müziğin sesini kısar mısınız lütfen?"
+            "miniCase": "The university offered him a scholarship, but he decided to turn it down because he wanted to work for a year before continuing his studies. His parents were surprised, but they respected his decision to gain some practical experience in the real world. He focused on building his portfolio during that time.",
+            "trMiniCase": "Üniversite ona burs teklif etti ancak o, eğitimine devam etmeden önce bir yıl çalışmak istediği için bunu reddetmeye karar verdi. Ailesi şaşırdı ancak gerçek dünyada pratik deneyim kazanma kararına saygı duydular. O süre zarfında portfolyosunu oluşturmaya odaklandı.",
+            "caseExamples": [
+                { "tr": "Harika bir teklifi reddetti.", "en": "She turned down a brilliant offer." },
+                { "tr": "Lütfen televizyonun sesini kısar mısın?", "en": "Can you turn down the TV, please?" }
+            ]
         },
+        "wordFamily": { "noun": "turnout" },
         "targetMode": "Phrasal Verbs"
     },
     {
@@ -1301,8 +1398,12 @@ export const rawPhrasalVerbs = [
         "engExample": "Please bear with me while I find the file.",
         "trExample": "Dosyayı bulana kadar lütfen bana karşı sabırlı olun/bekleyin.",
         "details": {
-            "miniCase": "If you just bear with us for a few more minutes, the manager will be here.",
-            "trMiniCase": "Bize birkaç dakika daha sabrederseniz, yönetici burada olacak."
+            "miniCase": "The customer support agent asked the client to bear with him while he checked the status of the delayed shipment. There was a technical glitch in the system that made the process slower than usual. After a few minutes of patience, he was finally able to provide a precise delivery date.",
+            "trMiniCase": "Müşteri destek temsilcisi, geciken sevkiyatın durumunu kontrol ederken müşteriden sabırlı olmasını istedi. Sistemde süreci normalden daha yavaş hale getiren teknik bir aksaklık vardı. Birkaç dakikalık sabrın ardından, nihayet kesin bir teslimat tarihi verebildi.",
+            "caseExamples": [
+                { "tr": "Lütfen birkaç dakika daha sabredin.", "en": "Please bear with us for a few more minutes." },
+                { "tr": "İşler yoğun, lütfen bekleyiniz.", "en": "Things are busy, please bear with me." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1318,8 +1419,12 @@ export const rawPhrasalVerbs = [
         "engExample": "It took him a long time to catch on to the joke.",
         "trExample": "Şakayı anlaması uzun zamanını aldı.",
         "details": {
-            "miniCase": "The new fashion trend hasn't really caught on yet.",
-            "trMiniCase": "Yeni moda akımı henüz tam olarak popülerleşmedi."
+            "miniCase": "When the new technology was first introduced, many experts thought it would never catch on with the general public. However, within a year, it became an essential part of daily life for millions of people worldwide. It's often hard to predict which trends will disappear and which will become permanent.",
+            "trMiniCase": "Yeni teknoloji ilk tanıtıldığında, birçok uzman bunun halk arasında asla popülerleşmeyeceğini/tutmayacağını düşündü. Ancak bir yıl içinde dünya çapında milyonlarca insan için günlük hayatın vazgeçilmez bir parçası haline geldi. Hangi trendlerin yok olacağını, hangilerinin kalıcı olacağını tahmin etmek genellikle zordur.",
+            "caseExamples": [
+                { "tr": "Üzgünüm, esprilerini hemen anlayamıyorum.", "en": "I'm sorry, I don't catch on to your jokes immediately." },
+                { "tr": "Yeni şarkısı gençler arasında hemen popüler oldu.", "en": "His new song caught on quickly among teenagers." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1335,8 +1440,12 @@ export const rawPhrasalVerbs = [
         "engExample": "I can't figure out why she is so angry.",
         "trExample": "Onun neden bu kadar kızgın olduğunu çözemiyorum/anlayamıyorum.",
         "details": {
-            "miniCase": "We need to figure out a way to save money.",
-            "trMiniCase": "Para biriktirmenin bir yolunu bulmamız/çözmemiz gerekiyor."
+            "miniCase": "The scientists spent months trying to figure out the complex code that protected the ancient database. They examined every pattern and tested hundreds of possible combinations before finally finding the key. Their success allowed them to access centuries of lost historical information.",
+            "trMiniCase": "Bilim insanları, antik veri tabanını koruyan karmaşık kodu çözmeye çalışarak aylar geçirdiler. Nihayet anahtarı bulmadan önce her deseni incelediler ve yüzlerce olası kombinasyonu test ettiler. Başarıları, yüzyıllardır kayıp olan tarihi bilgilere erişmelerini sağladı.",
+            "caseExamples": [
+                { "tr": "Bu makinenin nasıl çalıştığını hala çözemedim.", "en": "I still haven't figured out how this machine works." },
+                { "tr": "Sorunu çözmek için bir yol bulacağız.", "en": "We will figure out a way to solve the problem." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1415,8 +1524,12 @@ export const rawPhrasalVerbs = [
         "engExample": "I could just make out a figure in the distance.",
         "trExample": "Uzaktaki bir figürü zar zor seçebiliyordum.",
         "details": {
-            "miniCase": "I can't make out what he is saying.",
-            "trMiniCase": "Ne dediğini anlayamıyorum/seçemiyorum."
+            "miniCase": "The fog was so thick that the ship's captain could barely make out the lighthouse on the jagged coastline. He had to rely on the radar and his experience to navigate the vessel safely into the harbor. It was one of the most challenging nights of his long career at sea.",
+            "trMiniCase": "Sis o kadar yoğundu ki, geminin kaptanı engebeli kıyı şeridindeki deniz fenerini zar zor seçebiliyordu. Gemiyi limana güvenli bir şekilde yanaştırmak için radara ve deneyimine güvenmek zorundaydı. Denizdeki uzun kariyerinin en zorlu gecelerinden biriydi.",
+            "caseExamples": [
+                { "tr": "Uzaktan ne olduğunu seçemiyorum.", "en": "I can't make out what it is from a distance." },
+                { "tr": "El yazısını okumak/anlamak çok zor.", "en": "It's very hard to make out his handwriting." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1432,8 +1545,12 @@ export const rawPhrasalVerbs = [
         "engExample": "No one owned up to breaking the window.",
         "trExample": "Kimse pencereyi kırdığını itiraf etmedi.",
         "details": {
-            "miniCase": "You should own up to your mistakes.",
-            "trMiniCase": "Hatalarını dürüstçe itiraf etmelisin."
+            "miniCase": "The young boy eventually decided to own up to breaking the expensive vase while playing football in the living room. His parents were upset about the damage, but they appreciated his honesty and courage in telling the truth. He promised to be much more careful with his ball in the future.",
+            "trMiniCase": "Küçük çocuk, oturma odasında futbol oynarken pahalı vazoyu kırdığını sonunda itiraf etmeye karar verdi. Ailesi hasar için üzüldü ancak gerçeği söylemedeki dürüstlüğünü ve cesaretini takdir ettiler. Gelecekte topuyla çok daha dikkatli olacağına dair söz verdi.",
+            "caseExamples": [
+                { "tr": "Hatalarını kabullenip itiraf etmelisin.", "en": "You should own up and admit your mistakes." },
+                { "tr": "Suçu kimse üstlenmedi.", "en": "No one owned up to the crime." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1449,8 +1566,12 @@ export const rawPhrasalVerbs = [
         "engExample": "He pointed out that we were running late.",
         "trExample": "Geç kaldığımızı işaret etti/dikkat çekti.",
         "details": {
-            "miniCase": "The teacher pointed out the errors in my essay.",
-            "trMiniCase": "Öğretmen makalemdeki hatalara dikkat çekti."
+            "miniCase": "During the guided tour, the expert pointed out several historical landmarks that most tourists usually overlook. He explained the architect's intention behind the unique designs and shared fascinating stories from the past. Every participant left the tour with a much deeper appreciation for the city's heritage.",
+            "trMiniCase": "Rehberli tur sırasında uzman, çoğu turistin genellikle gözden kaçırdığı birkaç tarihi simgeye dikkat çekti. Benzersiz tasarımların arkasındaki mimarın amacını açıkladı ve geçmişten büyüleyici hikayeler paylaştı. Her katılımcı turdan şehrin mirasına karşı çok daha derin bir takdirle ayrıldı.",
+            "caseExamples": [
+                { "tr": "Grafikteki hatayı bana o gösterdi.", "en": "She pointed out the error in the chart to me." },
+                { "tr": "Bu noktaya değinmeniz çok iyi oldu.", "en": "It was very good that you pointed out this point." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1466,8 +1587,12 @@ export const rawPhrasalVerbs = [
         "engExample": "They set out on their journey across Europe.",
         "trExample": "Avrupa yolculuklarına başladılar/yola çıktılar.",
         "details": {
-            "miniCase": "He set out to become the best player in the league.",
-            "trMiniCase": "Ligdeki en iyi oyuncu olmak için yola çıktı/işe koyuldu."
+            "miniCase": "The explorers set out at dawn to climb the highest peak in the mountain range before the weather changed. They carried all their essential gear and enough food for a three-day journey into the wilderness. The first few hours were easy, but the terrain became increasingly difficult as they climbed higher.",
+            "trMiniCase": "Kaşifler, hava değişmeden önce dağ sırasındaki en yüksek zirveye tırmanmak için şafak vaktinde yola çıktılar. Tüm temel ekipmanlarını ve yabani doğada üç günlük bir yolculuk için yeterli yiyeceği yanlarında taşıdılar. İlk birkaç saat kolaydı ancak tırmandıkça arazi giderek zorlaştı.",
+            "caseExamples": [
+                { "tr": "Güneş doğmadan yola çıkmalıyız.", "en": "We should set out before sunrise." },
+                { "tr": "Dünyayı değiştirmek için yola çıktı.", "en": "He set out to change the world." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1483,8 +1608,12 @@ export const rawPhrasalVerbs = [
         "engExample": "I need some time to think over your offer.",
         "trExample": "Teklifini iyice düşünmek için biraz zamana ihtiyacım var.",
         "details": {
-            "miniCase": "Think it over before you give me your answer.",
-            "trMiniCase": "Bana cevabını vermeden önce iyice düşün."
+            "miniCase": "I suggest you take a few days to think over the job offer before giving us your final answer. It's a big career move that involves relocating to another country, so it deserves careful consideration. We want you to be fully certain about your decision before we sign the contract.",
+            "trMiniCase": "Bize kesin cevabınızı vermeden önce iş teklifini iyice düşünmek için birkaç gün ayırmanızı öneririm. Başka bir ülkeye taşınmayı gerektiren büyük bir kariyer adımı, bu yüzden dikkatlice düşünülmeyi hak ediyor. Sözleşmeyi imzalamadan önce kararınızdan tamamen emin olmanızı istiyoruz.",
+            "caseExamples": [
+                { "tr": "Karar vermeden önce iyice düşünmelisin.", "en": "You should think it over before making a decision." },
+                { "tr": "Planımı düşünmek için zamana ihtiyacı var.", "en": "He needs time to think over my plan." }
+            ]
         },
         "targetMode": "Phrasal Verbs"
     },
@@ -1500,9 +1629,14 @@ export const rawPhrasalVerbs = [
         "engExample": "I'm sure we can work out this problem together.",
         "trExample": "Bu sorunu birlikte çözebileceğimizden eminim.",
         "details": {
-            "miniCase": "He works out at the gym every morning.",
-            "trMiniCase": "Her sabah spor salonunda antrenman yapıyor."
+            "miniCase": "Despite their different opinions on the project's direction, the two managers were able to work out a compromise that satisfied both teams. They focused on their shared goals and were willing to make some adjustments to their original plans. Their collaborative spirit ensured the project's overall success.",
+            "trMiniCase": "Projenin gidişatı konusundaki farklı görüşlerine rağmen, iki yönetici her iki ekibi de memnun eden bir uzlaşma sağlamayı (sorunu çözmeyi) başardılar. Ortak hedeflerine odaklandılar ve orijinal planlarında bazı ayarlamalar yapmaya istekliydiler. İş birliği ruhları projenin genel başarısını sağladı.",
+            "caseExamples": [
+                { "tr": "Bu karmaşık matematik problemini çözemiyorum.", "en": "I can't work out this complex math problem." },
+                { "tr": "Haftada üç kez spor salonunda antrenman yapıyor.", "en": "She works out at the gym three times a week." }
+            ]
         },
+        "wordFamily": { "noun": "workout" },
         "targetMode": "Phrasal Verbs"
     }
 ];

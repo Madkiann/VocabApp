@@ -16,6 +16,29 @@ export const CommunityHub = ({ isDark, t, onClose, isAdmin, appLang }) => {
     const [logs, setLogs] = useState(() => {
         const defaultLogs = [
             {
+                id: 4, date: '2026-03-02',
+                en: {
+                    title: 'System Stability & Sharing V2',
+                    items: [
+                        'Fixed critical rendering crashes across all modules.',
+                        'Optimized Phrasal Verb share cards with intelligent truncation.',
+                        'Cleaned up "Case Examples" UI for a more premium look.',
+                        'Enhanced button feedback with loading states.',
+                        'Fixed Phrasal Verb speaker icon behaviors.'
+                    ]
+                },
+                tr: {
+                    title: 'Sistem Kararlılığı & Paylaşım V2',
+                    items: [
+                        'Tüm modüllerdeki kritik render çökme hataları giderildi.',
+                        'Akıllı metin kırpma ile paylaşım kartları optimize edildi.',
+                        'Vaka Örnekleri arayüzü daha sade ve premium hale getirildi.',
+                        'Buton geri bildirimleri yükleme animasyonlarıyla güçlendirildi.',
+                        'Phrasal Verb hoparlör simgesi hataları düzeltildi.'
+                    ]
+                }
+            },
+            {
                 id: 3, date: '2026-02-27',
                 en: {
                     title: 'Mobile Optimization & Gestures',
@@ -290,7 +313,7 @@ export const CommunityHub = ({ isDark, t, onClose, isAdmin, appLang }) => {
                                         {content.items.map((item, i) => (
                                             <li key={i} className="flex gap-3 text-sm font-bold opacity-80 leading-relaxed">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
-                                                {item}
+                                                {typeof item === 'string' ? item : (item.en || JSON.stringify(item))}
                                             </li>
                                         ))}
                                     </ul>

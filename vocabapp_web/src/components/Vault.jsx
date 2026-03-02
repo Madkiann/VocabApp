@@ -211,13 +211,17 @@ export const Vault = ({
                                     <div key={w.id} onClick={() => { setSelectedVaultWord(w); setIsRevealed(true); setIsTranslated(false); setShowForms(false); setShowAi(false); setShowWriting(false); }} className={`p-5 rounded-[2rem] flex justify-between items-center shadow-lg cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98] ${isDark ? 'bg-slate-900/80 border border-slate-800' : 'bg-white border border-slate-100'}`}>
                                         <div className="flex-1 min-w-0 pr-4">
                                             <div className="flex items-center gap-3 mb-1.5">
-                                                <h3 className={`text-xl font-black tracking-tighter capitalize truncate ${isDark ? 'text-indigo-300' : 'text-indigo-800'}`}>{w.word || w.eng}</h3>
+                                                <h3 className={`text-xl font-black tracking-tighter capitalize truncate ${isDark ? 'text-indigo-300' : 'text-indigo-800'}`}>
+                                                    {typeof (w.word || w.eng) === 'object' ? (w.word || w.eng).en : (w.word || w.eng)}
+                                                </h3>
                                                 <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${mastery >= 80 ? 'bg-emerald-500/10 text-emerald-500' : mastery >= 40 ? 'bg-amber-500/10 text-amber-500' : 'bg-blue-500/10 text-blue-500'}`}>
                                                     %{mastery} Mastered
                                                 </div>
                                             </div>
                                             <p className={`text-xs font-semibold truncate ${isDark ? 'opacity-50 text-slate-300' : 'opacity-60 text-slate-600'}`}>
-                                                {appLang === 'tr' ? w.trWord : (w.engDef || w.meaning || "").split(';')[0]}
+                                                {appLang === 'tr'
+                                                    ? (typeof w.trWord === 'object' ? w.trWord.tr : w.trWord)
+                                                    : (typeof (w.engDef || w.meaning) === 'object' ? (w.engDef || w.meaning).en : (w.engDef || w.meaning || "").split(';')[0])}
                                             </p>
                                         </div>
                                         {!isSystem && (
@@ -344,9 +348,14 @@ export const Vault = ({
 
             <div className="w-full max-w-md mx-auto pt-6 animate-fade-in relative z-10 px-4">
                 <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h2 className="text-[2.5rem] font-bold tracking-tighter leading-none mb-1">Library</h2>
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30">Personal Archives</p>
+                    <div className="flex items-center gap-4">
+                        <div className={`p-1 px-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 shadow-sm transition-all duration-300 hover:scale-105`}>
+                            <Mascot isDark={isDark} size="md" variant="3d" look="book" animated={true} />
+                        </div>
+                        <div>
+                            <h2 className="text-[2.5rem] font-bold tracking-tighter leading-none mb-1">Library</h2>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30">Personal Archives</p>
+                        </div>
                     </div>
                     <Search size={22} onClick={() => setIsSearching(!isSearching)} className={`cursor-pointer transition-transform hover:scale-110 ${isSearching ? 'text-indigo-500' : 'opacity-40'}`} />
                 </div>

@@ -49,7 +49,7 @@ export const BottomNav = ({
                 <div className={`w-full h-full relative ${isDark ? 'bg-slate-800/30' : 'bg-slate-500/10'}`}>
                     {/* Living Gradient Fill */}
                     <div
-                        className={`h-full relative rounded-full bg-[length:200%_100%] animate-[liquid_3s_linear_infinite] transition-all duration-300 ease-out shadow-[0_0_15px_rgba(16,185,129,0.3)] ${lastActionStatus ? 'scale-y-[2.5]' : 'scale-y-100'} ${lastActionStatus === 'correct' ? 'bg-emerald-400 shadow-[0_0_20px_#10b981]' : lastActionStatus === 'wrong' ? 'bg-rose-500 shadow-[0_0_20px_#f43f5e]' : 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500'}`}
+                        className={`h-full relative rounded-full bg-[length:200%_100%] animate-[liquid_3s_linear_infinite] transition-all duration-300 ease-out shadow-[0_0_15px_rgba(16,185,129,0.3)] ${lastActionStatus ? 'scale-y-[2.5]' : 'scale-y-100'} ${lastActionStatus === 'correct' ? 'bg-emerald-400 shadow-[0_0_20px_#10b981]' : lastActionStatus === 'wrong' ? 'bg-purple-500 shadow-[0_0_20px_#a855f7]' : 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500'}`}
                         style={{ width: `${dailyProgress}%` }}
                     >
                         {/* Rapid Shimmer */}
@@ -99,7 +99,7 @@ export const BottomNav = ({
                 <div className={`flex items-center justify-center w-[4.5rem] h-[4.5rem] rounded-full text-white font-black text-2xl border-4 transition-all duration-300 ease-out 
                     ${isDark ? 'border-[#0a0f1c]' : 'border-[#f8f9fc]'} 
                     ${lastActionStatus === 'correct' ? 'bg-emerald-500 scale-[1.02] shadow-[0_0_30px_#10b981]' :
-                        lastActionStatus === 'wrong' ? 'bg-rose-600 scale-[1.02] shadow-[0_0_30px_#f43f5e]' :
+                        lastActionStatus === 'wrong' ? 'bg-purple-600 scale-[1.02] shadow-[0_0_30px_#a855f7]' :
                             isFlameBlue ? 'bg-gradient-to-tr from-emerald-400 to-teal-300 shadow-[0_0_35px_rgba(52,211,153,0.7)] scale-110' :
                                 (isDark ? 'bg-gradient-to-tr from-emerald-700 to-teal-500 shadow-glow-emerald hover:scale-105 active:scale-95' : 'bg-gradient-to-tr from-emerald-500 to-teal-400 shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:scale-105 active:scale-95')}`}>
                     {isFlameBlue && <Moon size={28} className="absolute animate-ping text-white" style={{ opacity: 0.6, transform: 'scale(1.5)' }} />}

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion';
-import { X, Check } from 'lucide-react';
+import { RotateCcw, Check } from 'lucide-react';
 
 export const SwipeableCard = ({
     children,
@@ -86,17 +86,17 @@ export const SwipeableCard = ({
             viewport={{ once: true }}
             whileDrag={{ scale: 1.01, transition: { duration: 0.1 } }}
         >
-            {/* Overlay Indicator - Left (Don't Know / Red) */}
+            {/* Overlay Indicator - Left (Remind Me / Amber-Purple) */}
             {appMode === 'swipe' && (
                 <motion.div
                     className="absolute inset-0 z-[100] pointer-events-none rounded-[2.5rem] flex items-center justify-center"
                     style={{
                         opacity: opacityLeft,
-                        backgroundColor: isDark ? 'rgba(225, 29, 72, 0.4)' : 'rgba(244, 63, 94, 0.4)',
+                        backgroundColor: isDark ? 'rgba(139, 92, 246, 0.4)' : 'rgba(245, 158, 11, 0.4)',
                     }}
                 >
-                    <div className="bg-white text-rose-600 p-8 rounded-full shadow-lg transform scale-110 border-4 border-white/50">
-                        <X size={52} strokeWidth={4} />
+                    <div className={`bg-white p-8 rounded-full shadow-lg transform scale-110 border-4 border-white/50 ${isDark ? 'text-purple-600' : 'text-amber-600'}`}>
+                        <RotateCcw size={52} strokeWidth={4} />
                     </div>
                 </motion.div>
             )}
@@ -121,10 +121,10 @@ export const SwipeableCard = ({
                 <>
                     <motion.div
                         className="absolute -right-20 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 pointer-events-none transition-colors"
-                        style={{ opacity: hintLeftOpacity, color: isDark ? '#fb7185' : '#e11d48' }}
+                        style={{ opacity: hintLeftOpacity, color: isDark ? '#a78bfa' : '#f59e0b' }}
                     >
                         <div className="flex flex-col items-center animate-pulse">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] [writing-mode:vertical-lr]">SOLA: BİLMİYORUM</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] [writing-mode:vertical-lr]">SOLA: TEKRARLA</span>
                         </div>
                     </motion.div>
                     <motion.div

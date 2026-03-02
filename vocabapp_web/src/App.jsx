@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { RefreshCw, Check, X, Sun, Moon, Instagram, Globe, Archive, Languages, Hourglass, BarChart3, Brain, Flame, Clock, Sparkles, ArrowRight, Menu, Settings, Layers, Coffee, BookOpen, ServerCrash, Undo2 } from 'lucide-react';
 import { rawVocabulary, initialVocabulary, initialPhrasalVerbs, localDict } from './data/vocabulary';
 import { translations } from './data/translations';
-import { safeJsonParse, calculateAdvancedSM2 } from './utils/helpers';
+import { safeJsonParse, calculateAdvancedSM2, shuffleArray } from './utils/helpers';
 
 // Components
 import { BrandLogo } from './components/BrandLogo';
@@ -19,6 +19,7 @@ import { AchievementPopup } from './components/AchievementPopup';
 import { Mascot } from './components/Mascot';
 import { SwipeableCard } from './components/SwipeableCard';
 import { AdminPanel } from './components/AdminPanel';
+import { DiscoveryBar } from './components/DiscoveryBar';
 import { LevelTestModal } from './components/LevelTestModal';
 
 // Hooks
@@ -124,6 +125,7 @@ export default function App() {
 
   const [lastActionStatus, setLastActionStatus] = useState(null); // 'correct', 'wrong', null
   const [dauDisplay, setDauDisplay] = useState(1); // Set to exact usage counter
+  const [chillSortMode, setChillSortMode] = useState('random'); // Default to random discovery
 
   useEffect(() => {
     // Intercept console.error to log to User Shadowing system
@@ -186,7 +188,7 @@ export default function App() {
     }
 
     setDailyStats(prev => {
-      const todayStr = new Date().toDateString();
+      const todayStr = new Date(currentDate).toDateString();
       const hour = new Date().getHours();
       const dayData = prev[todayStr] || {
         swiped: 0,
@@ -203,19 +205,28 @@ export default function App() {
       const newHourlyActions = [...(dayData.hourlyActions || new Array(24).fill(0))];
       newHourlyActions[hour] = (newHourlyActions[hour] || 0) + 1;
 
-      // Find the card ID to track unique swipes
-      const currentVocab = vocabMode === 'words' ? wordVocab : (vocabMode === 'phrasal' ? phrasalVocab : chillVocab);
-      const card = currentVocab.find(w => (w.text || w.eng) === wordText);
+      // Find the card ID to track unique swipes - search all possible sources
+      const allPossibleVocab = [...wordVocab, ...phrasalVocab, ...chillVocab, ...customWords];
+      const card = allPossibleVocab.find(w => (w.text || w.eng) === wordText || w.word === wordText);
       const cardId = card?.id;
 
       const alreadySwiped = cardId && (dayData.swipedIds || []).includes(cardId);
       const newSwipedIds = (cardId && !alreadySwiped) ? [...(dayData.swipedIds || []), cardId] : (dayData.swipedIds || []);
 
+      // Discovery Logic (Global 12 Quota)
+      // Only "Stranger" cards (rep === 0) that are swiped for the first time TODAY
+      // and successfully learned (quality >= 4) advance the bar.
+      // Quizzes (isQuiz) now also count if the target word is a Stranger.
+      const isReview = card && card.sm2 && card.sm2.rep > 0;
+      const isStranger = card && card.sm2 && card.sm2.rep === 0;
+      // Discovery counts when we meet a Stranger word for the first time TODAY.
+      const isDiscovery = !alreadySwiped && isStranger && !isReview && !isRetryMode;
+
       return {
         ...prev,
         [todayStr]: {
           ...dayData,
-          swiped: dayData.swiped + (!isQuiz && !alreadySwiped ? 1 : 0),
+          swiped: dayData.swiped + (isDiscovery ? 1 : 0),
           correct: dayData.correct + (isSuccess ? 1 : 0),
           wrong: dayData.wrong + (!isSuccess ? 1 : 0),
           quiz: dayData.quiz + (isQuiz ? 1 : 0),
@@ -225,7 +236,7 @@ export default function App() {
       };
     });
 
-    localStorage.setItem('vocabapp_last_active_date', new Date().toDateString());
+    localStorage.setItem('vocabapp_last_active_date', new Date(currentDate).toDateString());
   };
 
   const deleteWord = (wordId) => {
@@ -308,8 +319,8 @@ export default function App() {
     const overrideIds = new Set(custom.map(w => w.id));
     const deletedIds = new Set(deletedWords);
 
-    // Filter by appDay: Day 1 (1-12), Day 2 (1-24), Day 3 (1-36)
-    const dayLimit = appDay * 12;
+    // Show up to 36 words for the vocab tab as requested
+    const dayLimit = 36;
     const baseWords = wordVocab.filter(w => !overrideIds.has(w.id) && !deletedIds.has(w.id));
     const limitedWords = baseWords.slice(0, dayLimit);
 
@@ -325,11 +336,23 @@ export default function App() {
 
   const computedChill = useMemo(() => {
     const wordsForChill = customWords.filter(w => w.targetMode === 'words' || w.targetMode === 'chill');
+    const phrasalsForChill = phrasalVocab.map(w => ({ ...w, sm2: { ...w.sm2, ef: 3.0 } }));
     const overrideIds = new Set(wordsForChill.map(w => w.id));
     const deletedIds = new Set(deletedWords);
-    const baseChill = [...chillVocab.filter(w => !overrideIds.has(w.id) && !deletedIds.has(w.id)), ...wordsForChill.map(w => ({ ...w, sm2: { ...w.sm2, ef: 3.0 } }))];
-    return baseChill.filter(w => !deletedIds.has(w.id));
-  }, [chillVocab, customWords, deletedWords]);
+    let baseChill = [
+      ...chillVocab.filter(w => !overrideIds.has(w.id) && !deletedIds.has(w.id)),
+      ...wordsForChill.map(w => ({ ...w, sm2: { ...w.sm2, ef: 3.0 } })),
+      ...phrasalsForChill
+    ].filter(w => !deletedIds.has(w.id));
+
+    if (chillSortMode === 'alphabetical') {
+      return [...baseChill].sort((a, b) => (a.word || '').localeCompare(b.word || ''));
+    } else if (chillSortMode === 'newest') {
+      return [...baseChill].reverse(); // Assuming original order is chronological
+    }
+    // Default: Random Discovery (Fisher-Yates)
+    return shuffleArray(baseChill);
+  }, [chillVocab, customWords, deletedWords, chillSortMode]);
 
   // Compute active vocab based on mode
   const vocab = useMemo(() => {
@@ -439,7 +462,7 @@ export default function App() {
         return newValue;
       });
 
-      const todayStr = new Date().toDateString();
+      const todayStr = new Date(currentDate).toDateString();
       const hour = new Date().getHours();
       setDailyStats(prev => {
         const dayData = prev[todayStr] || { swiped: 0, correct: 0, wrong: 0, quiz: 0, time: 0, hourlyActions: new Array(24).fill(0), hourlyTime: new Array(24).fill(0) };
@@ -498,6 +521,7 @@ export default function App() {
   const [writingFeedback, setWritingFeedback] = useState(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [isRetryMode, setIsRetryMode] = useState(false);
+  const [showCaseExamples, setShowCaseExamples] = useState(false);
 
   // Quiz States
   const [quizExplanation, setQuizExplanation] = useState(null);
@@ -551,12 +575,49 @@ export default function App() {
 
 
   const refreshDeck = (isRetry = false) => {
-    let newDeck;
+    let newDeck = [];
     if (isRetry) {
-      newDeck = vocab.sort(() => Math.random() - 0.5);
+      // "Tekrar Yap" (isRetryMode) focuses on what we did today + any missed reviews
+      const todayStr = new Date(currentDate).toDateString();
+      const stats = dailyStats[todayStr] || { swipedIds: [] };
+      const swipedTodayIds = new Set(stats.swipedIds || []);
+
+      const sessionContent = vocab.filter(w =>
+        swipedTodayIds.has(w.id) ||
+        (w.sm2.nextDate <= currentDate && w.sm2.rep > 0)
+      );
+
+      newDeck = shuffleArray(sessionContent);
       setIsRetryMode(true);
+    } else if (vocabMode !== 'chill') {
+      const todayStr = new Date(currentDate).toDateString();
+      const stats = dailyStats[todayStr] || { swiped: 0, swipedIds: [] };
+
+      // 1. Due Cards: Reviews coming from the SM-2 engine
+      const dueCards = vocab.filter(w => w.sm2.nextDate <= currentDate && w.sm2.rep > 0);
+
+      // Stochastic approach: We don't necessarily show all due cards at once, 
+      // but we pull a random selection (0-20 as requested) or just shuffle all.
+      // Let's take up to 20 random due cards for a better "Mix".
+      const shuffledDue = shuffleArray(dueCards).slice(0, Math.floor(Math.random() * 21));
+
+      // 2. Stranger Cards: New discoveries for today. 
+      // CRITICAL: Pull from the FULL wordVocab/phrasalVocab instead of the limited 'vocab' 
+      // so we don't run out of strangers after a few days.
+      const pool = vocabMode === 'phrasal' ? phrasalVocab : wordVocab;
+      const alreadySwipedToday = new Set(stats.swipedIds || []);
+      const strangerCards = pool.filter(w => w.sm2.rep === 0 && !alreadySwipedToday.has(w.id));
+      const shuffledStrangers = shuffleArray(strangerCards);
+
+      // Rule: Take until daily limit (12) is reached
+      const remainingDiscoveryQuota = Math.max(0, 12 - (stats.swiped || 0));
+      const discoveriesForDeck = shuffledStrangers.slice(0, remainingDiscoveryQuota);
+
+      // MIX: Shuffle Due + Discoveries for a truly stochastic feel
+      newDeck = shuffleArray([...shuffledDue, ...discoveriesForDeck]);
+      setIsRetryMode(false);
     } else {
-      newDeck = vocab.filter(w => w.sm2.nextDate <= currentDate);
+      newDeck = vocab; // ChillMode handles its own sorting via computedChill
       setIsRetryMode(false);
     }
 
@@ -789,14 +850,16 @@ export default function App() {
     if (currentWordIndex >= deck.length) return;
 
     if (!isComplete) {
-      // Check for daily quota before allowing swipe start
-      const todayStr = new Date().toDateString();
+      const todayStr = new Date(currentDate).toDateString();
       const stats = dailyStats[todayStr] || { swiped: 0, swipedIds: [] };
       const currentWord = deck[currentWordIndex];
-      const alreadySwiped = currentWord && (stats.swipedIds || []).includes(currentWord.id);
+      const isReview = currentWord && currentWord.sm2.rep > 0;
+      const alreadySwipedToday = currentWord && (stats.swipedIds || []).includes(currentWord.id);
 
-      if (stats.swiped >= 12 && !alreadySwiped) {
-        alert("Günlük kotana ulaştın (12/12). Yarın devam edebilirsin!");
+      // Only block if it's a NEW discovery (Stranger) and quota is met
+      // Chill mode is exempt from daily limits
+      if (vocabMode !== 'chill' && !isReview && !alreadySwipedToday && stats.swiped >= 12 && !isRetryMode) {
+        alert("Günlük yeni keşif kotana ulaştın (12/12). Daha önce gördüğün kelimelere (Tanış/Sırdaş) sınırsız devam edebilirsin ama yeni kelime için yarını bekle!");
         return;
       }
       setSwipeDirection(direction);
@@ -807,39 +870,48 @@ export default function App() {
     if (!currentWord) return null;
 
     const isCorrect = direction === 'right';
-
     let quality;
-    let mode;
+    let mode = 'recall';
 
-    if (!isCorrect) {
-      quality = 1;
-      mode = 'recall';
-      sounds.playError();
-    } else {
+    if (isCorrect) {
       if (!isRevealed) {
-        quality = 5;
+        quality = 5; // Mastered
         mode = 'perfect';
         sounds.playMastery();
       } else {
-        quality = 4;
-        mode = 'recall';
+        quality = 4; // Got it
         sounds.playSuccess();
+      }
+    } else {
+      if (isRevealed) {
+        quality = 2; // Remind Me (Stubborn)
+        sounds.playError();
+      } else {
+        quality = 0; // New to Me (Stranger)
+        sounds.playError();
       }
     }
 
-    const updatedWord = calculateAdvancedSM2(currentWord, quality, mode, currentDate, sm2Multiplier);
-    setVocab(prev => prev.map(w => w.id === updatedWord.id ? updatedWord : w));
-    trackSwipe(currentWord.text || currentWord.eng, quality, vocabMode, isCorrect);
+    if (vocabMode !== 'chill') {
+      // We now allow scientific SM-2 progress during "Retry" to satisfy "review not working"
+      // but isDiscovery logic in trackSwipe will still protect the daily visual limit/quota
+      const updatedWord = calculateAdvancedSM2(currentWord, quality, mode, currentDate, sm2Multiplier, false);
+      setVocab(prev => prev.map(w => w.id === updatedWord.id ? updatedWord : w));
+      trackSwipe(currentWord.word || currentWord.text || currentWord.eng, quality, vocabMode, isCorrect);
 
-    if (!isCorrect) {
-      setLearningWords(prev => {
-        if (!prev.find(w => w.id === updatedWord.id)) {
-          return [...prev, updatedWord];
-        }
-        return prev;
-      });
+      if (!isCorrect) {
+        setLearningWords(prev => {
+          if (!prev.find(w => w.id === updatedWord.id)) {
+            return [...prev, updatedWord];
+          }
+          return prev;
+        });
+      } else {
+        setLearningWords(prev => prev.filter(w => w.id !== updatedWord.id));
+      }
     } else {
-      setLearningWords(prev => prev.filter(w => w.id !== updatedWord.id));
+      // Chill Mode Passive Track
+      trackSwipe(currentWord.text || currentWord.eng, quality, 'chill', isCorrect);
     }
 
     // Push to history for Undo
@@ -853,7 +925,7 @@ export default function App() {
 
     setSwipeDirection(null);
     setIsTranslated(false);
-    setShowForms(false); setShowAi(false); setShowWriting(false); setShowDetails(false);
+    setShowForms(false); setShowAi(false); setShowWriting(false); setShowDetails(false); setShowCaseExamples(false);
     setUserSentence(""); setWritingFeedback(null); setAiData(null);
     setQuickTx({ visible: false, text: '', x: 0, y: 0 });
 
@@ -883,7 +955,7 @@ export default function App() {
 
     // Revert daily stats if necessary
     if (prevState.currentWord) {
-      const todayStr = new Date().toDateString();
+      const todayStr = new Date(currentDate).toDateString();
       setDailyStats(prev => {
         const dayData = prev[todayStr];
         if (!dayData) return prev;
@@ -952,14 +1024,14 @@ export default function App() {
 
     const updatedWord = calculateAdvancedSM2(quizQuestion.target, quality, mode, currentDate, sm2Multiplier);
     setVocab(prev => prev.map(w => w.id === updatedWord.id ? updatedWord : w));
-    trackSwipe(quizQuestion.target.text || quizQuestion.target.eng, quality, 'quiz', isCorrect);
+    trackSwipe(quizQuestion.target.word || quizQuestion.target.text || quizQuestion.target.eng, quality, 'quiz', isCorrect);
 
     setQuizLog(prev => ({
       total: prev.total + 1,
       correct: prev.correct + (isCorrect ? 1 : 0),
       history: [{
-        id: Date.now(),
-        date: new Date().toISOString(),
+        id: currentDate + Math.random(), // Unique key based on sim time
+        date: new Date(currentDate).toISOString(),
         word: quizQuestion.target.word || quizQuestion.target.eng,
         type: quizType,
         isCorrect
@@ -1059,13 +1131,19 @@ export default function App() {
   const correctReviewsAll = vocab.reduce((acc, curr) => acc + curr.sm2.correctReviews, 0);
   const globalRetention = totalReviewsAll === 0 ? 0 : Math.round((correctReviewsAll / totalReviewsAll) * 100);
 
-  const familiarCount = vocab.filter(w => w.sm2.rep > 0 && w.sm2.int < 7).length;
-  const learningCount = vocab.filter(w => w.sm2.int >= 7 && w.sm2.int < 21).length;
-  const strongCount = vocab.filter(w => w.sm2.int >= 21).length;
+  const bondStats = {
+    stranger: vocab.filter(w => !w.sm2.bondXP || w.sm2.bondXP === 0).length,
+    acquaintance: vocab.filter(w => w.sm2.bondXP > 0 && w.sm2.bondXP < 100).length,
+    confidant: vocab.filter(w => w.sm2.bondXP >= 100 && w.sm2.bondXP < 250).length,
+    companion: vocab.filter(w => w.sm2.bondXP >= 250).length,
+    stubborn: vocab.filter(w => w.sm2.lastQualityScore === 2).length
+  };
   const learnedCount = vocab.filter(w => w.sm2.rep > 0).length;
+  const strongCount = bondStats.companion; // For backward compatibility with some dashboard logic or achievements
 
-  const weakWordsArray = vocab.filter(w => w.sm2.totalReviews >= 3 && (w.sm2.correctReviews / w.sm2.totalReviews) < 0.6);
-  const isDeckFinished = deck.length === 0 || currentWordIndex >= deck.length;
+  const todayStats = dailyStats[new Date(currentDate).toDateString()] || { swiped: 0 };
+  const swipedToday = todayStats.swiped || 0;
+  const isDeckFinished = deck.length === 0 || currentWordIndex >= deck.length || (!isRetryMode && swipedToday >= 12);
 
   const dueTodayCount = vocab.filter(w => w.sm2.nextDate <= currentDate).length;
   const dueTodayMins = Math.max(1, Math.round((dueTodayCount * 15) / 60));
@@ -1073,8 +1151,7 @@ export default function App() {
   const dueTomorrowCount = vocab.filter(w => w.sm2.nextDate > currentDate && w.sm2.nextDate <= currentDate + 24 * 60 * 60 * 1000).length;
   const dueTomorrowMins = Math.max(1, Math.round((dueTomorrowCount * 15) / 60));
 
-  const todayStats = dailyStats[new Date().toDateString()] || { swiped: 0 };
-  const dailyProgress = Math.min(1, (todayStats.swiped || 0) / 12);
+  const dailyProgress = Math.min(1, learnedCount / Math.max(1, vocab.length));
 
   // Achievement Check Logic
   useEffect(() => {
@@ -1096,7 +1173,6 @@ export default function App() {
     if (newUnlocked.length > 0) {
       setUnlockedAchievements(prev => {
         const next = [...prev, ...newUnlocked.map(a => a.id)];
-        localStorage.setItem('vocabapp_achievements', JSON.stringify(next));
         return next;
       });
       setAchievementQueue(prev => [...prev, ...newUnlocked]);
@@ -1107,16 +1183,54 @@ export default function App() {
     setAchievementQueue(prev => prev.filter(a => a.id !== id));
   }, []);
 
-  const renderCardContentWrapper = (word, isSaved, isSystem = false) => {
-    const todayStr = new Date().toDateString();
-    const swipedToday = (dailyStats[todayStr]?.swiped || 0);
-    const remainingCardsCount = isRetryMode ? (deck.length - currentWordIndex) : (12 - swipedToday);
-    const safeRemaining = Math.max(0, remainingCardsCount);
+  const evolveBond = useCallback((wordId) => {
+    if (!isAdmin) return;
+    const updateFn = w => {
+      if (String(w.id) === String(wordId)) {
+        let currentXp = w.sm2.bondXP || 0;
+        let nextXp, nextInt;
 
+        if (currentXp === 0) { nextXp = 50; nextInt = 1; } // Stranger -> Acquaintance
+        else if (currentXp < 100) { nextXp = 100; nextInt = 7; } // Acquaintance -> Confidant
+        else if (currentXp < 250) { nextXp = 250; nextInt = 21; } // Confidant -> Companion
+        else { nextXp = currentXp + 100; nextInt = Math.max(w.sm2.int || 0, 30); } // Beyond Companion, just add XP
+
+        return {
+          ...w,
+          sm2: {
+            ...w.sm2,
+            bondXP: nextXp,
+            int: nextInt,
+            rep: Math.max(w.sm2.rep, 1)
+          }
+        };
+      }
+      return w;
+    };
+
+    setWordVocab(prev => prev.map(updateFn));
+    setPhrasalVocab(prev => prev.map(updateFn));
+    setDeck(prev => prev.map(updateFn));
+  }, [isAdmin]);
+
+
+  const renderCardContentWrapper = (word, isSaved, isSystem = false) => {
+    const todayStr = new Date(currentDate).toDateString();
+    const swipedToday = (dailyStats[todayStr]?.swiped || 0);
+    const isStranger = word && word.sm2.rep === 0;
+
+    const cardBgClass = isDark ? 'glass-dark border-transparent shadow-premium' : 'glass border-transparent shadow-premium';
+
+    // Stats for the Discovery Bar (Shared Discovery Count)
     const stats = {
-      current: isRetryMode ? (currentWordIndex + 1) : Math.min(12, swipedToday + 1),
-      total: isRetryMode ? deck.length : 12,
-      timeRemaining: Math.max(1, Math.ceil(safeRemaining * 0.25))
+      isStranger,
+      currentDiscovery: swipedToday, // Global count of NEW cards today
+      totalDiscovery: 12,
+      current: currentWordIndex + 1,
+      total: deck.length,
+      overallCurrent: learnedCount + 1,
+      overallTotal: vocab.length,
+      timeRemaining: Math.max(1, Math.ceil((deck.length - currentWordIndex) * 0.25))
     };
 
     const commonProps = {
@@ -1131,6 +1245,8 @@ export default function App() {
           wordObj={word}
           isSavedStatus={isSaved}
           toggleSaveWord={toggleSaveWord}
+          showCaseExamples={showCaseExamples}
+          setShowCaseExamples={setShowCaseExamples}
           isDark={isDark}
           t={t}
           appLang={appLang}
@@ -1143,6 +1259,8 @@ export default function App() {
           setIsTranslated={setIsTranslated}
           onDeleteWord={deleteWord}
           onEditWord={editWord}
+          cardBg={cardBgClass}
+          onEvolveBond={evolveBond}
           {...commonProps}
         />
       );
@@ -1169,6 +1287,8 @@ export default function App() {
         setShowDetails={setShowDetails}
         showForms={showForms}
         setShowForms={setShowForms}
+        showCaseExamples={showCaseExamples}
+        setShowCaseExamples={setShowCaseExamples}
         isDark={isDark}
         t={t}
         appLang={appLang}
@@ -1182,6 +1302,8 @@ export default function App() {
         stats={stats}
         onDeleteWord={deleteWord}
         onEditWord={editWord}
+        cardBg={cardBgClass}
+        onEvolveBond={evolveBond}
         {...commonProps}
       />
     );
@@ -1317,17 +1439,44 @@ export default function App() {
             <span className="hidden xs:inline">{mode.label}</span>
           </button>
         ))}
+        {isAdmin && (
+          <button
+            onClick={() => { sounds.playClick(); advanceTime(); }}
+            className="ml-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-400 text-black shadow-lg hover:bg-amber-500 transition-all flex items-center gap-2 scale-95"
+            title="Simüle Et: Yarın"
+          >
+            <Clock size={12} strokeWidth={3} />
+            <span>+1 GÜN</span>
+          </button>
+        )}
       </div>
     </div>
   );
 
-  if (maintenanceMode && !isAdmin) {
+  const weakWordsArray = useMemo(() => {
+    return (difficultWords || []).map(dw => {
+      const card = (vocab || []).find(v => (v.text || v.eng) === dw.text);
+      return card ? { ...card, fails: dw.fails } : null;
+    }).filter(Boolean).slice(0, 8);
+  }, [difficultWords, vocab]);
+
+  if (maintenanceMode) {
     return (
       <div className="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center p-8 z-[999] text-center">
         <ServerCrash size={64} className="text-red-500 mb-6 animate-pulse" />
-        <h1 className="text-2xl font-black text-white mb-2">System Under Maintenance</h1>
-        <p className="text-slate-400 font-bold max-w-sm">We are currently deploying critical updates to VocabApp. Please check back shortly.</p>
-        <button onClick={handleVersionClick} className="mt-12 text-[10px] uppercase font-black tracking-widest text-slate-700">Attempt Admin Login</button>
+        <h1 className="text-2xl font-black text-white mb-2">{t.maintenanceTitle || 'Sistem Bakımda'}</h1>
+        <p className="text-slate-400 font-bold max-w-sm mb-8">{globalAnnouncement || t.maintenanceDesc || 'Size daha iyi bir deneyim sunmak için güncellemeler yapıyoruz. Lütfen biraz sonra tekrar deneyin.'}</p>
+
+        {isAdmin ? (
+          <button
+            onClick={() => setMaintenanceMode(false)}
+            className="px-8 py-4 bg-amber-400 text-slate-900 font-black rounded-2xl shadow-glow-amber hover:scale-105 active:scale-95 transition-all uppercase tracking-widest"
+          >
+            Admın Geçişi (Panelden Kapatabilirsin)
+          </button>
+        ) : (
+          <button onClick={handleVersionClick} className="mt-12 text-[10px] uppercase font-black tracking-widest text-slate-700">Attempt Admin Login</button>
+        )}
       </div>
     );
   }
@@ -1359,8 +1508,7 @@ export default function App() {
           vocab={vocab}
           totalReviewsAll={totalReviewsAll}
           globalRetention={globalRetention}
-          familiarCount={familiarCount}
-          learningCount={learningCount}
+          bondStats={bondStats}
           strongCount={strongCount}
           weakWordsArray={weakWordsArray}
           bgMain={bgMain}
@@ -1443,8 +1591,12 @@ export default function App() {
           isAdmin={isAdmin}
           onDeleteWord={deleteWord}
           onEditWord={editWord}
+          chillSortMode={chillSortMode}
+          setChillSortMode={setChillSortMode}
         />
-        {bottomNavigation}
+        <div className="relative z-[500] w-full">
+          {bottomNavigation}
+        </div>
       </div>
     );
   }
@@ -1469,7 +1621,7 @@ export default function App() {
         </div>
       )}
 
-      <div className="flex-grow flex flex-col items-center justify-start w-full pt-24 mb-20 relative">
+      <div className={`flex-grow flex flex-col items-center justify-start w-full ${appMode.startsWith('quiz_') ? 'pt-14' : 'pt-28'} mb-20 relative`}>
         {modeSelector}
 
         {isLogoVisible ? (
@@ -1482,6 +1634,17 @@ export default function App() {
           </div>
         ) : (
           <div className="animate-fade-in w-full flex flex-col items-center">
+
+            {/* Discovery Bar - Top Mounted (Unified Limit) */}
+            <div className="mb-4 w-full max-w-sm px-4">
+              <DiscoveryBar
+                current={Math.min(swipedToday, 12)}
+                total={12}
+                isDark={isDark}
+                t={t}
+              />
+            </div>
+
             {/* Global Announcement Banner */}
             {globalAnnouncement && (
               <div className="w-full max-w-sm mb-6 animate-slide-up group">
@@ -1528,13 +1691,13 @@ export default function App() {
                 isQuizReview={isQuizReview}
               />
             ) : isDeckFinished ? (
-              <div className={`text-center w-full max-w-sm ${cardBg} p-8 pt-12 rounded-[3.5rem] shadow-premium border animate-fade-in relative overflow-visible`}>
-                {/* Celebratory Mascot at the top */}
-                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 h-48 pointer-events-none drop-shadow-2xl opacity-80">
-                  <Mascot isDark={isDark} size="xl" look="happy" animated={false} glow={false} isAdmin={isAdmin} />
+              <div className={`text-center w-full max-w-sm ${cardBg} p-8 pt-16 rounded-[3.5rem] shadow-premium border animate-fade-in relative overflow-visible`}>
+                {/* Celebratory Mascot peeking from behind the text */}
+                <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 z-0 pointer-events-none drop-shadow-2xl opacity-90 scale-110">
+                  <Mascot look="happy" size="xl" isDark={isDark} />
                 </div>
 
-                <h2 className={`text-4xl font-black mb-4 tracking-tighter ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{t.congrats}</h2>
+                <h2 className={`text-4xl font-black mb-4 tracking-tighter relative z-10 drop-shadow-md ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{t.congrats}</h2>
                 <p className="mb-6 font-bold opacity-60 uppercase tracking-widest text-[10px]">{t.deckFinished}</p>
 
                 <div className={`mb-8 p-5 rounded-2xl border-2 border-dashed ${isDark ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
@@ -1560,11 +1723,7 @@ export default function App() {
                   swipeDirection={swipeDirection}
                   isRevealed={isRevealed}
                 >
-                  <div
-                    className={`w-full h-full ${cardBg} ${isDark ? 'shadow-black/50' : 'shadow-blue-900/10'} rounded-[2.5rem] shadow-2xl border p-7 flex flex-col origin-center overflow-hidden animate-fade-in relative`}
-                  >
-                    {renderCardContentWrapper(currentWord, isSaved)}
-                  </div>
+                  {renderCardContentWrapper(currentWord, isSaved)}
                 </SwipeableCard>
               </div>
             )}
