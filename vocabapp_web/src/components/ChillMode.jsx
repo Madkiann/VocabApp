@@ -5,11 +5,7 @@ import FlamingoImg from '../assets/Mascot/Flamingoo.png';
 import { Mascot } from './Mascot';
 import { ChillModeAudio } from './ChillModeAudio';
 
-// Audio Assets
-import FireSound from '../assets/audio/234288__leosalom__fireplace.wav';
-import RainSound from '../assets/audio/346642__inspectorj__rain-on-windows-interior-a.wav';
-import WavesSound from '../assets/audio/462592__eelke__calm-seawaves.wav';
-import StormSound from '../assets/audio/531947__straget__the-rain-falls-against-the-parasol.wav';
+// Audio assets are located in public/Audio and are referenced by static URL
 
 const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isAdmin, onDeleteWord, onEditWord, chillSortMode, setChillSortMode, showAmbientLounge, setShowAmbientLounge }) => {
     if (!wordObj) return null;
@@ -367,10 +363,10 @@ export const ChillMode = ({ vocab, isDark, appLang, t, dueTodayCount, dueTodayMi
     const audioRef = useRef(null);
 
     const sounds = [
-        { id: 'fire', icon: <Flame size={20} />, label: 'HUZUR', file: FireSound, color: 'text-orange-400' },
-        { id: 'rain', icon: <CloudRain size={20} />, label: 'YAĞMUR', file: RainSound, color: 'text-blue-400' },
-        { id: 'waves', icon: <Waves size={20} />, label: 'DENİZ', file: WavesSound, color: 'text-cyan-400' },
-        { id: 'storm', icon: <Wind size={20} />, label: 'TERAS', file: StormSound, color: 'text-slate-400' },
+        { id: 'fire', icon: <Flame size={20} />, label: 'HUZUR', file: '/Audio/fireplace.wav', color: 'text-orange-400' },
+        { id: 'rain', icon: <CloudRain size={20} />, label: 'YAĞMUR', file: '/Audio/rain-on-windows-interior.wav', color: 'text-blue-400' },
+        { id: 'waves', icon: <Waves size={20} />, label: 'DENİZ', file: '/Audio/calm-seawaves.wav', color: 'text-cyan-400' },
+        { id: 'storm', icon: <Wind size={20} />, label: 'TERAS', file: '/Audio/the-rain-falls-against-the-parasol.wav', color: 'text-slate-400' },
     ];
 
     const toggleSound = (soundId) => {
