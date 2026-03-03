@@ -10,158 +10,189 @@ export const SwipeableCard = ({
     swipeDirection,
     isRevealed
 }) => {
-    const minSwipeDistance = 100;
     const x = useMotionValue(0);
+    const y = useMotionValue(0);
     const controls = useAnimation();
-    const isDragLocked = useRef(false);
     const isSwipingOut = useRef(false);
 
-    const opacityLeft = useTransform(x, [-minSwipeDistance, -minSwipeDistance * 2], [0, 1]);
-    const opacityRight = useTransform(x, [minSwipeDistance, minSwipeDistance * 2], [0, 1]);
+    // Dynamic Rotation logic: Tilt based on movement
     const rotate = useTransform(x, [-300, 300], [-15, 15]);
+    const rotateY = useTransform(x, [-300, 300], [-10, 10]);
+    const rotateX = useTransform(y, [-300, 300], [10, -10]);
 
-    // Hint Opacities
-    const hintLeftOpacity = useTransform(x, [0, -40], [0, 0.4]);
-    const hintRightOpacity = useTransform(x, [0, 40], [0, 0.4]);
+    // Opacities for Side Glows
+    const opacityLeft = useTransform(x, [0, -150], [0, 1]);
+    const opacityRight = useTransform(x, [0, 150], [0, 1]);
+
+    // Icon Overlays Opacities (Moved to top level to fix "Rendered fewer hooks" error)
+    const iconLeftOpacity = useTransform(x, [0, -180], [0, 0.8]);
+    const iconRightOpacity = useTransform(x, [0, 180], [0, 0.8]);
+
+    // Scale and Border Radius during drag
+    const scale = useTransform(x, [-300, 0, 300], [1.05, 1, 1.05]);
+    const borderRadius = useTransform(x, [-200, 0, 200], ["1.5rem", "2rem", "1.5rem"]);
+
+    const isDragging = useRef(false);
 
     useEffect(() => {
         if (!swipeDirection) {
+            // Guard: Don't reset if we are currently dragging
+            if (isDragging.current) return;
+
             isSwipingOut.current = false;
-            // Entrance animation for new cards
+            // Explicitly reset position values
+            x.set(0);
+            y.set(0);
             controls.start({
+                x: 0,
                 y: 0,
                 opacity: 1,
                 scale: 1,
+                rotate: 0,
                 transition: { type: 'spring', stiffness: 400, damping: 30 }
             });
         } else if (swipeDirection === 'left') {
             isSwipingOut.current = true;
-            controls.start({ x: -600, opacity: 0, scale: 0.9, transition: { duration: 0.3, ease: "easeOut" } }).then(() => {
-                onSwipe('left', true);
-            });
+            controls.start({
+                x: -800,
+                rotate: -45,
+                opacity: 0,
+                scale: 0.8,
+                transition: { duration: 0.4, ease: "circOut" }
+            }).then(() => onSwipe('left', true));
         } else if (swipeDirection === 'right') {
             isSwipingOut.current = true;
-            controls.start({ x: 600, opacity: 0, scale: 0.9, transition: { duration: 0.3, ease: "easeOut" } }).then(() => {
-                onSwipe('right', true);
-            });
+            controls.start({
+                x: 800,
+                rotate: 45,
+                opacity: 0,
+                scale: 0.8,
+                transition: { duration: 0.4, ease: "circOut" }
+            }).then(() => onSwipe('right', true));
         }
-    }, [swipeDirection, controls, onSwipe]);
+    }, [swipeDirection, controls, onSwipe, x, y]);
 
-    const handleDragStart = (event, info) => {
-        if (isSwipingOut.current) return;
+    const handleDragStart = () => {
+        isDragging.current = true;
+        isSwipingOut.current = false;
         controls.stop();
-        isDragLocked.current = false;
-    };
-
-    const handleDrag = (event, info) => {
-        if (!isDragLocked.current && Math.abs(info.offset.x) > 10) {
-            isDragLocked.current = true;
-        }
     };
 
     const handleDragEnd = (event, info) => {
-        if (appMode !== 'swipe' || swipeDirection) {
-            controls.start({ x: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } });
+        isDragging.current = false;
+
+        if (appMode !== 'swipe' || swipeDirection || isSwipingOut.current) {
+            controls.start({ x: 0, y: 0, rotate: 0, transition: { type: 'spring', stiffness: 500, damping: 30 } });
             return;
         }
 
         const offset = info.offset.x;
         const velocity = info.velocity.x;
+        const threshold = 130;
+        const velocityThreshold = 500;
 
-        // Snappier detection
-        const isRightSwipe = offset > 100 || (offset > 40 && velocity > 350);
-        const isLeftSwipe = offset < -100 || (offset < -40 && velocity < -350);
-
-        if (isRightSwipe) {
+        if (offset > threshold || velocity > velocityThreshold) {
             isSwipingOut.current = true;
-            controls.start({ x: 700, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }).then(() => onSwipe('right', true));
-        } else if (isLeftSwipe) {
+            controls.start({
+                x: 800,
+                rotate: 25,
+                opacity: 0,
+                scale: 0.8,
+                transition: { duration: 0.35, ease: "easeOut" }
+            }).then(() => onSwipe('right', true));
+        } else if (offset < -threshold || velocity < -velocityThreshold) {
             isSwipingOut.current = true;
-            controls.start({ x: -700, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }).then(() => onSwipe('left', true));
+            controls.start({
+                x: -800,
+                rotate: -25,
+                opacity: 0,
+                scale: 0.8,
+                transition: { duration: 0.35, ease: "easeOut" }
+            }).then(() => onSwipe('left', true));
         } else {
-            // Explicit reset
-            controls.start({ x: 0, y: 0, scale: 1, rotate: 0, opacity: 1, transition: { type: 'spring', stiffness: 500, damping: 30 } });
+            controls.start({
+                x: 0,
+                y: 0,
+                scale: 1,
+                rotate: 0,
+                opacity: 1,
+                transition: { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 }
+            });
         }
     };
 
     return (
         <motion.div
-            className="absolute inset-0 z-[50] select-none touch-none touch-callout-none"
+            className="absolute inset-0 z-[50] select-none touch-none"
             style={{
                 x,
+                y,
                 rotate,
-                touchAction: 'none',
-                WebkitTouchCallout: 'none',
-                WebkitUserSelect: 'none',
-                MozUserSelect: 'none',
-                userSelect: 'none',
-                willChange: 'transform, opacity',
-                pointerEvents: 'auto'
+                rotateX,
+                rotateY,
+                scale,
+                borderRadius,
+                perspective: 1200,
+                cursor: 'grab'
             }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={isRevealed ? 0.3 : 0.5}
-            dragMomentum={false}
+            drag={!isSwipingOut.current}
+            dragElastic={0.6} // Reduced for a more "connected" feel
+            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
             onDragStart={handleDragStart}
-            onDrag={handleDrag}
             onDragEnd={handleDragEnd}
+            whileDrag={{ scale: 1.02, transition: { duration: 0.1 } }}
             animate={controls}
-            initial={{ y: 20, opacity: 0, scale: 0.98 }}
-            whileDrag={{ scale: 1.01, transition: { duration: 0.1 } }}
+            initial={{ y: 80, opacity: 0, scale: 0.85 }}
         >
-            {/* Overlay Indicator - Left (Remind Me / Amber-Purple) */}
-            {appMode === 'swipe' && (
-                <motion.div
-                    className="absolute inset-0 z-[100] pointer-events-none rounded-[2.5rem] flex items-center justify-center"
-                    style={{
-                        opacity: opacityLeft,
-                        backgroundColor: isDark ? 'rgba(139, 92, 246, 0.4)' : 'rgba(245, 158, 11, 0.4)',
-                    }}
-                >
-                    <div className={`bg-white p-8 rounded-full shadow-lg transform scale-110 border-4 border-white/50 ${isDark ? 'text-purple-600' : 'text-amber-600'}`}>
-                        <RotateCcw size={52} strokeWidth={4} />
-                    </div>
-                </motion.div>
-            )}
+            {children}
 
-            {/* Overlay Indicator - Right (Know / Green) */}
-            {appMode === 'swipe' && (
-                <motion.div
-                    className="absolute inset-0 z-[100] pointer-events-none rounded-[2.5rem] flex items-center justify-center"
-                    style={{
-                        opacity: opacityRight,
-                        backgroundColor: isDark ? 'rgba(5, 150, 105, 0.4)' : 'rgba(16, 185, 129, 0.4)',
-                    }}
-                >
-                    <div className="bg-white text-emerald-600 p-8 rounded-full shadow-lg transform scale-110 border-4 border-white/50">
-                        <Check size={52} strokeWidth={4} />
-                    </div>
-                </motion.div>
-            )}
-
-            {/* Swipe Hints - Stationary behind the card */}
-            {appMode === 'swipe' && (
+            {/* Edge Glows - Premium Visual Feedback (Moved after children to be on top) */}
+            {appMode === 'swipe' && !isSwipingOut.current && (
                 <>
+                    {/* Left Swipe Glow (Tekrarla) */}
                     <motion.div
-                        className="absolute -right-20 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 pointer-events-none transition-colors"
-                        style={{ opacity: hintLeftOpacity, color: isDark ? '#a78bfa' : '#f59e0b' }}
+                        className="absolute inset-0 z-[100] rounded-[2rem] pointer-events-none"
+                        style={{
+                            opacity: opacityLeft,
+                            background: isDark
+                                ? 'radial-gradient(circle at left, rgba(168, 85, 247, 0.4) 0%, transparent 70%)'
+                                : 'radial-gradient(circle at left, rgba(245, 158, 11, 0.3) 0%, transparent 70%)',
+                            boxShadow: isDark
+                                ? 'inset 15px 0 30px -10px rgba(168, 85, 247, 0.5)'
+                                : 'inset 15px 0 30px -10px rgba(245, 158, 11, 0.4)'
+                        }}
+                    />
+
+                    {/* Right Swipe Glow (Biliyorum) */}
+                    <motion.div
+                        className="absolute inset-0 z-[100] rounded-[2rem] pointer-events-none"
+                        style={{
+                            opacity: opacityRight,
+                            background: 'radial-gradient(circle at right, rgba(16, 185, 129, 0.4) 0%, transparent 70%)',
+                            boxShadow: 'inset -15px 0 30px -10px rgba(16, 185, 129, 0.5)'
+                        }}
+                    />
+
+                    {/* Large Icon Overlays on Deep Swipe */}
+                    <motion.div
+                        className="absolute inset-0 z-[101] flex items-center justify-center pointer-events-none"
+                        style={{ opacity: iconLeftOpacity }}
                     >
-                        <div className="flex flex-col items-center animate-pulse">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] [writing-mode:vertical-lr]">SOLA: TEKRARLA</span>
+                        <div className={`p-6 rounded-full bg-white shadow-2xl ${isDark ? 'text-purple-600' : 'text-amber-600'}`}>
+                            <RotateCcw size={48} strokeWidth={3} />
                         </div>
                     </motion.div>
+
                     <motion.div
-                        className="absolute -left-20 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 pointer-events-none transition-colors"
-                        style={{ opacity: hintRightOpacity, color: isDark ? '#34d399' : '#059669' }}
+                        className="absolute inset-0 z-[101] flex items-center justify-center pointer-events-none"
+                        style={{ opacity: iconRightOpacity }}
                     >
-                        <div className="flex flex-col items-center animate-pulse">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] [writing-mode:vertical-lr] rotate-180">SAĞA: BİLİYORUM</span>
+                        <div className="p-6 rounded-full bg-white text-emerald-600 shadow-2xl">
+                            <Check size={48} strokeWidth={3} />
                         </div>
                     </motion.div>
                 </>
             )}
-
-            {children}
         </motion.div>
     );
 };
