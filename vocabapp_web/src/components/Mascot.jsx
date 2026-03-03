@@ -6,6 +6,9 @@ import Book3D from '../assets/Mascot/Flamingo3Dbook.png';
 import Chill3D from '../assets/Mascot/Flamingo3Dchill.png';
 import Glasses3D from '../assets/Mascot/Flamingo3Dglasses.png';
 import Tired3D from '../assets/Mascot/Flamingo3Dtired.png';
+import Arena3D from '../assets/Mascot/Flamingo3DarenaT.png';
+import Tough2D from '../assets/Mascot/Flamingo2Dtough.png';
+import Happy2D from '../assets/Mascot/Flamingo3Dhappy2.png';
 import { Sparkles } from 'lucide-react';
 
 export const Mascot = ({
@@ -15,7 +18,7 @@ export const Mascot = ({
     animated = false,
     glow = false,
     variant = '3d', // 'minimal' or '3d'
-    look = 'neutral', // 'neutral', 'happy', 'book', 'chill', 'glasses', 'tired'
+    look = 'neutral', // 'neutral', 'happy', 'book', 'chill', 'glasses', 'tired', 'arena', 'tough', 'happy2'
     isAdmin = false
 }) => {
     const [imgError, setImgError] = useState(false);
@@ -41,6 +44,9 @@ export const Mascot = ({
             case 'chill': return Chill3D;
             case 'glasses': return Glasses3D;
             case 'tired': return Tired3D;
+            case 'arena': return Arena3D;
+            case 'tough': return Tough2D;
+            case 'happy2': return Happy2D;
             default: return Neutral3D;
         }
     };

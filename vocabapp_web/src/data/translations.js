@@ -63,7 +63,8 @@ export const translations = {
         addWord: "Kelime Ekle", wordText: "Kelime", wordType: "Tür", wordTr: "Çeviri", wordDetail: "Detay (Tanım/Cümle)", targetMode: "Hedef Mod",
         maintenanceActive: "Bakım Modu Yayında", maintenanceDesc: "Tüm kullanıcılar için uygulamayı kapa.", publishSuccess: "Duyuru Yayında!", logsEmpty: "Henüz sistem hatası kaydedilmedi.",
         dailyGoal: "GÜNLÜK HEDEF", totalProgress: "TOPLAM İLERLEME", timeRemainingLabel: "SÜRE",
-        maxLevelCompanion: "Maksimum Seviye: Yoldaş (%100)"
+        maxLevelCompanion: "Maksimum Seviye: Yoldaş (%100)",
+        practiceArena: "Antrenman Sahası", practiceArenaDesc: "Hızlı Kelime Pratiği", exerciseLibrary: "Alıştırma Kütüphanesi", exerciseLibDesc: "Alıştırma Kitaplığı",
     },
     en: {
         learned: "Learned", mastered: "Mastered", card: "Card", vault: "Your Vault", vaultEmpty: "Vault is empty.", back: "Go Back", backToVault: "Back to Vault",
@@ -131,6 +132,7 @@ export const translations = {
         addWord: "Add Word", wordText: "Word", wordType: "Type", wordTr: "Translation", wordDetail: "Detail (Def/Example)", targetMode: "Target Mode",
         maintenanceActive: "Maintenance Active", maintenanceDesc: "Shut down app for all users.", publishSuccess: "Broadcast Live!", logsEmpty: "No system errors logged yet.",
         dailyGoal: "DAILY GOAL", totalProgress: "OVERALL PROGRESS", timeRemainingLabel: "TIME",
-        maxLevelCompanion: "Maximum Level: Companion (100%)"
+        maxLevelCompanion: "Maximum Level: Companion (100%)",
+        practiceArena: "Practice Arena", practiceArenaDesc: "Rapid Word Practice", exerciseLibrary: "Exercise Library", exerciseLibDesc: "Exercise Library",
     }
 };

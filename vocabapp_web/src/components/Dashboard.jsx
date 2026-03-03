@@ -308,21 +308,86 @@ export const Dashboard = ({
                         </div>
                     </div>
 
-                    {/* Level Test Banner */}
-                    <div
-                        onClick={(e) => { e.stopPropagation(); onLevelTestClick && onLevelTestClick(); }}
-                        className={`w-full p-6 rounded-[2.5rem] mb-10 flex items-center justify-between cursor-pointer transition-all hover:scale-[1.02] active:scale-95 border ${isDark ? 'bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-amber-500/20 shadow-glow-amber/5' : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-100 shadow-sm'}`}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center text-white shadow-glow-amber">
-                                <Trophy size={24} />
+                    {/* Practice & Library Section */}
+                    <div className="mb-14 px-2">
+                        <div className="flex justify-between items-center mb-6">
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.25em] opacity-40 flex items-center gap-2">
+                                GELİŞİM & ANTRENMAN <Zap size={11} className="text-indigo-400" />
+                            </h4>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                            {/* Practice Arena */}
+                            <div
+                                onClick={(e) => { e.stopPropagation(); if (onVaultClick) onVaultClick('Learning'); }}
+                                className={`p-6 rounded-[2.5rem] border cursor-pointer transition-all hover:scale-[1.03] active:scale-95 flex flex-col items-center text-center relative overflow-hidden group ${isDark ? 'bg-indigo-500/10 border-indigo-500/20 shadow-glow-indigo/5' : 'bg-indigo-50 border-indigo-100/50 shadow-sm'}`}
+                            >
+                                <div className="absolute -top-6 -right-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                                    <Mascot isDark={isDark} size="lg" variant="3d" look="arena" />
+                                </div>
+                                <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-white shadow-glow-indigo mb-4 relative z-10 group-hover:scale-110 transition-transform">
+                                    <Target size={24} />
+                                </div>
+                                <h5 className="font-black text-xs uppercase tracking-tight mb-1 relative z-10">{t.practiceArena}</h5>
+                                <p className="text-[9px] font-bold opacity-50 relative z-10">{t.practiceArenaDesc}</p>
                             </div>
-                            <div className="flex flex-col">
-                                <h4 className="font-black text-sm uppercase tracking-tight">{t.levelTestTitle || "Seviye Tespit"}</h4>
-                                <p className="text-[10px] font-bold opacity-60 leading-tight">{t.levelTestDesc || "Kelime dağarcığını ölç ve seviyeni öğren!"}</p>
+
+                            {/* Exercise Library */}
+                            <div
+                                onClick={(e) => { e.stopPropagation(); if (setQuickTx) setQuickTx({ visible: true, text: t.comingSoon, x: window.innerWidth / 2, y: window.innerHeight - 100 }); setTimeout(() => setQuickTx(prev => ({ ...prev, visible: false })), 2000); }}
+                                className={`p-6 rounded-[2.5rem] border cursor-pointer transition-all hover:scale-[1.03] active:scale-95 flex flex-col items-center text-center relative overflow-hidden group ${isDark ? 'bg-emerald-500/10 border-emerald-500/20 shadow-glow-emerald/5' : 'bg-emerald-50 border-emerald-100/50 shadow-sm'}`}
+                            >
+                                <div className="absolute -top-6 -right-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                                    <Mascot isDark={isDark} size="lg" variant="3d" look="book" />
+                                </div>
+                                <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-glow-emerald mb-4 relative z-10 group-hover:scale-110 transition-transform">
+                                    <FileText size={24} />
+                                </div>
+                                <h5 className="font-black text-xs uppercase tracking-tight mb-1 relative z-10">{t.exerciseLibrary}</h5>
+                                <p className="text-[9px] font-bold opacity-50 relative z-10">{t.exerciseLibDesc}</p>
                             </div>
                         </div>
-                        <ChevronRight size={20} className="text-amber-500" />
+
+                        {/* Combined Full Width Banners */}
+                        <div className="space-y-3">
+                            {/* Smart Quiz */}
+                            <div
+                                onClick={(e) => { e.stopPropagation(); if (onVaultClick) onVaultClick('Learning'); }}
+                                className={`p-5 rounded-[2.2rem] border transition-all hover:scale-[1.02] flex items-center justify-between px-8 cursor-pointer group ${isDark ? 'bg-purple-500/10 border-purple-500/20 shadow-glow-purple/5' : 'bg-purple-50 border-white shadow-sm'}`}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-purple-500 flex items-center justify-center text-white shadow-glow-purple">
+                                        <Zap size={20} className="group-hover:animate-pulse" />
+                                    </div>
+                                    <div className="flex flex-col text-left">
+                                        <div className="text-sm font-black uppercase tracking-tight">Akıllı Quiz</div>
+                                        <div className="text-[9px] font-bold opacity-50 uppercase tracking-widest">AI Destekli Ölçüm</div>
+                                    </div>
+                                </div>
+                                <div className="opacity-60 scale-75 group-hover:scale-90 transition-transform">
+                                    <Mascot isDark={isDark} size="sm" variant="3d" look="happy2" />
+                                </div>
+                            </div>
+
+                            {/* Level Test */}
+                            <div
+                                onClick={(e) => { e.stopPropagation(); onLevelTestClick && onLevelTestClick(); }}
+                                className={`p-5 rounded-[2.2rem] border cursor-pointer transition-all hover:scale-[1.02] flex items-center justify-between px-8 group ${isDark ? 'bg-amber-500/10 border-amber-500/20 shadow-glow-amber/5' : 'bg-amber-50 border-white shadow-sm'}`}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center text-white shadow-glow-amber">
+                                        <Trophy size={20} />
+                                    </div>
+                                    <div className="flex flex-col text-left">
+                                        <h4 className="font-black text-sm uppercase tracking-tight">{t.levelTestTitle || "Seviye Tespit"}</h4>
+                                        <p className="text-[9px] font-bold opacity-50 uppercase tracking-widest">Bilgini Kanıtla</p>
+                                    </div>
+                                </div>
+                                <div className="opacity-60 scale-75 animate-float-subtle group-hover:scale-90 transition-transform">
+                                    <Mascot isDark={isDark} size="sm" variant="3d" look="glasses" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
