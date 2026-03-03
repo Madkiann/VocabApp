@@ -1426,7 +1426,7 @@ export default function App() {
   );
 
   const modeSelector = (
-    <div className="absolute top-0 left-0 right-0 flex justify-center w-full z-[150] pt-4 pointer-events-none">
+    <div className="absolute top-0 left-0 right-0 flex justify-center w-full z-[600] pt-4 pointer-events-none">
       <div className={`flex w-auto p-1.5 rounded-full border shadow-2xl pointer-events-auto transition-all ${isDark ? 'bg-slate-900/60 border-slate-700/50 backdrop-blur-2xl' : 'bg-white/60 border-slate-200/50 backdrop-blur-2xl'}`}>
         {[
           { id: 'words', label: t.modeWords, icon: BookOpen },
@@ -1446,10 +1446,10 @@ export default function App() {
           <button
             onClick={() => { sounds.playClick(); advanceTime(); }}
             className="ml-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-400 text-black shadow-lg hover:bg-amber-500 transition-all flex items-center gap-2 scale-95"
-            title="Sim├╝le Et: Yar─▒n"
+            title="Simüle Et: Yarın"
           >
             <Clock size={12} strokeWidth={3} />
-            <span>+1 G├£N</span>
+            <span>+1 GÜN</span>
           </button>
         )}
       </div>
@@ -1467,15 +1467,15 @@ export default function App() {
     return (
       <div className="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center p-8 z-[999] text-center">
         <ServerCrash size={64} className="text-red-500 mb-6 animate-pulse" />
-        <h1 className="text-2xl font-black text-white mb-2">{t.maintenanceTitle || 'Sistem Bak─▒mda'}</h1>
-        <p className="text-slate-400 font-bold max-w-sm mb-8">{globalAnnouncement || t.maintenanceDesc || 'Size daha iyi bir deneyim sunmak i├ğin g├╝ncellemeler yap─▒yoruz. L├╝tfen biraz sonra tekrar deneyin.'}</p>
+        <h1 className="text-2xl font-black text-white mb-2">{t.maintenanceTitle || 'Sistem Bakımda'}</h1>
+        <p className="text-slate-400 font-bold max-w-sm mb-8">{globalAnnouncement || t.maintenanceDesc || 'Size daha iyi bir deneyim sunmak için güncellemeler yapıyoruz. Lütfen biraz sonra tekrar deneyin.'}</p>
 
         {isAdmin ? (
           <button
             onClick={() => setMaintenanceMode(false)}
             className="px-8 py-4 bg-amber-400 text-slate-900 font-black rounded-2xl shadow-glow-amber hover:scale-105 active:scale-95 transition-all uppercase tracking-widest"
           >
-            Adm─▒n Ge├ği┼şi (Panelden Kapatabilirsin)
+            Admin Geçişi (Panelden Kapatabilirsin)
           </button>
         ) : (
           <button onClick={handleVersionClick} className="mt-12 text-[10px] uppercase font-black tracking-widest text-slate-700">Attempt Admin Login</button>
@@ -1583,7 +1583,6 @@ export default function App() {
   if (vocabMode === 'chill') {
     return (
       <div className={`min-h-screen flex flex-col items-center justify-start font-sans overflow-hidden transition-all duration-300 relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
-        {modeSelector}
         <ChillMode
           vocab={vocab}
           isDark={isDark}
@@ -1597,6 +1596,7 @@ export default function App() {
           chillSortMode={chillSortMode}
           setChillSortMode={setChillSortMode}
         />
+        {modeSelector}
         <div className="relative z-[500] w-full">
           {bottomNavigation}
         </div>

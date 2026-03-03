@@ -370,8 +370,24 @@ export const PhrasalCard = ({
                                                 <p className={`text-xl font-black leading-tight mb-4 tracking-tight ${isDark ? 'text-indigo-100' : 'text-indigo-950'}`}>
                                                     {typeof wordObj.details.miniCase === 'object' ? wordObj.details.miniCase.en : wordObj.details.miniCase}
                                                 </p>
-                                                <div className={`p-5 rounded-2xl border-l-[6px] italic text-sm font-bold ${isDark ? 'bg-indigo-950/40 border-indigo-600/50 text-slate-400' : 'bg-indigo-100/80 border-indigo-400 text-slate-800'}`}>
-                                                    {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : wordObj.details.trMiniCase}
+
+                                                <div className="mt-4">
+                                                    {!isMiniCaseTrOpen ? (
+                                                        <button
+                                                            onPointerDown={(e) => e.stopPropagation()}
+                                                            onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(true); }}
+                                                            className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}
+                                                        >
+                                                            <RefreshCw size={14} /> {t.showTranslation || "Çeviriyi Gör"}
+                                                        </button>
+                                                    ) : (
+                                                        <div
+                                                            onPointerDown={(e) => e.stopPropagation()}
+                                                            onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(false); }}
+                                                            className={`p-5 rounded-2xl border-l-[6px] italic text-sm font-bold cursor-pointer animate-fade-in ${isDark ? 'bg-indigo-950/40 border-indigo-600/50 text-slate-400' : 'bg-indigo-100/80 border-indigo-400 text-slate-800'}`}>
+                                                            {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : wordObj.details.trMiniCase}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </motion.div>

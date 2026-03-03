@@ -16,9 +16,17 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
     const [openSections, setOpenSections] = useState({
         family: false,
         details: false,
-        miniCase: false,
         examples: false
     });
+    const [isMiniCaseTrRevealed, setIsMiniCaseTrRevealed] = useState(false);
+    const [isCaseExamplesOpen, setIsCaseExamplesOpen] = useState(false);
+    const [revealedCaseEn, setRevealedCaseEn] = useState({});
+
+    useEffect(() => {
+        setRevealedCaseEn({});
+        setIsMiniCaseTrRevealed(false);
+        setIsCaseExamplesOpen(false);
+    }, [wordObj?.id]);
 
     const minsRemaining = Math.max(1, Math.ceil((total - index + 1) * 0.25));
 
@@ -291,11 +299,22 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                                                     <p className={`text-xs font-bold leading-relaxed mb-3 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                                                         {typeof wordObj.details.miniCase === 'object' ? (wordObj.details.miniCase.en || wordObj.details.miniCase.tr) : (wordObj.details.miniCase || "")}
                                                     </p>
-                                                    {(wordObj.details.trMiniCase || wordObj.details.miniCase?.tr) && (
-                                                        <div className={`p-3 rounded-xl italic text-[10px] ${isDark ? 'bg-black/30 text-slate-400 border-l-2 border-amber-500/50' : 'bg-white/50 text-slate-600 border-l-2 border-amber-400'}`}>
-                                                            {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : (wordObj.details.trMiniCase || wordObj.details.miniCase?.tr || "")}
-                                                        </div>
-                                                    )}
+                                                    <div className="mt-3">
+                                                        {!isMiniCaseTrRevealed ? (
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrRevealed(true); }}
+                                                                className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}
+                                                            >
+                                                                <RefreshCw size={12} /> {t.showTranslation || "Çeviriyi Gör"}
+                                                            </button>
+                                                        ) : (
+                                                            <div
+                                                                onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrRevealed(false); }}
+                                                                className={`p-3 rounded-xl italic text-[10px] cursor-pointer animate-fade-in ${isDark ? 'bg-black/30 text-slate-400 border-l-2 border-amber-500/50' : 'bg-white/50 text-slate-600 border-l-2 border-amber-400'}`}>
+                                                                {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : (wordObj.details.trMiniCase || wordObj.details.miniCase?.tr || "")}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
 
@@ -313,23 +332,53 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                                                 </div>
                                             )}
 
-                                            {/* Case Examples (Vaka Örnekleri) */}
-                                            {(wordObj.details.caseExamples?.length > 0 || wordObj.details.trMiniCaseExamples?.length > 0) && (
-                                                <div className="pt-4 border-t border-slate-700/10">
-                                                    <span className="text-[9px] font-black uppercase tracking-widest opacity-30 mb-3 block">{t.caseExamples || 'VAKA ÖRNEKLERİ'}</span>
-                                                    <ul className="space-y-3">
-                                                        {(wordObj.details.caseExamples || wordObj.details.trMiniCaseExamples).map((ex, idx) => (
-                                                            <li key={idx} className="text-xs font-bold leading-relaxed opacity-80 border-l-2 border-amber-500/30 pl-3">
-                                                                {typeof ex === 'string' ? ex : (ex.tr || ex.en)}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>
                             )}
+
+                            {/* Collapsible: Case Examples (Vaka Örnekleri) */}
+                            {(wordObj.details?.caseExamples || wordObj.details?.trMiniCaseExamples)?.length > 0 && (
+                                <div className={`rounded-2xl border transition-all overflow-hidden ${isDark ? 'border-amber-500/20 bg-amber-500/5' : 'border-amber-100 bg-amber-50/30'}`}>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setIsCaseExamplesOpen(!isCaseExamplesOpen); }}
+                                        className="w-full px-5 py-4 flex items-center justify-between text-[11px] font-black uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity"
+                                    >
+                                        <span className="flex items-center gap-2 text-amber-500"><Sparkles size={14} /> {t.caseExamples || 'VAKA ÖRNEKLERİ'}</span>
+                                        <ChevronDown size={16} className={`transition-transform duration-300 ${isCaseExamplesOpen ? 'rotate-180 text-amber-500' : ''}`} />
+                                    </button>
+                                    <div className={`grid transition-all duration-300 ease-in-out ${isCaseExamplesOpen ? 'grid-rows-[1fr] opacity-100 pb-4 px-5' : 'grid-rows-[0fr] opacity-0'}`}>
+                                        <div className="overflow-hidden space-y-3">
+                                            {(wordObj.details.caseExamples || wordObj.details.trMiniCaseExamples).map((ex, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    onClick={(e) => { e.stopPropagation(); setRevealedCaseEn(prev => ({ ...prev, [idx]: !prev[idx] })); }}
+                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer group relative ${isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-amber-100'}`}
+                                                >
+                                                    <p className={`text-[13px] font-black leading-tight tracking-tight mb-1 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
+                                                        "{typeof ex === 'string' ? ex : (ex.tr || ex.en)}"
+                                                    </p>
+
+                                                    <div className={`grid transition-all duration-300 ease-in-out ${revealedCaseEn[idx] ? 'grid-rows-[1fr] opacity-100 pt-2' : 'grid-rows-[0fr] opacity-0'}`}>
+                                                        <div className="overflow-hidden">
+                                                            <p className={`text-xs font-bold italic ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                                                                {typeof ex === 'object' ? (ex.en || ex.tr) : ''}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    {!revealedCaseEn[idx] && typeof ex === 'object' && (
+                                                        <div className="flex items-center gap-1.5 mt-1 text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-40 transition-opacity text-amber-500">
+                                                            <RefreshCw size={12} /> {t.toEn || 'EN'}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="pt-8 pb-4 flex justify-center">
                                 <button
                                     onClick={() => setIsRevealed(false)}
