@@ -146,7 +146,7 @@ export const Dashboard = ({
                                     </button>
                                     {isAdmin && (
                                         <button onClick={(e) => { e.stopPropagation(); setShowStreakMenu(false); advanceTime(); }} className={`w-full flex items-center justify-between px-3 py-2 mt-1 text-[11px] font-black uppercase tracking-tighter rounded-xl transition-all bg-amber-400 text-black hover:bg-amber-500`}>
-                                            +1 GÜN İLERİ (PASS) <Zap size={14} fill="currentColor" />
+                                            +1 G\u00dcN \u0130LER\u0130 (PASS) <Zap size={14} fill="currentColor" />
                                         </button>
                                     )}
                                 </div>

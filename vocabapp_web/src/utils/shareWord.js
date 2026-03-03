@@ -319,21 +319,48 @@ export const sharePhrasalToCanvas = async (wordObj, appLang, isDark, showPractic
 const shareImage = async (blob, word, textToShare) => {
     try {
         const file = new File([blob], `vocab-${word}.png`, { type: 'image/png' });
+
+        // 1. Try sharing with files if supported
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ title: word, text: textToShare, files: [file] });
-        } else {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `vocab-${word}.png`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            // Delay revocation to ensure download starts
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            try {
+                await navigator.share({ title: word, text: textToShare, files: [file] });
+                return; // Success
+            } catch (shareErr) {
+                console.warn("navigator.share(files) failed, trying fallback:", shareErr);
+            }
         }
+
+        // 2. Fallback to sharing ONLY text if files fail but sharing exists
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: word, text: textToShare });
+                return; // Success
+            } catch (shareErr) {
+                console.warn("navigator.share(text) failed:", shareErr);
+            }
+        }
+
+        // 3. Strong fallback for Desktop: Copy path/text to clipboard
+        try {
+            await navigator.clipboard.writeText(textToShare);
+            console.log("Copied text to clipboard as share fallback.");
+            // We still proceed to download so the user gets the PNG
+        } catch (clipErr) {
+            console.warn("Clipboard fallback failed:", clipErr);
+        }
+
+        // 4. Last resort: Download the file (always happens if share fails/unsupported)
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `vocab-${word}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
     } catch (err) {
-        console.error("shareImage failed:", err);
+        console.error("shareImage failed completely:", err);
         throw err;
     }
 };

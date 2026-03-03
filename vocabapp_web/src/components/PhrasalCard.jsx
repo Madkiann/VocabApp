@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mascot } from './Mascot';
 import { sharePhrasalToCanvas } from '../utils/shareWord';
 import { DiscoveryBar } from './DiscoveryBar';
+import { LevelTestModal } from './LevelTestModal';
+import { sounds } from '../utils/sounds';
 
 export const PhrasalCard = ({
     wordObj,
@@ -39,11 +41,13 @@ export const PhrasalCard = ({
     const [isSharing, setIsSharing] = useState(false);
     const [revealedCaseEn, setRevealedCaseEn] = useState({});
 
+    if (!wordObj || !wordObj.sm2) return null;
+
     React.useEffect(() => {
         setRevealedCaseEn({});
         setIsMiniCaseOpen(false);
         setIsCaseExamplesOpen(false);
-    }, [wordObj.id]);
+    }, [wordObj?.id]);
 
     const handleShare = async (e) => {
         if (e) e.stopPropagation();
@@ -95,11 +99,11 @@ export const PhrasalCard = ({
             id: 'stranger',
             name: t.bond_stranger || 'Yabancı',
             desc: t.bond_stranger_desc,
-            color: 'text-slate-400',
-            bg: 'bg-slate-900/40',
-            border: 'border-slate-700/30',
-            featherColor: 'text-slate-500',
-            cardEffect: 'backdrop-blur-[4px] saturate-[0.95]'
+            color: isDark ? 'text-slate-400' : 'text-slate-700',
+            bg: isDark ? 'bg-slate-900/40' : 'bg-slate-200/80',
+            border: isDark ? 'border-slate-700/30' : 'border-slate-300/60',
+            featherColor: isDark ? 'text-slate-500' : 'text-slate-600',
+            cardEffect: 'backdrop-blur-[4px] saturate-[1.1]'
         };
 
         // Acquaintance (Tanış) - Rose Quartz
@@ -109,12 +113,12 @@ export const PhrasalCard = ({
                 id: 'acquaintance',
                 name: `${t.bond_acquaintance || 'Tanış'} (Lv ${subLevel})`,
                 desc: t.bond_acquaintance_desc,
-                color: 'text-rose-300',
-                bg: 'bg-rose-950/40',
-                border: 'border-rose-500/40',
-                glow: 'shadow-[0_0_30px_rgba(244,63,94,0.3)]',
-                featherColor: 'text-rose-400',
-                cardEffect: 'ring-2 ring-rose-500/20'
+                color: isDark ? 'text-rose-300' : 'text-rose-700',
+                bg: isDark ? 'bg-rose-950/40' : 'bg-rose-300/80',
+                border: isDark ? 'border-rose-500/40' : 'border-rose-400/60',
+                glow: isDark ? 'shadow-[0_0_30px_rgba(244,63,94,0.3)]' : 'shadow-[0_0_40px_rgba(244,63,94,0.3)]',
+                featherColor: isDark ? 'text-rose-400' : 'text-rose-700',
+                cardEffect: 'ring-2 ring-rose-500/30'
             };
         }
 
@@ -123,14 +127,14 @@ export const PhrasalCard = ({
             id: 'confidant',
             name: t.bond_confidant || 'Sırdaş',
             desc: t.bond_confidant_desc,
-            color: 'text-purple-300',
-            bg: 'bg-purple-950/50',
-            border: 'border-purple-500/50',
-            glow: 'shadow-[0_0_40px_rgba(168,85,247,0.4)]',
-            featherColor: 'text-purple-400',
+            color: isDark ? 'text-purple-300' : 'text-purple-800',
+            bg: isDark ? 'bg-purple-950/50' : 'bg-purple-300/80',
+            border: isDark ? 'border-purple-500/50' : 'border-purple-400/60',
+            glow: isDark ? 'shadow-[0_0_40px_rgba(168,85,247,0.4)]' : 'shadow-[0_0_50px_rgba(168,85,247,0.4)]',
+            featherColor: isDark ? 'text-purple-400' : 'text-purple-700',
             texture: 'stone',
             pulse: 'animate-pulse-slow',
-            cardEffect: 'ring-2 ring-purple-500/30'
+            cardEffect: 'ring-2 ring-purple-500/40'
         };
 
         // Companion (Yoldaş) - Radiant Golden Mettle
@@ -138,15 +142,15 @@ export const PhrasalCard = ({
             id: 'companion',
             name: t.bond_companion || 'Yoldaş',
             desc: t.bond_companion_desc,
-            color: 'text-amber-300',
-            bg: 'bg-amber-950/60',
-            border: 'border-amber-400/60',
-            glow: 'shadow-[0_0_60px_rgba(245,158,11,0.5)]',
-            featherColor: 'text-amber-400',
+            color: isDark ? 'text-amber-300' : 'text-amber-900',
+            bg: isDark ? 'bg-amber-950/60' : 'bg-amber-300/90',
+            border: isDark ? 'border-amber-400/60' : 'border-amber-500/60',
+            glow: isDark ? 'shadow-[0_0_60px_rgba(245,158,11,0.5)]' : 'shadow-[0_0_80px_rgba(245,158,11,0.5)]',
+            featherColor: isDark ? 'text-amber-400' : 'text-amber-700',
             seal: true,
             texture: 'stone',
             sound: 'companion',
-            cardEffect: 'ring-4 ring-amber-400/40 shadow-inner-gold'
+            cardEffect: isDark ? 'ring-4 ring-amber-400/40 shadow-inner-gold' : 'ring-4 ring-amber-500/50 shadow-inner-gold-vibrant'
         };
     };
 
@@ -160,7 +164,7 @@ export const PhrasalCard = ({
 
             {/* Background Texture Overlays */}
             {bond.texture === 'stone' && (
-                <div className="absolute inset-0 opacity-[0.05] pointer-events-none grayscale mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stone-wall.png')]"></div>
+                <div className="absolute inset-0 opacity-[0.05] pointer-events-none grayscale mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]"></div>
             )}
 
             {bond.id === 'stranger' && (
@@ -235,6 +239,9 @@ export const PhrasalCard = ({
                     className="absolute inset-x-0 bottom-0 top-16 flex flex-col items-center justify-center cursor-pointer group text-center bg-transparent select-none active:bg-slate-500/5 transition-colors duration-200"
                     onClick={() => {
                         setIsRevealed(true);
+                        if (bond.id === 'companion') {
+                            sounds.playCompanion();
+                        }
                     }}
                 >
                     <h2 className={`font-black tracking-tight mb-4 w-full px-2 leading-none pointer-events-none ${isDark ? 'text-white' : 'text-slate-900'} ${wordObj.word.length > 8 ? (wordObj.word.length > 12 ? 'text-3xl sm:text-4xl' : 'text-4xl sm:text-5xl') : 'text-5xl sm:text-6xl'}`} style={{ wordBreak: 'break-word' }}>
@@ -259,7 +266,7 @@ export const PhrasalCard = ({
             <div className={`flex-grow flex flex-col overflow-y-auto custom-scrollbar relative min-h-0 pt-20 mask-fade-v transition-all duration-300 p-7 ${!isRevealed ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`} style={{ touchAction: 'pan-y' }}>
                 {/* Persistent POS Tag - Now inside scrollable for 'embedded' feel */}
                 <div className="flex px-8 mb-4">
-                    <span className={`px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.2em] shadow-sm ${isDark ? 'bg-indigo-900/50 text-indigo-300 border border-indigo-500/30' : 'bg-indigo-50 text-indigo-600 border border-indigo-100'}`}>
+                    <span className={`px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.2em] shadow-sm ${isDark ? 'bg-indigo-900/50 text-indigo-300 border border-indigo-500/30' : 'bg-indigo-100 text-indigo-700 border border-indigo-200'}`}>
                         {appLang === 'tr' ? wordObj.posTr : wordObj.pos}
                     </span>
                 </div>
@@ -291,7 +298,7 @@ export const PhrasalCard = ({
                         <h3 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-4 flex items-center gap-2">
                             <span className="w-4 h-[2px] bg-current opacity-20"></span> {t.def || "AÇIKLAMA"}
                         </h3>
-                        <div className={`p-6 rounded-[2.5rem] border-2 transition-all duration-500 ${isDark ? 'bg-indigo-950/20 border-indigo-500/20 shadow-premium' : 'bg-indigo-50/50 border-indigo-100 shadow-premium'}`}>
+                        <div className={`p-6 rounded-[2.5rem] border-2 transition-all duration-700 overflow-hidden ${isDark ? 'bg-indigo-950/30 border-indigo-500/20' : 'bg-indigo-100/40 border-indigo-200/60'}`}>
                             <p className={`text-xl font-bold leading-tight ${isDark ? 'text-blue-100' : 'text-blue-900'}`}>
                                 {renderClickableText ? renderClickableText(isTranslated ? wordObj.trDef : wordObj.engDef) : (isTranslated ? wordObj.trDef : wordObj.engDef)}
                             </p>
@@ -359,11 +366,11 @@ export const PhrasalCard = ({
                                             exit={{ height: 0, opacity: 0, marginTop: 0 }}
                                             className="overflow-hidden"
                                         >
-                                            <div className={`p-8 rounded-[3rem] border-2 ${isDark ? 'bg-slate-900 border-indigo-500/20' : 'bg-white border-indigo-100 shadow-premium'}`}>
+                                            <div className={`p-8 rounded-[3rem] border-2 ${isDark ? 'bg-slate-900 border-indigo-500/20' : 'bg-indigo-50/60 border-indigo-200 shadow-premium'}`}>
                                                 <p className={`text-xl font-black leading-tight mb-4 tracking-tight ${isDark ? 'text-indigo-100' : 'text-indigo-950'}`}>
                                                     {typeof wordObj.details.miniCase === 'object' ? wordObj.details.miniCase.en : wordObj.details.miniCase}
                                                 </p>
-                                                <div className={`p-5 rounded-2xl border-l-[6px] italic text-sm font-bold ${isDark ? 'bg-indigo-950/40 border-indigo-600/50 text-slate-400' : 'bg-indigo-50/50 border-indigo-400 text-slate-700'}`}>
+                                                <div className={`p-5 rounded-2xl border-l-[6px] italic text-sm font-bold ${isDark ? 'bg-indigo-950/40 border-indigo-600/50 text-slate-400' : 'bg-indigo-100/80 border-indigo-400 text-slate-800'}`}>
                                                     {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : wordObj.details.trMiniCase}
                                                 </div>
                                             </div>
@@ -379,7 +386,7 @@ export const PhrasalCard = ({
                                     onClick={() => setIsCaseExamplesOpen(!isCaseExamplesOpen)}
                                     className={`w-full p-6 rounded-[2.5rem] flex items-center justify-between transition-all duration-300 border-2 ${isCaseExamplesOpen
                                         ? 'bg-amber-500 border-amber-400 shadow-glow-amber text-slate-950'
-                                        : (isDark ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' : 'bg-amber-50 border-amber-200 text-amber-600 shadow-sm hover:border-amber-300')}`}
+                                        : (isDark ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' : 'bg-amber-100 border-amber-300 text-amber-700 shadow-sm hover:border-amber-400')}`}
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${isCaseExamplesOpen ? 'bg-slate-950/10' : (isDark ? 'bg-amber-500/20' : 'bg-amber-100')}`}>

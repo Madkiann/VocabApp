@@ -10,29 +10,46 @@ export const SwipeableCard = ({
     swipeDirection,
     isRevealed
 }) => {
-    const minSwipeDistance = 120; // Increased for better stability on small screens
-    const minVelocity = 400; // Require a faster flick if distance is low
+    const minSwipeDistance = 100;
     const x = useMotionValue(0);
     const controls = useAnimation();
     const isDragLocked = useRef(false);
+    const isSwipingOut = useRef(false);
 
-    const opacityLeft = useTransform(x, [-minSwipeDistance / 2, -minSwipeDistance], [0, 1]);
-    const opacityRight = useTransform(x, [minSwipeDistance / 2, minSwipeDistance], [0, 1]);
+    const opacityLeft = useTransform(x, [-minSwipeDistance, -minSwipeDistance * 2], [0, 1]);
+    const opacityRight = useTransform(x, [minSwipeDistance, minSwipeDistance * 2], [0, 1]);
     const rotate = useTransform(x, [-300, 300], [-15, 15]);
 
     // Hint Opacities
-    const hintLeftOpacity = useTransform(x, [0, -30], [0, 0.4]);
-    const hintRightOpacity = useTransform(x, [0, 30], [0, 0.4]);
+    const hintLeftOpacity = useTransform(x, [0, -40], [0, 0.4]);
+    const hintRightOpacity = useTransform(x, [0, 40], [0, 0.4]);
 
     useEffect(() => {
-        if (swipeDirection === 'left') {
-            controls.start({ x: -600, opacity: 0, scale: 0.9, transition: { duration: 0.3, ease: "easeOut" } }).then(() => onSwipe('left', true));
+        if (!swipeDirection) {
+            isSwipingOut.current = false;
+            // Entrance animation for new cards
+            controls.start({
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                transition: { type: 'spring', stiffness: 400, damping: 30 }
+            });
+        } else if (swipeDirection === 'left') {
+            isSwipingOut.current = true;
+            controls.start({ x: -600, opacity: 0, scale: 0.9, transition: { duration: 0.3, ease: "easeOut" } }).then(() => {
+                onSwipe('left', true);
+            });
         } else if (swipeDirection === 'right') {
-            controls.start({ x: 600, opacity: 0, scale: 0.9, transition: { duration: 0.3, ease: "easeOut" } }).then(() => onSwipe('right', true));
+            isSwipingOut.current = true;
+            controls.start({ x: 600, opacity: 0, scale: 0.9, transition: { duration: 0.3, ease: "easeOut" } }).then(() => {
+                onSwipe('right', true);
+            });
         }
     }, [swipeDirection, controls, onSwipe]);
 
     const handleDragStart = (event, info) => {
+        if (isSwipingOut.current) return;
+        controls.stop();
         isDragLocked.current = false;
     };
 
@@ -43,7 +60,7 @@ export const SwipeableCard = ({
     };
 
     const handleDragEnd = (event, info) => {
-        if (appMode !== 'swipe') {
+        if (appMode !== 'swipe' || swipeDirection) {
             controls.start({ x: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } });
             return;
         }
@@ -51,27 +68,35 @@ export const SwipeableCard = ({
         const offset = info.offset.x;
         const velocity = info.velocity.x;
 
-        // Check if movement is significant enough to trigger swipe
-        const isRightSwipe = offset > minSwipeDistance || (offset > 50 && velocity > minVelocity);
-        const isLeftSwipe = offset < -minSwipeDistance || (offset < -50 && velocity < -minVelocity);
+        // Snappier detection
+        const isRightSwipe = offset > 100 || (offset > 40 && velocity > 350);
+        const isLeftSwipe = offset < -100 || (offset < -40 && velocity < -350);
 
         if (isRightSwipe) {
-            controls.start({ x: 600, opacity: 0, scale: 0.9, transition: { duration: 0.25 } }).then(() => onSwipe('right', true));
+            isSwipingOut.current = true;
+            controls.start({ x: 700, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }).then(() => onSwipe('right', true));
         } else if (isLeftSwipe) {
-            controls.start({ x: -600, opacity: 0, scale: 0.9, transition: { duration: 0.25 } }).then(() => onSwipe('left', true));
+            isSwipingOut.current = true;
+            controls.start({ x: -700, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }).then(() => onSwipe('left', true));
         } else {
-            controls.start({ x: 0, scale: 1, rotate: 0, transition: { type: 'spring', stiffness: 400, damping: 20 } });
+            // Explicit reset
+            controls.start({ x: 0, y: 0, scale: 1, rotate: 0, opacity: 1, transition: { type: 'spring', stiffness: 500, damping: 30 } });
         }
     };
 
     return (
         <motion.div
-            className="absolute inset-0 z-[50]"
+            className="absolute inset-0 z-[50] select-none touch-none touch-callout-none"
             style={{
                 x,
                 rotate,
                 touchAction: 'none',
-                willChange: 'transform, opacity'
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                MozUserSelect: 'none',
+                userSelect: 'none',
+                willChange: 'transform, opacity',
+                pointerEvents: 'auto'
             }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
@@ -82,8 +107,6 @@ export const SwipeableCard = ({
             onDragEnd={handleDragEnd}
             animate={controls}
             initial={{ y: 20, opacity: 0, scale: 0.98 }}
-            whileInView={{ y: 0, opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
-            viewport={{ once: true }}
             whileDrag={{ scale: 1.01, transition: { duration: 0.1 } }}
         >
             {/* Overlay Indicator - Left (Remind Me / Amber-Purple) */}

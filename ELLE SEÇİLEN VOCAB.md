@@ -749,3 +749,36 @@
 "syncToChill": true
 }
 
+{
+"id": "pv_1772538335167",
+"word": "Cope with",
+"trWord": "Başa Çıkmak/Üstesinden Gelmek",
+"phonetic": "/koʊp wɪð/",
+"pos": "Phrasal verb",
+"posTr": "Deyimsel fiil",
+"targetMode": "Phrasal Verbs",
+"engDef": "To deal effectively with something difficult or to manage a stressful situation successfully.",
+"trDef": "Zor bir durumla etkili bir şekilde ilgilenmek veya stresli bir vaziyetin üstesinden başarıyla gelmek.",
+"engExample": "It is often difficult to cope with the loss of a loved one.",
+"trExample": "Sevilen birinin kaybıyla başa çıkmak genellikle zordur.",
+"details": {
+"miniCase": "After the promotion, Elena found herself buried under a mountain of new responsibilities. She started practicing meditation and organizing her schedule strictly to cope with the increased pressure. Eventually, her ability to manage the stress impressed her colleagues.",
+"trMiniCase": "Terfi aldıktan sonra Elena, kendini yeni sorumluluklardan oluşan bir dağın altında gömülü buldu. Artan baskıyla başa çıkabilmek için meditasyon yapmaya ve programını sıkı bir şekilde düzenlemeye başladı. Sonunda, stresi yönetme yeteneği meslektaşlarını etkiledi.",
+"caseExamples": [
+{
+"tr": "Yeni sistemdeki teknik aksaklıklarla başa çıkmak için ek desteğe ihtiyacımız var.",
+"en": "We need extra support to cope with the technical glitches in the new system."
+},
+{
+"tr": "Küçük çocuklar bazen ani değişikliklerle başa çıkmakta zorlanabilirler.",
+"en": "Young children can sometimes struggle to cope with sudden changes."
+},
+{
+"tr": "Bu kadar çok işle aynı anda nasıl başa çıkıyorsun?",
+"en": "How do you cope with so much work at the same time?"
+}
+]
+},
+"syncToChill": true
+}
+

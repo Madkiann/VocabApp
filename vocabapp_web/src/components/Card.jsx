@@ -27,6 +27,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { shareWordToCanvas } from '../utils/shareWord';
 import { Mascot } from './Mascot';
 import { DiscoveryBar } from './DiscoveryBar';
+import { sounds } from '../utils/sounds';
 
 export const Card = ({
     wordObj,
@@ -120,11 +121,11 @@ export const Card = ({
 
     const [revealedCaseEn, setRevealedCaseEn] = useState({});
 
+    if (!wordObj || !wordObj.sm2) return null;
+
     useEffect(() => {
         setRevealedCaseEn({});
-    }, [wordObj.id]);
-
-    if (!wordObj || !wordObj.sm2) return null;
+    }, [wordObj?.id]);
 
     const getBondInfo = () => {
         const bondXP = wordObj.sm2.bondXP || 0;
@@ -148,52 +149,52 @@ export const Card = ({
         if (bondXP === 0) return {
             id: 'stranger',
             name: t.bond_stranger || 'Yabancı',
-            color: 'text-slate-400',
-            bg: 'bg-slate-900/40',
-            border: 'border-slate-700/30',
-            featherColor: 'text-slate-500',
-            cardEffect: 'backdrop-blur-[4px] saturate-[0.95]'
+            color: isDark ? 'text-slate-400' : 'text-slate-700',
+            bg: isDark ? 'bg-slate-900/40' : 'bg-slate-200/80',
+            border: isDark ? 'border-slate-700/30' : 'border-slate-300/60',
+            featherColor: isDark ? 'text-slate-500' : 'text-slate-600',
+            cardEffect: 'backdrop-blur-[4px] saturate-[1.1]'
         };
 
         // Acquaintance (Tanış) - Rose Quartz
         if (bondXP < 100) return {
             id: 'acquaintance',
             name: t.bond_acquaintance || 'Tanış',
-            color: 'text-rose-300',
-            bg: 'bg-rose-950/40',
-            border: 'border-rose-500/40',
-            glow: 'shadow-[0_0_30px_rgba(244,63,94,0.3)]',
-            featherColor: 'text-rose-400',
-            cardEffect: 'ring-2 ring-rose-500/20'
+            color: isDark ? 'text-rose-300' : 'text-rose-700',
+            bg: isDark ? 'bg-rose-950/40' : 'bg-rose-300/85',
+            border: isDark ? 'border-rose-500/40' : 'border-rose-400/60',
+            glow: isDark ? 'shadow-[0_0_30px_rgba(244,63,94,0.3)]' : 'shadow-[0_0_40px_rgba(244,63,94,0.3)]',
+            featherColor: isDark ? 'text-rose-400' : 'text-rose-700',
+            cardEffect: 'ring-2 ring-rose-500/30'
         };
 
         // Confidant (Sırdaş) - Royal Amethyst
         if (bondXP < 250) return {
             id: 'confidant',
             name: t.bond_confidant || 'Sırdaş',
-            color: 'text-purple-300',
-            bg: 'bg-purple-950/50',
-            border: 'border-purple-500/50',
-            glow: 'shadow-[0_0_40px_rgba(168,85,247,0.4)]',
-            featherColor: 'text-purple-400',
+            color: isDark ? 'text-purple-300' : 'text-purple-800',
+            bg: isDark ? 'bg-purple-950/50' : 'bg-purple-300/85',
+            border: isDark ? 'border-purple-500/50' : 'border-purple-400/60',
+            glow: isDark ? 'shadow-[0_0_40px_rgba(168,85,247,0.4)]' : 'shadow-[0_0_50px_rgba(168,85,247,0.4)]',
+            featherColor: isDark ? 'text-purple-400' : 'text-purple-700',
             texture: 'stone',
             pulse: 'animate-pulse-slow',
-            cardEffect: 'ring-2 ring-purple-500/30'
+            cardEffect: 'ring-2 ring-purple-500/40'
         };
 
         // Companion (Yoldaş) - Radiant Golden Mettle
         return {
             id: 'companion',
             name: t.bond_companion || 'Yoldaş',
-            color: 'text-amber-300',
-            bg: 'bg-amber-950/60',
-            border: 'border-amber-400/60',
-            glow: 'shadow-[0_0_60px_rgba(245,158,11,0.5)]',
-            featherColor: 'text-amber-400',
+            color: isDark ? 'text-amber-300' : 'text-amber-900',
+            bg: isDark ? 'bg-amber-950/60' : 'bg-amber-300/90',
+            border: isDark ? 'border-amber-400/60' : 'border-amber-500/60',
+            glow: isDark ? 'shadow-[0_0_60px_rgba(245,158,11,0.5)]' : 'shadow-[0_0_80px_rgba(245,158,11,0.5)]',
+            featherColor: isDark ? 'text-amber-400' : 'text-amber-700',
             seal: true,
             texture: 'stone',
             sound: 'companion',
-            cardEffect: 'ring-4 ring-amber-400/40 shadow-inner-gold'
+            cardEffect: isDark ? 'ring-4 ring-amber-400/40 shadow-inner-gold' : 'ring-4 ring-amber-500/50 shadow-inner-gold-vibrant'
         };
     };
 
@@ -207,7 +208,7 @@ export const Card = ({
 
             {/* Background Texture Overlays */}
             {bond.texture === 'stone' && (
-                <div className="absolute inset-0 opacity-[0.05] pointer-events-none grayscale mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stone-wall.png')]"></div>
+                <div className="absolute inset-0 opacity-[0.05] pointer-events-none grayscale mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]"></div>
             )}
 
             {bond.id === 'stranger' && (
@@ -320,7 +321,7 @@ export const Card = ({
                 >
                     {/* Background Texture Overlays */}
                     {bond.texture === 'stone' && (
-                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none grayscale mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stone-wall.png')]"></div>
+                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none grayscale mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]"></div>
                     )}
                     {bond.seal && (
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none animate-spin-slow">

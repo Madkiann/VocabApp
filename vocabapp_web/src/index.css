@@ -184,6 +184,10 @@
         box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.4);
     }
 
+    .shadow-inner-gold-vibrant {
+        box-shadow: inset 0 0 35px rgba(245, 158, 11, 0.7);
+    }
+
     .glass {
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(12px);

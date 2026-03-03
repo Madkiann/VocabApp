@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { RefreshCw, Check, X, Sun, Moon, Instagram, Globe, Archive, Languages, Hourglass, BarChart3, Brain, Flame, Clock, Sparkles, ArrowRight, Menu, Settings, Layers, Coffee, BookOpen, ServerCrash, Undo2 } from 'lucide-react';
 import { rawVocabulary, initialVocabulary, initialPhrasalVerbs, localDict } from './data/vocabulary';
 import { translations } from './data/translations';
@@ -24,6 +24,9 @@ import { LevelTestModal } from './components/LevelTestModal';
 
 // Hooks
 import { useAdmin } from './hooks/useAdmin';
+import { useTheme } from './hooks/useTheme';
+import { useVocabStats } from './hooks/useVocabStats';
+import { useAchievements } from './hooks/useAchievements';
 
 // Sounds
 import { sounds } from './utils/sounds';
@@ -240,7 +243,7 @@ export default function App() {
   };
 
   const deleteWord = (wordId) => {
-    if (!window.confirm("Bu kelimeyi silmek istediğine emin misin?")) return;
+    if (!window.confirm("Bu kelimeyi silmek istedi─şine emin misin?")) return;
     setCustomWords(prev => prev.filter(w => w.id !== wordId));
     setWordVocab(prev => prev.filter(w => w.id !== wordId));
     setPhrasalVocab(prev => prev.filter(w => w.id !== wordId));
@@ -307,7 +310,7 @@ export default function App() {
 
   const getThemeText = () => {
     if (themePref === 'system') return 'Sistem';
-    return themePref === 'dark' ? 'Karanlık' : 'Aydınlık';
+    return themePref === 'dark' ? 'Karanl─▒k' : 'Ayd─▒nl─▒k';
   };
 
   const [wordVocab, setWordVocab] = useState([...initialVocabulary]);
@@ -667,7 +670,7 @@ export default function App() {
     return execute();
   };
 
-  const getSystemLang = () => appLang === 'tr' ? "Türkçe" : "English";
+  const getSystemLang = () => appLang === 'tr' ? "T├╝rk├ğe" : "English";
 
   const handleWordClick = (e, cleanWord) => {
     e.stopPropagation();
@@ -679,7 +682,7 @@ export default function App() {
 
   const renderClickableText = (text) => {
     if (!text) return "";
-    if (!isRevealed) return "••••••••••••••••••••••••••••";
+    if (!isRevealed) return "ÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇó";
     return text.split(' ').map((word, i) => {
       const cleanWord = word.replace(/^[.,:;!?()"'[\]]+|[.,:;!?()"'[\]]+$/g, '').toLowerCase();
       const hasTranslation = !!localDict[cleanWord];
@@ -722,14 +725,14 @@ export default function App() {
   const evaluateSentence = async (targetWordStr) => {
     if (!userSentence.trim() || isEvaluating || !apiKey) return;
     setIsEvaluating(true);
-    const systemPrompt = `Sen Ferhat Hoca'sın. Dilin: ${getSystemLang()}. Hedef kelime: "${targetWordStr}". Öğrenci Girdisi: "${userSentence}".
-    DURUM 1: Öğrenci İngilizce bir cümle kurmaya çalışmış.
-    DURUM 2: Öğrenci Türkçe yardım istiyor veya mazeret bildiriyor.
-    Eğer DURUM 2 ise: Score kısmına motivasyon amaçlı 10 ver. Feedback kısmında özne/yüklem dizilimini çok samimi bir dille adım adım öğret. CorrectedSentence kısmına çevirisini yaz.
-    SADECE AŞAĞIDAKİ RAW JSON FORMATINDA DÖN:
-    { "score": 10, "feedback": "Hoca'nın samimi geri bildirimi.", "correctedSentence": "Doğru İngilizce cümle." }`;
+    const systemPrompt = `Sen Ferhat Hoca's─▒n. Dilin: ${getSystemLang()}. Hedef kelime: "${targetWordStr}". ├û─şrenci Girdisi: "${userSentence}".
+    DURUM 1: ├û─şrenci ─░ngilizce bir c├╝mle kurmaya ├ğal─▒┼şm─▒┼ş.
+    DURUM 2: ├û─şrenci T├╝rk├ğe yard─▒m istiyor veya mazeret bildiriyor.
+    E─şer DURUM 2 ise: Score k─▒sm─▒na motivasyon ama├ğl─▒ 10 ver. Feedback k─▒sm─▒nda ├Âzne/y├╝klem dizilimini ├ğok samimi bir dille ad─▒m ad─▒m ├Â─şret. CorrectedSentence k─▒sm─▒na ├ğevirisini yaz.
+    SADECE A┼ŞA─ŞIDAK─░ RAW JSON FORMATINDA D├ûN:
+    { "score": 10, "feedback": "Hoca'n─▒n samimi geri bildirimi.", "correctedSentence": "Do─şru ─░ngilizce c├╝mle." }`;
     try {
-      const text = await geminiFetch(`Kelime: "${targetWordStr}", Öğrenci: "${userSentence}"`, systemPrompt, true);
+      const text = await geminiFetch(`Kelime: "${targetWordStr}", ├û─şrenci: "${userSentence}"`, systemPrompt, true);
       setWritingFeedback(safeJsonParse(text));
     } catch { setWritingFeedback({ error: t.aiError }); }
     finally { setIsEvaluating(false); }
@@ -800,7 +803,7 @@ export default function App() {
     } else if (selectedType === 'sentence') {
       const targetExample = targetWord.engExample || targetWord.eng || "Sample Sentence.";
       // Better normalization for tokenization: removes smart quotes and all basic punctuation
-      const cleanSentence = targetExample.replace(/[.,:;!?()"'[\]“”‘’]/g, '');
+      const cleanSentence = targetExample.replace(/[.,:;!?()"'[\]ÔÇ£ÔÇØÔÇİÔÇÖ]/g, '');
       const correctTokens = cleanSentence.split(/\s+/).filter(t => t.trim());
 
       const distractors = [];
@@ -809,7 +812,7 @@ export default function App() {
         failsafe++;
         const randomWord = vocab[Math.floor(Math.random() * vocab.length)];
         const randomExample = randomWord.engExample || randomWord.eng || "";
-        const randomTokens = randomExample.replace(/[.,:;!?()"'[\]“”‘’]/g, '').split(/\s+/).filter(t => t.trim());
+        const randomTokens = randomExample.replace(/[.,:;!?()"'[\]ÔÇ£ÔÇØÔÇİÔÇÖ]/g, '').split(/\s+/).filter(t => t.trim());
         if (randomTokens.length > 0) {
           const randomToken = randomTokens[Math.floor(Math.random() * randomTokens.length)].toLowerCase();
           if (!correctTokens.map(t => t.toLowerCase()).includes(randomToken) && !distractors.includes(randomToken)) distractors.push(randomToken);
@@ -859,7 +862,7 @@ export default function App() {
       // Only block if it's a NEW discovery (Stranger) and quota is met
       // Chill mode is exempt from daily limits
       if (vocabMode !== 'chill' && !isReview && !alreadySwipedToday && stats.swiped >= 12 && !isRetryMode) {
-        alert("Günlük yeni keşif kotana ulaştın (12/12). Daha önce gördüğün kelimelere (Tanış/Sırdaş) sınırsız devam edebilirsin ama yeni kelime için yarını bekle!");
+        alert("G├╝nl├╝k yeni ke┼şif kotana ula┼şt─▒n (12/12). Daha ├Ânce g├Ârd├╝─ş├╝n kelimelere (Tan─▒┼ş/S─▒rda┼ş) s─▒n─▒rs─▒z devam edebilirsin ama yeni kelime i├ğin yar─▒n─▒ bekle!");
         return;
       }
       setSwipeDirection(direction);
@@ -1064,7 +1067,7 @@ export default function App() {
     const normalize = (str) => {
       if (!str) return "";
       return str
-        .replace(/[.,:;!?()"'[\]“”‘’]/g, '')
+        .replace(/[.,:;!?()"'[\]ÔÇ£ÔÇØÔÇİÔÇÖ]/g, '')
         .replace(/\s+/g, ' ')
         .toLowerCase()
         .trim();
@@ -1088,7 +1091,7 @@ export default function App() {
       [...userTokens].sort().join('|') === [...targetTokens].sort().join('|');
 
     let isCorrect = isExactMatch || isBagOfWordsMatch;
-    let feedbackMessage = isExactMatch ? t.correctAwesome : (appLang === 'tr' ? `Doğru! Alternatif kullanım: "${quizQuestion.target.engExample || quizQuestion.target.eng}"` : `Correct! Alternative usage: "${quizQuestion.target.engExample || quizQuestion.target.eng}"`);
+    let feedbackMessage = isExactMatch ? t.correctAwesome : (appLang === 'tr' ? `Do─şru! Alternatif kullan─▒m: "${quizQuestion.target.engExample || quizQuestion.target.eng}"` : `Correct! Alternative usage: "${quizQuestion.target.engExample || quizQuestion.target.eng}"`);
 
     const userDisplay = selectedTokens.map(tok => tok.text).join(' ');
 
@@ -1156,11 +1159,11 @@ export default function App() {
   // Achievement Check Logic
   useEffect(() => {
     const achievementsList = [
-      { id: 'first_word', title: t.ach_first_word_title || 'İlk Adım', requirement: 1, current: learnedCount },
-      { id: 'consistent_3', title: t.ach_consistent_3_title || 'Isınma Turu', requirement: 3, current: streak },
-      { id: 'hard_worker', title: t.ach_hard_worker_title || 'Çalışkan', requirement: 50, current: totalReviewsAll },
-      { id: 'consistent_7', title: t.ach_consistent_7_title || 'İstikrarlı', requirement: 7, current: streak },
-      { id: 'master_1', title: t.ach_master_1_title || 'Uzman Adayı', requirement: 10, current: strongCount },
+      { id: 'first_word', title: t.ach_first_word_title || '─░lk Ad─▒m', requirement: 1, current: learnedCount },
+      { id: 'consistent_3', title: t.ach_consistent_3_title || 'Is─▒nma Turu', requirement: 3, current: streak },
+      { id: 'hard_worker', title: t.ach_hard_worker_title || '├çal─▒┼şkan', requirement: 50, current: totalReviewsAll },
+      { id: 'consistent_7', title: t.ach_consistent_7_title || '─░stikrarl─▒', requirement: 7, current: streak },
+      { id: 'master_1', title: t.ach_master_1_title || 'Uzman Aday─▒', requirement: 10, current: strongCount },
     ];
 
     let newUnlocked = [];
@@ -1443,10 +1446,10 @@ export default function App() {
           <button
             onClick={() => { sounds.playClick(); advanceTime(); }}
             className="ml-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-400 text-black shadow-lg hover:bg-amber-500 transition-all flex items-center gap-2 scale-95"
-            title="Simüle Et: Yarın"
+            title="Sim├╝le Et: Yar─▒n"
           >
             <Clock size={12} strokeWidth={3} />
-            <span>+1 GÜN</span>
+            <span>+1 G├£N</span>
           </button>
         )}
       </div>
@@ -1464,15 +1467,15 @@ export default function App() {
     return (
       <div className="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center p-8 z-[999] text-center">
         <ServerCrash size={64} className="text-red-500 mb-6 animate-pulse" />
-        <h1 className="text-2xl font-black text-white mb-2">{t.maintenanceTitle || 'Sistem Bakımda'}</h1>
-        <p className="text-slate-400 font-bold max-w-sm mb-8">{globalAnnouncement || t.maintenanceDesc || 'Size daha iyi bir deneyim sunmak için güncellemeler yapıyoruz. Lütfen biraz sonra tekrar deneyin.'}</p>
+        <h1 className="text-2xl font-black text-white mb-2">{t.maintenanceTitle || 'Sistem Bak─▒mda'}</h1>
+        <p className="text-slate-400 font-bold max-w-sm mb-8">{globalAnnouncement || t.maintenanceDesc || 'Size daha iyi bir deneyim sunmak i├ğin g├╝ncellemeler yap─▒yoruz. L├╝tfen biraz sonra tekrar deneyin.'}</p>
 
         {isAdmin ? (
           <button
             onClick={() => setMaintenanceMode(false)}
             className="px-8 py-4 bg-amber-400 text-slate-900 font-black rounded-2xl shadow-glow-amber hover:scale-105 active:scale-95 transition-all uppercase tracking-widest"
           >
-            Admın Geçişi (Panelden Kapatabilirsin)
+            Adm─▒n Ge├ği┼şi (Panelden Kapatabilirsin)
           </button>
         ) : (
           <button onClick={handleVersionClick} className="mt-12 text-[10px] uppercase font-black tracking-widest text-slate-700">Attempt Admin Login</button>

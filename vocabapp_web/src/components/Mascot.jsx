@@ -65,6 +65,7 @@ export const Mascot = ({
                     <img
                         src={activeMaskot}
                         alt="Ferhat Hoca Mascot"
+                        draggable="false"
                         className={`object-contain w-full h-full relative z-10 transition-all duration-700 ${isAdmin ? 'brightness-125 saturate-150 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]' : (variant === 'minimal' ? 'brightness-110 contrast-125' : 'drop-shadow-[0_10px_20px_rgba(0,0,0,0.15)]')} ${animated ? 'hover:scale-110' : ''}`}
                         style={variant === 'minimal' ? { filter: isDark ? 'drop-shadow(0 0 8px rgba(96, 165, 250, 0.4))' : 'drop-shadow(0 0 5px rgba(0,0,0,0.1))' } : {
                             opacity: 0.9
