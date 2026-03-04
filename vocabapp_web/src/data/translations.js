@@ -64,7 +64,8 @@ export const translations = {
         maintenanceActive: "Bakım Modu Yayında", maintenanceDesc: "Tüm kullanıcılar için uygulamayı kapa.", publishSuccess: "Duyuru Yayında!", logsEmpty: "Henüz sistem hatası kaydedilmedi.",
         dailyGoal: "GÜNLÜK HEDEF", totalProgress: "TOPLAM İLERLEME", timeRemainingLabel: "SÜRE",
         maxLevelCompanion: "Maksimum Seviye: Yoldaş (%100)",
-        practiceArena: "ARENA", practiceArenaDesc: "Hızlı Kelime Pratiği", exerciseLibrary: "Alıştırma Kütüphanesi", exerciseLibDesc: "Alıştırma Kitaplığı",
+        practiceArena: "ARENA", practiceArenaDesc: "Hızlı Kelime Pratiği", exerciseLibrary: "KÜTÜPHANE", exerciseLibDesc: "Referans & Pasif Öğrenme",
+        lib_grammar: "DİL BİLGİSİ • CASELER", lib_wisdom: "BİLGELİK • OKUMA",
     },
     en: {
         learned: "Learned", mastered: "Mastered", card: "Card", vault: "Your Vault", vaultEmpty: "Vault is empty.", back: "Go Back", backToVault: "Back to Vault",
@@ -133,6 +134,7 @@ export const translations = {
         maintenanceActive: "Maintenance Active", maintenanceDesc: "Shut down app for all users.", publishSuccess: "Broadcast Live!", logsEmpty: "No system errors logged yet.",
         dailyGoal: "DAILY GOAL", totalProgress: "OVERALL PROGRESS", timeRemainingLabel: "TIME",
         maxLevelCompanion: "Maximum Level: Companion (100%)",
-        practiceArena: "Practice Arena", practiceArenaDesc: "Rapid Word Practice", exerciseLibrary: "Exercise Library", exerciseLibDesc: "Exercise Library",
+        practiceArena: "Practice Arena", practiceArenaDesc: "Rapid Word Practice", exerciseLibrary: "LIBRARY", exerciseLibDesc: "Reference & Passive Learning",
+        lib_grammar: "GRAMMAR • CASES", lib_wisdom: "WISDOM • READING",
     }
 };

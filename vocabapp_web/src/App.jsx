@@ -21,6 +21,8 @@ import { SwipeableCard } from './components/SwipeableCard';
 import { AdminPanel } from './components/AdminPanel';
 import { LevelTestModal } from './components/LevelTestModal';
 
+import { Library } from './components/Library';
+
 // Hooks
 import { useAdmin } from './hooks/useAdmin';
 import { useTheme } from './hooks/useTheme';
@@ -504,6 +506,7 @@ export default function App() {
   const [showVault, setShowVault] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showLevelTest, setShowLevelTest] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedVaultWord, setSelectedVaultWord] = useState(null);
 
@@ -1436,6 +1439,13 @@ export default function App() {
           onClose={() => setShowCommunityHub(false)}
         />
       )}
+      {showLibrary && (
+        <Library
+          isDark={isDark}
+          t={t}
+          onClose={() => setShowLibrary(false)}
+        />
+      )}
     </>
   );
 
@@ -1549,6 +1559,7 @@ export default function App() {
           isAdmin={isAdmin}
           advanceTime={advanceTime}
           onJumpToCard={jumpToCard}
+          setShowLibrary={setShowLibrary}
         />
         {bottomNavigation}
       </>

@@ -32,7 +32,8 @@ export const Dashboard = ({
     setShowQuizHistory,
     dailyStats = {},
     isAdmin = false,
-    advanceTime
+    advanceTime,
+    setShowLibrary
 }) => {
     const [sortMode, setSortMode] = useState('name');
     const [achievementsExpanded, setAchievementsExpanded] = useState(false);
@@ -363,7 +364,7 @@ export const Dashboard = ({
                         <div className="grid grid-cols-2 gap-4 mb-4">
                             {/* Exercise Library System */}
                             <div
-                                onClick={(e) => { e.stopPropagation(); if (setQuickTx) setQuickTx({ visible: true, text: t.comingSoon, x: window.innerWidth / 2, y: window.innerHeight - 100 }); setTimeout(() => setQuickTx(prev => ({ ...prev, visible: false })), 2000); }}
+                                onClick={(e) => { e.stopPropagation(); setShowLibrary(true); }}
                                 className={`p-6 rounded-[2.5rem] border cursor-pointer transition-all hover:scale-[1.03] active:scale-95 flex flex-col items-center text-center relative overflow-hidden group ${isDark ? 'bg-emerald-500/10 border-emerald-500/20 shadow-glow-emerald/5' : 'bg-emerald-50 border-emerald-100 shadow-sm'}`}
                             >
                                 <div className="absolute -top-4 -right-4 opacity-[0.08] group-hover:opacity-20 transition-all duration-700 group-hover:scale-125">
@@ -372,10 +373,10 @@ export const Dashboard = ({
                                 <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-glow-emerald mb-4 relative z-10 group-hover:scale-110 transition-transform">
                                     <FileText size={24} />
                                 </div>
-                                <h5 className="font-black text-xs uppercase tracking-tight mb-1 relative z-10 text-emerald-600 dark:text-emerald-400 italic">KÜTÜPHANE</h5>
+                                <h5 className="font-black text-xs uppercase tracking-tight mb-1 relative z-10 text-emerald-600 dark:text-emerald-400 italic">{t.exerciseLibrary}</h5>
                                 <div className="space-y-1 mt-1">
-                                    <div className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-[7px] font-black text-emerald-500 uppercase tracking-widest">READING • GRAMMAR</div>
-                                    <div className="px-2 py-0.5 rounded-full bg-slate-500/5 text-[7px] font-black opacity-30 uppercase tracking-widest">WRITING • CHAT</div>
+                                    <div className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-[7px] font-black text-emerald-500 uppercase tracking-widest">{t.lib_grammar}</div>
+                                    <div className="px-2 py-0.5 rounded-full bg-slate-500/5 text-[7px] font-black opacity-30 uppercase tracking-widest">{t.lib_wisdom}</div>
                                 </div>
                             </div>
 
