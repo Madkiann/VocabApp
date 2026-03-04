@@ -131,7 +131,7 @@ export const SwipeableCard = ({
 
     return (
         <motion.div
-            className={`absolute inset-0 z-[50] select-none ${isRevealed ? 'touch-pan-y' : 'touch-none'}`}
+            className={`absolute inset-0 z-[50] select-none shadow-premium`}
             style={{
                 x,
                 y,
@@ -142,6 +142,8 @@ export const SwipeableCard = ({
                 borderRadius,
                 perspective: 1200,
                 cursor: 'grab',
+                // Dikey kaydırmayı (scroll) koru, yatayda sürüklemeye (swipe) izin ver
+                touchAction: isSwipingOut.current ? "none" : "pan-y",
                 // --- Zen Browser & Firefox Optimizasyonu ---
                 willChange: "transform, opacity",
                 backfaceVisibility: "hidden",
@@ -151,20 +153,28 @@ export const SwipeableCard = ({
             }}
             drag={isSwipingOut.current ? false : "x"}
             dragDirectionLock={true}
+            dragListener={!isSwipingOut.current}
             dragPropagation={false}
-            dragElastic={0.5} // Daha sıkı kontrol için 0.5'e çekildi
-            dragMomentum={false} // Gecko motoru için momentum kapatıldı
+            dragElastic={0.4} // Daha "tok" ve kontrollü bir sürükleme hissi
+            dragTransition={{ bounceStiffness: 600, bounceDamping: 35 }} // Geri sekme kalitesi
+            dragMomentum={false}
             dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            whileDrag={{ scale: 1.02, transition: { duration: 0.1 } }}
+            onDrag={(event, info) => {
+                // Eğer dikey hareket yataydan fazlaysa sürüklemeyi pasif hissettir
+                if (Math.abs(info.offset.y) > Math.abs(info.offset.x) * 1.5) {
+                    // Tarayıcının doğal scroll'u için boş bırakıyoruz
+                }
+            }}
+            whileDrag={{ scale: 1.01, transition: { duration: 0.1 } }}
             animate={controls}
             transition={{
                 type: 'spring',
                 stiffness: 450,
                 damping: 35,
                 mass: 0.8,
-                restDelta: 0.01 // Animasyonun bittiğini tarayıcıya daha hızlı bildirir
+                restDelta: 0.01
             }}
             initial={{ y: 80, opacity: 0, scale: 0.85 }}
         >
