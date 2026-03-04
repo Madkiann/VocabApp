@@ -56,20 +56,20 @@ export const SwipeableCard = ({
         } else if (swipeDirection === 'left') {
             isSwipingOut.current = true;
             controls.start({
-                x: -600,
-                rotate: -15,
+                x: -500,
+                rotate: -10,
                 opacity: 0,
                 scale: 0.8,
-                transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
+                transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] }
             }).then(() => onSwipe('left', true));
         } else if (swipeDirection === 'right') {
             isSwipingOut.current = true;
             controls.start({
-                x: 600,
-                rotate: 15,
+                x: 500,
+                rotate: 10,
                 opacity: 0,
                 scale: 0.8,
-                transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
+                transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] }
             }).then(() => onSwipe('right', true));
         }
     }, [swipeDirection, controls, onSwipe, x, y]);
@@ -96,22 +96,22 @@ export const SwipeableCard = ({
         if (offset > swipeThreshold || velocity > velocityThreshold) {
             isSwipingOut.current = true;
             controls.start({
-                x: 600,
-                y: -100,
-                rotate: 15,
+                x: 500,
+                y: -60,
+                rotate: 10,
                 opacity: 0,
                 scale: 0.95,
-                transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
+                transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] }
             }).then(() => onSwipe('right', true));
         } else if (offset < -swipeThreshold || velocity < -velocityThreshold) {
             isSwipingOut.current = true;
             controls.start({
-                x: -600,
-                y: -100,
-                rotate: -15,
+                x: -500,
+                y: -60,
+                rotate: -10,
                 opacity: 0,
                 scale: 0.95,
-                transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
+                transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] }
             }).then(() => onSwipe('left', true));
         } else {
             // Geri dönüşü daha "snappy" (sert/hızlı) ve istikrarlı yaptık
