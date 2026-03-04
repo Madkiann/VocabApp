@@ -313,8 +313,20 @@
             font-size: 0.95rem !important;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
     }
+}
+
+/* Kalem Tüyü (Quill) Visual Style */
+.feather-icon-container svg,
+button svg.lucide-feather {
+    clip-path: polygon(50% 0%, 75% 40%, 50% 100%, 25% 40%);
+    transform: rotate(15deg);
+    stroke-width: 1px !important;
+    fill: none !important;
+    /* Force outline only */
+    filter: drop-shadow(0 0 2px currentColor);
 }

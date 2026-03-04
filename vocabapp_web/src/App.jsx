@@ -19,7 +19,6 @@ import { AchievementPopup } from './components/AchievementPopup';
 import { Mascot } from './components/Mascot';
 import { SwipeableCard } from './components/SwipeableCard';
 import { AdminPanel } from './components/AdminPanel';
-import { DiscoveryBar } from './components/DiscoveryBar';
 import { LevelTestModal } from './components/LevelTestModal';
 
 // Hooks
@@ -1239,7 +1238,7 @@ export default function App() {
     // Stats for the Discovery Bar (Shared Discovery Count)
     const stats = {
       isStranger,
-      currentDiscovery: swipedToday, // Global count of NEW cards today
+      currentDiscovery: isRetryMode ? currentWordIndex : Math.min(swipedToday, 12), // Global count of NEW cards today
       totalDiscovery: 12,
       current: currentWordIndex + 1,
       total: deck.length,
@@ -1637,30 +1636,19 @@ export default function App() {
         </div>
       )}
 
-      {/* ÜST BÖLÜM: Sıralı ve Temiz */}
-      <header className="w-full flex flex-col items-center pt-safe px-4 gap-y-1 z-[600] shrink-0">
-        <AchievementPopup queue={achievementQueue} onComplete={handleAchievementComplete} isDark={isDark} t={t} isAdmin={isAdmin} />
+      {/* ÜST BÖLÜM: Minimalist & Sabit Header */}
+      <header className="fixed top-0 left-0 right-0 flex flex-col items-center pt-6 z-[600] pointer-events-none">
+        <div className="w-full flex flex-col items-center pointer-events-auto">
+          <AchievementPopup queue={achievementQueue} onComplete={handleAchievementComplete} isDark={isDark} t={t} isAdmin={isAdmin} />
 
-        {!isLogoVisible && (
-          <div className="w-full max-w-sm">
-            <DiscoveryBar
-              current={isRetryMode ? currentWordIndex : Math.min(swipedToday, 12)}
-              total={12}
-              isDark={isDark}
-              t={t}
-              isRetry={isRetryMode}
-              label={isRetryMode ? (t.review || "TEKRAR YAPILAN") : null}
-            />
+          <div className="scale-90 opacity-80 hover:opacity-100 transition-all duration-300 transform origin-top">
+            {modeSelector}
           </div>
-        )}
-
-        <div className="mt-1">
-          {modeSelector}
         </div>
       </header>
 
-      {/* Main Content Area: Flexible & Navbar-separated */}
-      <main className="flex-1 w-full flex flex-col items-center justify-center p-4 pb-24 md:pb-28 relative overflow-hidden min-h-0">
+      {/* ORTA BÖLÜM: Kart Arenası (Yukarı Çapa) */}
+      <main className="flex-grow w-full flex flex-col items-center justify-start pt-16 px-4 relative overflow-hidden min-h-0">
 
         {isLogoVisible ? (
           <div
@@ -1737,7 +1725,7 @@ export default function App() {
                 </button>
               </div>
             ) : (
-              <div className="relative w-full max-w-[460px] h-full max-h-[650px]">
+              <div className="relative w-full max-w-[400px] aspect-[3/4] max-h-[70vh] mb-20">
 
                 <SwipeableCard
                   key={currentWordIndex}
@@ -1755,8 +1743,8 @@ export default function App() {
         )}
       </main>
 
-      {/* Fixed Bottom Section */}
-      <nav className="relative z-[500] w-full shrink-0 pb-safe">
+      {/* ALT BÖLÜM: Sabit Navbar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-[500] pb-safe bg-background/80 backdrop-blur-lg">
         <footer className="w-full flex-col items-center gap-2 opacity-60 hidden md:flex mb-4">
           <div className="flex gap-6">
             <a href="https://www.instagram.com/ferhat_hoca_ingilizce/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Instagram size={12} /> instagram</a>

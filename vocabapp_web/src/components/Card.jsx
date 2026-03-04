@@ -210,6 +210,7 @@ export const Card = ({
             {/* High-Impact Interior Paint Layer */}
             <div className={`absolute inset-0 transition-all duration-1000 ${bond.bg} ${bond.glow} ${bond.cardEffect || ''}`}></div>
 
+
             {/* Background Texture Overlays */}
             {bond.texture === 'stone' && (
                 <div className="absolute inset-0 opacity-[0.05] pointer-events-none grayscale mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]"></div>
@@ -219,76 +220,73 @@ export const Card = ({
                 <div className="absolute inset-0 bg-slate-500/5 backdrop-blur-[2px] pointer-events-none z-0"></div>
             )}
 
-            {/* Feather Bond Badge - Top Left - Now Clickable */}
-            <button
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={(e) => { e.stopPropagation(); setShowBondDetails(true); }}
-                className={`absolute top-12 left-6 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg ${bond.bg} ${bond.border} ${bond.color}`}
-            >
-                <Feather size={14} className={`animate-pulse ${bond.featherColor}`} />
-                <span className="text-[9px] font-black uppercase tracking-[0.2em]">{bond.name}</span>
-                <AnimatePresence>
-                    {showBondDetails && (
-                        <div className="absolute top-0 left-0">
-                            {/* Handled in the bottom AnimatePresence to be on top of everything */}
-                        </div>
-                    )}
-                </AnimatePresence>
-            </button>
 
-            {/* Top Action Area - Positioned relative to card top */}
-            <div className="absolute top-12 right-6 flex gap-2 z-50">
-                {canUndo && (
+            <div className="flex flex-col h-full animate-fade-in relative z-10 font-sans p-6 pt-6">
+                {/* 1. Zihin Yıldızları (Discovery) - En Üst ve Simetrik */}
+                {!isSystem && <DiscoveryBar current={stats?.currentDiscovery || 0} total={12} isDark={isDark} />}
+
+                {/* 2. Statü ve Aksiyonlar - Discovery'nin Altında */}
+                <div className="flex justify-between items-center w-full mb-6 relative z-50">
                     <button
                         onPointerDown={(e) => e.stopPropagation()}
-                        onClick={(e) => { e.stopPropagation(); onUndo(); }}
-                        className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isDark ? 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'} backdrop-blur-md`}
-                        title={t.undo || "Geri Al"}
+                        onClick={(e) => { e.stopPropagation(); setShowBondDetails(true); }}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg ${bond.bg} ${bond.border} ${bond.color}`}
                     >
-                        <Undo2 size={16} strokeWidth={2.5} />
+                        <Feather size={14} className={`animate-pulse ${bond.featherColor}`} />
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em]">{bond.name}</span>
                     </button>
-                )}
-                <button
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onClick={handleShare}
-                    disabled={isSharing}
-                    className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isSharing ? 'opacity-50' : ''} ${isDark ? 'bg-slate-800/40 text-slate-300' : 'bg-white/50 text-slate-500 hover:bg-white/90'} backdrop-blur-md`}
-                    title="Paylaş / Share"
-                >
-                    {isSharing ? <Loader2 size={16} strokeWidth={2.5} className="animate-spin" /> : <Share2 size={16} strokeWidth={2.5} />}
-                </button>
-                {!isSystem && (
-                    <button
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onClick={(e) => { e.stopPropagation(); toggleSaveWord(wordObj); }}
-                        className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isSavedStatus ? 'bg-amber-400 text-slate-900 shadow-glow-amber' : (isDark ? 'bg-slate-800/40 text-slate-300 hover:bg-slate-700/80 backdrop-blur-md' : 'bg-white/50 text-slate-500 hover:bg-white/90 backdrop-blur-md')}`}
-                    >
-                        <Bookmark size={16} strokeWidth={2.5} fill={isSavedStatus ? "currentColor" : "none"} />
-                    </button>
-                )}
-                {isAdmin && (
+
                     <div className="flex gap-2">
+                        {canUndo && (
+                            <button
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onClick={(e) => { e.stopPropagation(); onUndo(); }}
+                                className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isDark ? 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'} backdrop-blur-md`}
+                                title={t.undo || "Geri Al"}
+                            >
+                                <Undo2 size={16} strokeWidth={2.5} />
+                            </button>
+                        )}
                         <button
                             onPointerDown={(e) => e.stopPropagation()}
-                            onClick={(e) => { e.stopPropagation(); onEditWord(wordObj); }}
-                            className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}
-                            title="Edit"
+                            onClick={handleShare}
+                            disabled={isSharing}
+                            className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isSharing ? 'opacity-50' : ''} ${isDark ? 'bg-slate-800/40 text-slate-300' : 'bg-white/50 text-slate-500 hover:bg-white/90'} backdrop-blur-md`}
+                            title="Paylaş / Share"
                         >
-                            <Edit3 size={16} strokeWidth={2.5} />
+                            {isSharing ? <Loader2 size={16} strokeWidth={2.5} className="animate-spin" /> : <Share2 size={16} strokeWidth={2.5} />}
                         </button>
-                        <button
-                            onPointerDown={(e) => e.stopPropagation()}
-                            onClick={(e) => { e.stopPropagation(); onDeleteWord(wordObj.id); }}
-                            className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isDark ? 'bg-rose-500/20 text-rose-400' : 'bg-rose-50 text-rose-600'}`}
-                            title="Delete"
-                        >
-                            <Trash2 size={16} strokeWidth={2.5} />
-                        </button>
+                        {!isSystem && (
+                            <button
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onClick={(e) => { e.stopPropagation(); toggleSaveWord(wordObj); }}
+                                className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isSavedStatus ? 'bg-amber-400 text-slate-900 shadow-glow-amber' : (isDark ? 'bg-slate-800/40 text-slate-300 hover:bg-slate-700/80 backdrop-blur-md' : 'bg-white/50 text-slate-500 hover:bg-white/90 backdrop-blur-md')}`}
+                            >
+                                <Bookmark size={16} strokeWidth={2.5} fill={isSavedStatus ? "currentColor" : "none"} />
+                            </button>
+                        )}
+                        {isAdmin && (
+                            <div className="flex gap-2">
+                                <button
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                    onClick={(e) => { e.stopPropagation(); onEditWord(wordObj); }}
+                                    className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}
+                                    title="Edit"
+                                >
+                                    <Edit3 size={16} strokeWidth={2.5} />
+                                </button>
+                                <button
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                    onClick={(e) => { e.stopPropagation(); onDeleteWord(wordObj.id); }}
+                                    className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 border border-transparent shadow-sm ${isDark ? 'bg-rose-500/20 text-rose-400' : 'bg-rose-50 text-rose-600'}`}
+                                    title="Delete"
+                                >
+                                    <Trash2 size={16} strokeWidth={2.5} />
+                                </button>
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
-
-            <div className="flex flex-col h-full animate-fade-in relative z-10 font-sans p-7">
+                </div>
                 {/* Reveal Overlay - Top Level */}
                 {!isRevealed && (
                     <div
@@ -320,7 +318,7 @@ export const Card = ({
                 )}
 
                 <div
-                    className={`flex-grow flex flex-col overflow-y-auto scrollbar-hide pr-1 relative min-h-0 pt-20 mask-fade-v transition-all duration-500 ${!isRevealed ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'} ${bond.glow || ''} ${bond.pulse || ''}`}
+                    className={`flex-grow flex flex-col overflow-y-auto scrollbar-hide pr-1 relative min-h-0 pt-4 mask-fade-v transition-all duration-500 ${!isRevealed ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'} ${bond.glow || ''} ${bond.pulse || ''}`}
                     style={{ touchAction: 'pan-y' }}
                 >
                     {/* Background Texture Overlays */}
@@ -417,13 +415,6 @@ export const Card = ({
                                 >
                                     <Lightbulb size={24} />
                                     <span className="text-[9px] font-black uppercase tracking-widest leading-none text-center">{t.caseExamples}</span>
-                                </button>
-                                <button
-                                    onClick={() => { setShowMiniStory(!showMiniStory); setShowCaseExamples(false); setShowAi(false); setShowForms(false); setShowDetails(false); setShowWriting(false); }}
-                                    className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${showMiniStory ? 'border-pink-400 bg-pink-400/10 text-pink-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400 hover:border-slate-700 hover:text-pink-400' : 'border-slate-100 glass text-slate-600 shadow-sm hover:border-slate-300 hover:text-pink-500')}`}
-                                >
-                                    <Mascot isDark={isDark} size="xs" isAdmin={isAdmin} />
-                                    <span className="text-[9px] font-black uppercase tracking-widest leading-none">STORY</span>
                                 </button>
                                 <button
                                     onClick={() => { setShowDetails(!showDetails); setShowAi(false); setShowWriting(false); setShowForms(false); setShowCaseExamples(false); setShowMiniStory(false); }}
