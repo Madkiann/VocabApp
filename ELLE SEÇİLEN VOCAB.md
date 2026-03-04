@@ -782,3 +782,35 @@
 "syncToChill": true
 }
 
+{
+"id": "pv_1772616517429",
+"word": "Get a grasp of something",
+"trWord": "Bir Şeyi Kavramak/Anlamak/Fikir edinmek",
+"phonetic": "/ɡet ə ɡrɑːsp əv ˈsʌmθɪŋ/",
+"pos": "Phrasal verb",
+"posTr": "Deyimsel fiil",
+"targetMode": "Phrasal Verbs",
+"engDef": "To understand a complicated concept or situation fully.",
+"trDef": "Karmaşık bir kavramı veya durumu tam olarak anlamak, kavramak.",
+"engExample": "It took me a few weeks to get a grasp of the new software at work.",
+"trExample": "İşteki yeni yazılımı kavramam birkaç haftamı aldı.",
+"details": {
+"miniCase": "Arthur started his physics degree with great enthusiasm, but the advanced calculus classes were overwhelming. He spent every evening in the library, re-reading chapters until he finally began to get a grasp of the fundamental theories. Once the logic clicked, his grades improved significantly.",
+"trMiniCase": "Arthur fizik bölümüne büyük bir hevesle başladı ancak ileri kalkülüs dersleri bunaltıcıydı. Temel teorileri nihayet kavramaya başlayana kadar her akşamını kütüphanede bölümleri tekrar okuyarak geçirdi. Mantık oturduğunda, notları önemli ölçüde düzeldi.",
+"caseExamples": [
+{
+"tr": "Henüz durumun ciddiyetini tam olarak kavrayabildiğini sanmıyorum.",
+"en": "I don't think he has managed to get a full grasp of the gravity of the situation yet."
+},
+{
+"tr": "Yatırım yapmadan önce piyasanın nasıl işlediğini kavramak çok önemlidir.",
+"en": "It is crucial to get a grasp of how the market works before making an investment."
+},
+{
+"tr": "Yabancı bir dilin dilbilgisini kavramak zaman ve sabır gerektirir.",
+"en": "Getting a grasp of the grammar of a foreign language requires time and patience."
+}
+]
+},
+"syncToChill": true
+}

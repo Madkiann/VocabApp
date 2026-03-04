@@ -69,7 +69,9 @@ export const Card = ({
     canUndo,
     cardBg,
     onEvolveBond,
-    isSystem = false
+    isSystem = false,
+    showMiniStory,
+    setShowMiniStory
 }) => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [showBondDetails, setShowBondDetails] = useState(false);
@@ -125,6 +127,8 @@ export const Card = ({
 
     useEffect(() => {
         setRevealedCaseEn({});
+        setShowMiniStory(false);
+        setIsMiniCaseTrOpen(false);
     }, [wordObj?.id]);
 
     const getBondInfo = () => {
@@ -408,21 +412,28 @@ export const Card = ({
                             {/* Tools Grid */}
                             <div className="grid grid-cols-2 gap-4 mt-8">
                                 <button
-                                    onClick={() => { setShowCaseExamples(!showCaseExamples); setShowAi(false); setShowForms(false); setShowDetails(false); setShowWriting(false); }}
+                                    onClick={() => { setShowCaseExamples(!showCaseExamples); setShowAi(false); setShowForms(false); setShowDetails(false); setShowWriting(false); setShowMiniStory(false); }}
                                     className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all hover:scale-105 active:scale-95 ${showCaseExamples ? 'border-amber-400 bg-amber-400/10 text-amber-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400' : 'border-slate-100 glass text-slate-600 shadow-sm')}`}
                                 >
                                     <Lightbulb size={24} />
                                     <span className="text-[9px] font-black uppercase tracking-widest leading-none text-center">{t.caseExamples}</span>
                                 </button>
                                 <button
-                                    onClick={() => { setShowDetails(!showDetails); setShowAi(false); setShowWriting(false); setShowForms(false); setShowCaseExamples(false); }}
+                                    onClick={() => { setShowMiniStory(!showMiniStory); setShowCaseExamples(false); setShowAi(false); setShowForms(false); setShowDetails(false); setShowWriting(false); }}
+                                    className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${showMiniStory ? 'border-pink-400 bg-pink-400/10 text-pink-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400 hover:border-slate-700 hover:text-pink-400' : 'border-slate-100 glass text-slate-600 shadow-sm hover:border-slate-300 hover:text-pink-500')}`}
+                                >
+                                    <Mascot isDark={isDark} size="xs" isAdmin={isAdmin} />
+                                    <span className="text-[9px] font-black uppercase tracking-widest leading-none">STORY</span>
+                                </button>
+                                <button
+                                    onClick={() => { setShowDetails(!showDetails); setShowAi(false); setShowWriting(false); setShowForms(false); setShowCaseExamples(false); setShowMiniStory(false); }}
                                     className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${showDetails ? 'border-emerald-400 bg-emerald-400/10 text-emerald-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400 hover:border-slate-700 hover:text-emerald-400' : 'border-slate-100 glass text-slate-600 shadow-sm hover:border-slate-300 hover:text-emerald-500')}`}
                                 >
                                     <BookOpen size={24} />
                                     <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t.detailsBtn || 'DETAILS'}</span>
                                 </button>
                                 <button
-                                    onClick={() => { if (!showAi) fetchAiData(wordObj.word); setShowAi(!showAi); setShowWriting(false); setShowForms(false); setShowDetails(false); setShowCaseExamples(false); }}
+                                    onClick={() => { if (!showAi) fetchAiData(wordObj.word); setShowAi(!showAi); setShowWriting(false); setShowForms(false); setShowDetails(false); setShowCaseExamples(false); setShowMiniStory(false); }}
                                     className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${showAi ? 'border-blue-400 bg-blue-400/10 text-blue-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400 hover:border-slate-700 hover:text-blue-400' : 'border-slate-100 glass text-slate-600 shadow-sm hover:border-slate-300 hover:text-blue-500')}`}
                                 >
                                     <Sparkles size={24} />
@@ -464,19 +475,19 @@ export const Card = ({
                                                         className={`p-5 rounded-[2rem] border transition-all cursor-pointer group relative overflow-hidden ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-amber-50/50 border-amber-100'}`}
                                                     >
                                                         <div className="flex flex-col gap-2">
-                                                            <p className={`text-base font-black leading-tight tracking-tight ${isDark ? 'text-amber-400/90' : 'text-amber-600'}`}>"{ex?.tr || ''}"</p>
+                                                            <p className={`text-base font-black leading-tight tracking-tight ${isDark ? 'text-amber-400/90' : 'text-amber-600'}`}>"{ex?.en || ''}"</p>
 
                                                             <div className={`grid transition-all duration-300 ease-in-out ${(revealedCaseEn || {})[i] ? 'grid-rows-[1fr] opacity-100 mt-2' : 'grid-rows-[0fr] opacity-0'}`}>
                                                                 <div className="overflow-hidden">
                                                                     <p className={`text-sm font-bold italic ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                                                        {ex?.en || ''}
+                                                                        {ex?.tr || ''}
                                                                     </p>
                                                                 </div>
                                                             </div>
 
                                                             {!(revealedCaseEn || {})[i] && (
                                                                 <div className="flex items-center gap-2 mt-1 text-[9px] font-black uppercase tracking-widest opacity-30 group-hover:opacity-60 transition-opacity text-amber-500">
-                                                                    <Eye size={12} /> {t.toEn}
+                                                                    <RefreshCw size={12} /> {t.toTr}
                                                                 </div>
                                                             )}
                                                         </div>
@@ -581,6 +592,34 @@ export const Card = ({
                                                     <p className="text-base font-black text-purple-600 dark:text-purple-400 tracking-tight">{word}</p>
                                                 </div>
                                             ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {showMiniStory && wordObj.details?.miniCase && (
+                                    <div className={`p-8 rounded-[3rem] border-2 animate-fade-in ${isDark ? 'bg-slate-900 border-pink-500/20' : 'bg-white border-pink-200 shadow-premium'}`}>
+                                        <h4 className="text-xs font-black mb-6 flex items-center gap-2 text-pink-500 uppercase tracking-[0.2em]">
+                                            <Mascot isDark={isDark} size="xs" isAdmin={isAdmin} /> MINI CASE STORY
+                                        </h4>
+                                        <p className={`text-xl font-black leading-tight mb-4 tracking-tight ${isDark ? 'text-indigo-100' : 'text-indigo-950'}`}>
+                                            {typeof wordObj.details.miniCase === 'object' ? wordObj.details.miniCase.en : wordObj.details.miniCase}
+                                        </p>
+
+                                        <div className="mt-4">
+                                            {!isMiniCaseTrOpen ? (
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(true); }}
+                                                    className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}
+                                                >
+                                                    <RefreshCw size={14} /> {t.showTranslation || "Çeviriyi Gör"}
+                                                </button>
+                                            ) : (
+                                                <div
+                                                    onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(false); }}
+                                                    className={`p-5 rounded-2xl border-l-[6px] italic text-sm font-bold cursor-pointer animate-fade-in ${isDark ? 'bg-indigo-950/40 border-indigo-600/50 text-slate-400' : 'bg-indigo-100/80 border-indigo-400 text-slate-800'}`}>
+                                                    {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : wordObj.details.trMiniCase}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}

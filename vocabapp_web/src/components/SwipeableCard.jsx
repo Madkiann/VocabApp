@@ -129,7 +129,7 @@ export const SwipeableCard = ({
 
     return (
         <motion.div
-            className="absolute inset-0 z-[50] select-none touch-none"
+            className={`absolute inset-0 z-[50] select-none ${isRevealed ? 'touch-pan-y' : 'touch-none'}`}
             style={{
                 x,
                 y,
@@ -147,7 +147,9 @@ export const SwipeableCard = ({
                 transformStyle: "preserve-3d",
                 // -------------------------------------------
             }}
-            drag={!isSwipingOut.current}
+            drag={isSwipingOut.current ? false : (isRevealed ? "x" : true)}
+            dragDirectionLock={true}
+            dragPropagation={false}
             dragElastic={0.5} // Daha sıkı kontrol için 0.5'e çekildi
             dragMomentum={false} // Gecko motoru için momentum kapatıldı
             dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}

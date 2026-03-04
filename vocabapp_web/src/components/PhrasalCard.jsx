@@ -29,10 +29,11 @@ export const PhrasalCard = ({
     onEvolveBond,
     isSystem = false,
     showCaseExamples,
-    setShowCaseExamples
+    setShowCaseExamples,
+    showMiniStory,
+    setShowMiniStory
 }) => {
     const [isSpeaking, setIsSpeaking] = useState(false);
-    const [isMiniCaseOpen, setIsMiniCaseOpen] = useState(false);
     const [isMiniCaseTrOpen, setIsMiniCaseTrOpen] = useState(false);
     const [isExampleTrRevealed, setIsExampleTrRevealed] = useState(false);
     const [isCaseExamplesOpen, setIsCaseExamplesOpen] = useState(false);
@@ -45,8 +46,8 @@ export const PhrasalCard = ({
 
     React.useEffect(() => {
         setRevealedCaseEn({});
-        setIsMiniCaseOpen(false);
-        setIsCaseExamplesOpen(false);
+        setShowMiniStory(false);
+        setShowCaseExamples(false);
     }, [wordObj?.id]);
 
     const handleShare = async (e) => {
@@ -340,114 +341,85 @@ export const PhrasalCard = ({
 
 
 
-                    {/* Accordion Sections for Phrasal Verbs */}
-                    <div className="space-y-4">
-                        {wordObj.details?.miniCase && (
-                            <div className="group">
-                                <button
-                                    onClick={() => setIsMiniCaseOpen(!isMiniCaseOpen)}
-                                    className={`w-full p-6 rounded-[2.5rem] flex items-center justify-between transition-all duration-300 border-2 ${isMiniCaseOpen
-                                        ? 'bg-indigo-600 border-indigo-500 shadow-glow-indigo text-white'
-                                        : (isDark ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400' : 'bg-indigo-50 border-indigo-200 text-indigo-600 shadow-sm hover:border-indigo-300')}`}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="relative">
-                                            <Mascot isDark={isDark} size="xs" isAdmin={isAdmin} />
-                                        </div>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">MINI CASE STORY</span>
-                                    </div>
-                                    <ChevronDown className={`transition-transform duration-500 ${isMiniCaseOpen ? 'rotate-180' : ''}`} size={20} />
-                                </button>
-                                <AnimatePresence>
-                                    {isMiniCaseOpen && (
-                                        <motion.div
-                                            initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                                            animate={{ height: 'auto', opacity: 1, marginTop: 12 }}
-                                            exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                                            className="overflow-hidden"
-                                        >
-                                            <div className={`p-8 rounded-[3rem] border-2 ${isDark ? 'bg-slate-900 border-indigo-500/20' : 'bg-indigo-50/60 border-indigo-200 shadow-premium'}`}>
-                                                <p className={`text-xl font-black leading-tight mb-4 tracking-tight ${isDark ? 'text-indigo-100' : 'text-indigo-950'}`}>
-                                                    {typeof wordObj.details.miniCase === 'object' ? wordObj.details.miniCase.en : wordObj.details.miniCase}
-                                                </p>
+                    {/* Tools Grid - Synced with Card.jsx */}
+                    <div className="grid grid-cols-2 gap-4 mt-8">
+                        <button
+                            onClick={() => { setShowCaseExamples(!showCaseExamples); setShowMiniStory(false); }}
+                            className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all hover:scale-105 active:scale-95 ${showCaseExamples ? 'border-amber-400 bg-amber-400/10 text-amber-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400' : 'border-slate-100 glass text-slate-600 shadow-sm')}`}
+                        >
+                            <Lightbulb size={24} />
+                            <span className="text-[9px] font-black uppercase tracking-widest leading-none text-center">{t.caseExamples || 'VAKA ÖRNEKLERİ'}</span>
+                        </button>
+                        <button
+                            onClick={() => { setShowMiniStory(!showMiniStory); setShowCaseExamples(false); }}
+                            className={`flex flex-col items-center gap-2 p-5 rounded-[2rem] border-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${showMiniStory ? 'border-pink-400 bg-pink-400/10 text-pink-500' : (isDark ? 'border-slate-800 glass-dark text-slate-400 hover:border-slate-700 hover:text-pink-400' : 'border-slate-100 glass text-slate-600 shadow-sm hover:border-slate-300 hover:text-pink-500')}`}
+                        >
+                            <Mascot isDark={isDark} size="xs" isAdmin={isAdmin} />
+                            <span className="text-[9px] font-black uppercase tracking-widest leading-none">STORY</span>
+                        </button>
+                    </div>
 
-                                                <div className="mt-4">
-                                                    {!isMiniCaseTrOpen ? (
-                                                        <button
-                                                            onPointerDown={(e) => e.stopPropagation()}
-                                                            onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(true); }}
-                                                            className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}
-                                                        >
-                                                            <RefreshCw size={14} /> {t.showTranslation || "Çeviriyi Gör"}
-                                                        </button>
-                                                    ) : (
-                                                        <div
-                                                            onPointerDown={(e) => e.stopPropagation()}
-                                                            onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(false); }}
-                                                            className={`p-5 rounded-2xl border-l-[6px] italic text-sm font-bold cursor-pointer animate-fade-in ${isDark ? 'bg-indigo-950/40 border-indigo-600/50 text-slate-400' : 'bg-indigo-100/80 border-indigo-400 text-slate-800'}`}>
-                                                            {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : wordObj.details.trMiniCase}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </motion.div>
+                    <div className="space-y-6 mt-6">
+                        {showMiniStory && wordObj.details?.miniCase && (
+                            <div className={`p-8 rounded-[3rem] border-2 animate-fade-in ${isDark ? 'bg-slate-900 border-indigo-500/20' : 'bg-indigo-50/60 border-indigo-200 shadow-premium'}`}>
+                                <h4 className="text-xs font-black mb-6 flex items-center gap-2 text-indigo-500 uppercase tracking-[0.2em]">
+                                    <Mascot isDark={isDark} size="xs" isAdmin={isAdmin} /> MINI CASE STORY
+                                </h4>
+                                <p className={`text-xl font-black leading-tight mb-4 tracking-tight ${isDark ? 'text-indigo-100' : 'text-indigo-950'}`}>
+                                    {typeof wordObj.details.miniCase === 'object' ? wordObj.details.miniCase.en : wordObj.details.miniCase}
+                                </p>
+
+                                <div className="mt-4">
+                                    {!isMiniCaseTrOpen ? (
+                                        <button
+                                            onPointerDown={(e) => e.stopPropagation()}
+                                            onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(true); }}
+                                            className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}
+                                        >
+                                            <RefreshCw size={14} /> {t.showTranslation || "Çeviriyi Gör"}
+                                        </button>
+                                    ) : (
+                                        <div
+                                            onPointerDown={(e) => e.stopPropagation()}
+                                            onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(false); }}
+                                            className={`p-5 rounded-2xl border-l-[6px] italic text-sm font-bold cursor-pointer animate-fade-in ${isDark ? 'bg-indigo-950/40 border-indigo-600/50 text-slate-400' : 'bg-indigo-100/80 border-indigo-400 text-slate-800'}`}>
+                                            {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : wordObj.details.trMiniCase}
+                                        </div>
                                     )}
-                                </AnimatePresence>
+                                </div>
                             </div>
                         )}
 
-                        {(wordObj.details?.caseExamples || wordObj.details?.trMiniCaseExamples)?.length > 0 && (
-                            <div className="group">
-                                <button
-                                    onClick={() => setIsCaseExamplesOpen(!isCaseExamplesOpen)}
-                                    className={`w-full p-6 rounded-[2.5rem] flex items-center justify-between transition-all duration-300 border-2 ${isCaseExamplesOpen
-                                        ? 'bg-amber-500 border-amber-400 shadow-glow-amber text-slate-950'
-                                        : (isDark ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' : 'bg-amber-100 border-amber-300 text-amber-700 shadow-sm hover:border-amber-400')}`}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${isCaseExamplesOpen ? 'bg-slate-950/10' : (isDark ? 'bg-amber-500/20' : 'bg-amber-100')}`}>
-                                            <Lightbulb size={20} className={isCaseExamplesOpen ? 'text-slate-950' : 'text-amber-500'} />
-                                        </div>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">{t.caseExamples || 'VAKA ÖRNEKLERİ'}</span>
-                                    </div>
-                                    <ChevronDown className={`transition-transform duration-500 ${isCaseExamplesOpen ? 'rotate-180' : ''}`} size={20} />
-                                </button>
-                                <AnimatePresence>
-                                    {isCaseExamplesOpen && (
-                                        <motion.div
-                                            initial={{ height: 0, opacity: 0, y: -10 }}
-                                            animate={{ height: 'auto', opacity: 1, y: 0 }}
-                                            exit={{ height: 0, opacity: 0, y: -10 }}
-                                            className="overflow-hidden"
+                        {showCaseExamples && (wordObj.details?.caseExamples || wordObj.details?.trMiniCaseExamples)?.length > 0 && (
+                            <div className={`p-8 rounded-[3rem] border-2 animate-fade-in ${isDark ? 'bg-slate-900 border-amber-500/20' : 'bg-white border-amber-200 shadow-premium'}`}>
+                                <h4 className="text-xs font-black mb-6 flex items-center gap-2 text-amber-500 uppercase tracking-[0.2em]">
+                                    <Lightbulb size={20} /> {t.caseExamples || 'VAKA ÖRNEKLERİ'}
+                                </h4>
+                                <div className="space-y-4">
+                                    {(wordObj.details?.caseExamples || wordObj.details?.trMiniCaseExamples).map((ex, i) => (
+                                        <div
+                                            key={i}
+                                            onClick={() => setRevealedCaseEn(prev => ({ ...prev, [i]: !prev[i] }))}
+                                            className={`p-6 rounded-[2rem] border transition-all cursor-pointer group relative overflow-hidden ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-amber-50/50 border-amber-100/50'}`}
                                         >
-                                            <div className={`mt-3 p-6 rounded-[2.5rem] border-2 space-y-4 ${isDark ? 'bg-slate-900 border-amber-500/20' : 'bg-white border-amber-200 shadow-premium'}`}>
-                                                {(wordObj.details?.caseExamples || wordObj.details?.trMiniCaseExamples).map((ex, i) => (
-                                                    <div
-                                                        key={i}
-                                                        onClick={() => setRevealedCaseEn(prev => ({ ...prev, [i]: !prev[i] }))}
-                                                        className={`p-6 rounded-[2rem] border transition-all cursor-pointer group relative overflow-hidden ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-amber-50/50 border-amber-100/50'}`}
-                                                    >
-                                                        <p className={`text-base font-black leading-tight tracking-tight mb-2 ${isDark ? 'text-amber-400/90' : 'text-amber-600'}`}>"{ex?.tr || ''}"</p>
+                                            <p className={`text-base font-black leading-tight tracking-tight mb-2 ${isDark ? 'text-amber-400/90' : 'text-amber-600'}`}>"{ex?.en || ''}"</p>
 
-                                                        <div className={`grid transition-all duration-300 ease-in-out ${(revealedCaseEn || {})[i] ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-                                                            <div className="overflow-hidden">
-                                                                <p className={`text-sm font-bold italic pt-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                                                    {ex?.en || ''}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-
-                                                        {!(revealedCaseEn || {})[i] && (
-                                                            <div className="flex items-center gap-2 mt-1 text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-80 transition-opacity text-amber-500">
-                                                                <RefreshCw size={14} className="animate-spin-slow" /> {t.toEn}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ))}
+                                            <div className={`grid transition-all duration-300 ease-in-out ${(revealedCaseEn || {})[i] ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                                                <div className="overflow-hidden">
+                                                    <p className={`text-sm font-bold italic pt-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                                                        {ex?.tr || ''}
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+
+                                            {!(revealedCaseEn || {})[i] && (
+                                                <div className="flex items-center gap-2 mt-1 text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-80 transition-opacity text-amber-500">
+                                                    <RefreshCw size={14} className="animate-spin-slow" /> {t.toTr}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>

@@ -317,7 +317,7 @@ export default function App() {
 
   const getThemeText = () => {
     if (themePref === 'system') return 'Sistem';
-    return themePref === 'dark' ? 'Karanl─▒k' : 'Ayd─▒nl─▒k';
+    return themePref === 'dark' ? 'Karanlık' : 'Aydınlık';
   };
 
   const [wordVocab, setWordVocab] = useState([...initialVocabulary]);
@@ -532,6 +532,7 @@ export default function App() {
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [isRetryMode, setIsRetryMode] = useState(false);
   const [showCaseExamples, setShowCaseExamples] = useState(false);
+  const [showMiniStory, setShowMiniStory] = useState(false);
 
   // Quiz States
   const [quizExplanation, setQuizExplanation] = useState(null);
@@ -1261,6 +1262,8 @@ export default function App() {
           toggleSaveWord={toggleSaveWord}
           showCaseExamples={showCaseExamples}
           setShowCaseExamples={setShowCaseExamples}
+          showMiniStory={showMiniStory}
+          setShowMiniStory={setShowMiniStory}
           isDark={isDark}
           t={t}
           appLang={appLang}
@@ -1303,6 +1306,8 @@ export default function App() {
         setShowForms={setShowForms}
         showCaseExamples={showCaseExamples}
         setShowCaseExamples={setShowCaseExamples}
+        showMiniStory={showMiniStory}
+        setShowMiniStory={setShowMiniStory}
         isDark={isDark}
         t={t}
         appLang={appLang}

@@ -21,6 +21,7 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
     const [isMiniCaseTrRevealed, setIsMiniCaseTrRevealed] = useState(false);
     const [isCaseExamplesOpen, setIsCaseExamplesOpen] = useState(false);
     const [revealedCaseEn, setRevealedCaseEn] = useState({});
+    const [isMiniCaseOpen, setIsMiniCaseOpen] = useState(false);
 
     useEffect(() => {
         setRevealedCaseEn({});
@@ -292,31 +293,6 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                                                 </div>
                                             )}
 
-                                            {/* Mini Case */}
-                                            {wordObj.details.miniCase && (
-                                                <div className="pt-4 border-t border-slate-700/10">
-                                                    <span className="text-[9px] font-black uppercase tracking-widest opacity-30 mb-3 block">{t.teacherNotes || 'HOCA NOTLARI'}</span>
-                                                    <p className={`text-xs font-bold leading-relaxed mb-3 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                                        {typeof wordObj.details.miniCase === 'object' ? (wordObj.details.miniCase.en || wordObj.details.miniCase.tr) : (wordObj.details.miniCase || "")}
-                                                    </p>
-                                                    <div className="mt-3">
-                                                        {!isMiniCaseTrRevealed ? (
-                                                            <button
-                                                                onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrRevealed(true); }}
-                                                                className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}
-                                                            >
-                                                                <RefreshCw size={12} /> {t.showTranslation || "Çeviriyi Gör"}
-                                                            </button>
-                                                        ) : (
-                                                            <div
-                                                                onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrRevealed(false); }}
-                                                                className={`p-3 rounded-xl italic text-[10px] cursor-pointer animate-fade-in ${isDark ? 'bg-black/30 text-slate-400 border-l-2 border-amber-500/50' : 'bg-white/50 text-slate-600 border-l-2 border-amber-400'}`}>
-                                                                {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : (wordObj.details.trMiniCase || wordObj.details.miniCase?.tr || "")}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            )}
 
                                             {/* More Examples */}
                                             {wordObj.details.moreExamples?.length > 0 && (
@@ -332,6 +308,42 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                                                 </div>
                                             )}
 
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Collapsible: Mini Case Story */}
+                            {wordObj.details?.miniCase && (
+                                <div className={`rounded-2xl border transition-all overflow-hidden ${isDark ? 'border-pink-500/20 bg-pink-500/5' : 'border-pink-100 bg-pink-50/30'}`}>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setIsMiniCaseOpen(!isMiniCaseOpen); }}
+                                        className="w-full px-5 py-4 flex items-center justify-between text-[11px] font-black uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity"
+                                    >
+                                        <span className="flex items-center gap-2 text-pink-500"><Mascot isDark={isDark} size="xs" isAdmin={isAdmin} /> STORY</span>
+                                        <ChevronDown size={16} className={`transition-transform duration-500 ${isMiniCaseOpen ? 'rotate-180 text-pink-500' : ''}`} />
+                                    </button>
+                                    <div className={`grid transition-all duration-300 ease-in-out ${isMiniCaseOpen ? 'grid-rows-[1fr] opacity-100 pb-4 px-5' : 'grid-rows-[0fr] opacity-0'}`}>
+                                        <div className="overflow-hidden">
+                                            <p className={`text-xs font-bold leading-relaxed mb-3 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                                                {typeof wordObj.details.miniCase === 'object' ? (wordObj.details.miniCase.en || wordObj.details.miniCase.tr) : (wordObj.details.miniCase || "")}
+                                            </p>
+                                            <div className="mt-3">
+                                                {!isMiniCaseTrRevealed ? (
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrRevealed(true); }}
+                                                        className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}
+                                                    >
+                                                        <RefreshCw size={12} /> {t.showTranslation || "Çeviriyi Gör"}
+                                                    </button>
+                                                ) : (
+                                                    <div
+                                                        onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrRevealed(false); }}
+                                                        className={`p-3 rounded-xl italic text-[10px] cursor-pointer animate-fade-in ${isDark ? 'bg-black/30 text-slate-400 border-l-2 border-amber-500/50' : 'bg-white/50 text-slate-600 border-l-2 border-amber-400'}`}>
+                                                        {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : (wordObj.details.trMiniCase || wordObj.details.miniCase?.tr || "")}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -356,20 +368,20 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer group relative ${isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-amber-100'}`}
                                                 >
                                                     <p className={`text-[13px] font-black leading-tight tracking-tight mb-1 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
-                                                        "{typeof ex === 'string' ? ex : (ex.tr || ex.en)}"
+                                                        "{typeof ex === 'string' ? ex : (ex.en || ex.tr)}"
                                                     </p>
 
                                                     <div className={`grid transition-all duration-300 ease-in-out ${revealedCaseEn[idx] ? 'grid-rows-[1fr] opacity-100 pt-2' : 'grid-rows-[0fr] opacity-0'}`}>
                                                         <div className="overflow-hidden">
                                                             <p className={`text-xs font-bold italic ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                                                                {typeof ex === 'object' ? (ex.en || ex.tr) : ''}
+                                                                {typeof ex === 'object' ? (ex.tr || ex.en) : ''}
                                                             </p>
                                                         </div>
                                                     </div>
 
                                                     {!revealedCaseEn[idx] && typeof ex === 'object' && (
                                                         <div className="flex items-center gap-1.5 mt-1 text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-40 transition-opacity text-amber-500">
-                                                            <RefreshCw size={12} /> {t.toEn || 'EN'}
+                                                            <RefreshCw size={12} /> {t.toTr || 'TR'}
                                                         </div>
                                                     )}
                                                 </div>
