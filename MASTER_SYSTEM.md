@@ -8,3 +8,7 @@
 - **No Static Overflow**: Ana kaydırma ekranında (Swipe Mode) asla `min-height` piksel bazlı verilmemelidir; bunun yerine `dvh` (Dynamic Viewport Height) kullanılmalıdır. [cite: 2026-03-02]
 - **Padding Scalability**: Üst padding değerleri (pt-xx), ekran yüksekliğine göre (vh) veya mobile özel breakpointler ile dinamik olarak küçültülmelidir. [cite: 2026-03-02]
 - **Zero-Scroll Policy**: Aktif çalışma modunda (Vocab/Phrasal) kullanıcının aşağı kaydırma yapma zorunluluğu %0'a indirilmelidir. [cite: 2026-03-02]
+
+## 13. Premium Interaction Rules
+- **Gentle Throw**: Kart fırlatma mesafesi 600px ile sınırlandırılmalı ve 0.5s süreyle yavaşlatılarak (Cubic-Bezier [0.32, 0.72, 0, 1]) "süzülme" hissi verilmelidir. [cite: 2026-03-02]
+- **Fixed Viewport Structure**: Uygulama ana sarmalayıcısı her zaman `h-dvh` olmalı ve dikeyde taşmaları engellemek için `flex-col` + `overflow-hidden` yapısı kullanılmalıdır. [cite: 2026-03-02]

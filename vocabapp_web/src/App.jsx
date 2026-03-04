@@ -1624,9 +1624,7 @@ export default function App() {
   const isSaved = currentWord && savedWords.some(w => w.id === currentWord.id);
 
   return (
-    <div className={`min-h-screen mesh-bg flex flex-col items-center justify-center p-4 font-sans overflow-x-hidden transition-all duration-300 relative ${isDark ? 'dark text-slate-100' : 'text-slate-900'}`} onClick={() => setQuickTx(prev => ({ ...prev, visible: false }))}>
-
-      {/* Background is now handled by mesh-bg in CSS */}
+    <div className={`h-dvh w-full overflow-hidden flex flex-col font-sans transition-all duration-300 relative ${isDark ? 'dark text-slate-100' : 'text-slate-900'}`} onClick={() => setQuickTx(prev => ({ ...prev, visible: false }))}>
 
       {quickTx.visible && (
         <div
@@ -1640,8 +1638,26 @@ export default function App() {
         </div>
       )}
 
-      <div className={`flex-grow flex flex-col items-center justify-start w-full ${appMode.startsWith('quiz_') ? 'pt-10' : 'pt-14 md:pt-28'} mb-4 md:mb-20 relative`}>
+      {/* Top Section: Mode Selector & Discovery Bar (Compact) */}
+      <div className="flex flex-col items-center pt-6 md:pt-14 px-4 gap-4 z-[600] w-full shrink-0">
         {modeSelector}
+
+        {!isLogoVisible && (
+          <div className="w-full max-w-sm">
+            <DiscoveryBar
+              current={isRetryMode ? currentWordIndex : Math.min(swipedToday, 12)}
+              total={12}
+              isDark={isDark}
+              t={t}
+              isRetry={isRetryMode}
+              label={isRetryMode ? (t.review || "TEKRAR YAPILAN") : null}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Main Content Area: Flexible & Zero-Scroll */}
+      <div className="flex-1 w-full flex flex-col items-center justify-center p-4 relative overflow-hidden min-h-0">
 
         {isLogoVisible ? (
           <div
@@ -1652,32 +1668,16 @@ export default function App() {
             {isAdmin && <div className="mt-2 px-3 py-1 bg-amber-400 text-black text-[8px] font-black rounded-full shadow-lg shadow-amber-400/20 animate-pulse">ADMIN OVERDRIVE</div>}
           </div>
         ) : (
-          <div className="animate-fade-in w-full flex flex-col items-center">
+          <div className="animate-fade-in w-full h-full flex flex-col items-center justify-center">
 
-            {/* Discovery Bar - Top Mounted (Unified Limit + Retry Support) */}
-            <div className="mb-4 w-full max-w-sm px-4">
-              <DiscoveryBar
-                current={isRetryMode ? currentWordIndex : Math.min(swipedToday, 12)}
-                total={12}
-                isDark={isDark}
-                t={t}
-                isRetry={isRetryMode}
-                label={isRetryMode ? (t.review || "TEKRAR YAPILAN") : null}
-              />
-            </div>
-
-            {/* Global Announcement Banner */}
+            {/* Global Announcement Banner (Space-efficient) */}
             {globalAnnouncement && (
-              <div className="w-full max-w-sm mb-6 animate-slide-up group">
-                <div className="relative p-4 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 text-black shadow-xl overflow-hidden">
+              <div className="w-full max-w-sm mb-4 animate-slide-up group shrink-0">
+                <div className="relative p-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 text-black shadow-lg overflow-hidden">
                   <div className="relative z-10 flex items-center gap-3">
-                    <div className="bg-white/90 p-1.5 rounded-lg shadow-sm">
-                      <Sparkles size={14} className="text-amber-600 animate-pulse" />
-                    </div>
-                    <p className="text-xs font-black tracking-tight leading-tight">{globalAnnouncement}</p>
+                    <Sparkles size={14} className="text-amber-600 animate-pulse" />
+                    <p className="text-[10px] font-black tracking-tight leading-tight">{globalAnnouncement}</p>
                   </div>
-                  {/* Glowing light effect */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 blur-2xl -mr-16 -mt-16 pointer-events-none group-hover:translate-x-4 transition-transform duration-1000"></div>
                 </div>
               </div>
             )}
@@ -1752,14 +1752,16 @@ export default function App() {
         )}
       </div>
 
-      <footer className="w-full max-w-sm py-4 flex flex-col items-center gap-2 opacity-60">
-        <div className="flex gap-6">
-          <a href="https://www.instagram.com/ferhat_hoca_ingilizce/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-bold"><Instagram size={12} /> instagram</a>
-          <a href="https://ferhathocaingilizce.com" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-bold"><Globe size={12} /> ferhathocaingilizce.com</a>
-        </div>
-      </footer>
-
-      {bottomNavigation}
+      {/* Fixed Bottom Section */}
+      <div className="relative z-[500] w-full shrink-0">
+        <footer className="w-full flex-col items-center gap-2 opacity-60 hidden md:flex mb-4">
+          <div className="flex gap-6">
+            <a href="https://www.instagram.com/ferhat_hoca_ingilizce/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-bold"><Instagram size={12} /> instagram</a>
+            <a href="https://ferhathocaingilizce.com" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-bold"><Globe size={12} /> ferhathocaingilizce.com</a>
+          </div>
+        </footer>
+        {bottomNavigation}
+      </div>
     </div>
   );
 }

@@ -56,20 +56,20 @@ export const SwipeableCard = ({
         } else if (swipeDirection === 'left') {
             isSwipingOut.current = true;
             controls.start({
-                x: -1200,
-                rotate: -45,
+                x: -600,
+                rotate: -15,
                 opacity: 0,
                 scale: 0.8,
-                transition: { duration: 0.45, ease: "circOut" }
+                transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
             }).then(() => onSwipe('left', true));
         } else if (swipeDirection === 'right') {
             isSwipingOut.current = true;
             controls.start({
-                x: 1200,
-                rotate: 45,
+                x: 600,
+                rotate: 15,
                 opacity: 0,
                 scale: 0.8,
-                transition: { duration: 0.45, ease: "circOut" }
+                transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
             }).then(() => onSwipe('right', true));
         }
     }, [swipeDirection, controls, onSwipe, x, y]);
@@ -95,28 +95,23 @@ export const SwipeableCard = ({
 
         if (offset > swipeThreshold || velocity > velocityThreshold) {
             isSwipingOut.current = true;
-            // Hıza göre dinamik süre: Ne kadar hızlı atarsa o kadar hızlı gider (Momentum)
-            const duration = Math.max(0.15, Math.min(0.35, 300 / Math.abs(velocity)));
-
             controls.start({
-                x: 1000,
-                y: -300, // Hafif yukarı fırlat (Tinder/Bumble stili)
-                rotate: 25,
+                x: 600,
+                y: -100,
+                rotate: 15,
                 opacity: 0,
                 scale: 0.95,
-                transition: { duration, ease: "easeOut" }
+                transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
             }).then(() => onSwipe('right', true));
         } else if (offset < -swipeThreshold || velocity < -velocityThreshold) {
             isSwipingOut.current = true;
-            const duration = Math.max(0.15, Math.min(0.35, 300 / Math.abs(velocity)));
-
             controls.start({
-                x: -1000,
-                y: -300, // Hafif yukarı fırlat
-                rotate: -25,
+                x: -600,
+                y: -100,
+                rotate: -15,
                 opacity: 0,
                 scale: 0.95,
-                transition: { duration, ease: "easeOut" }
+                transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
             }).then(() => onSwipe('left', true));
         } else {
             // Geri dönüşü daha "snappy" (sert/hızlı) ve istikrarlı yaptık
