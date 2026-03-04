@@ -28,7 +28,7 @@ export const AchievementPopup = ({ queue, onComplete, isDark, t, isAdmin = false
     if (!current) return null;
 
     return (
-        <div className="fixed top-8 left-0 right-0 z-[9999] flex justify-center pointer-events-none px-4">
+        <div className="relative w-full flex justify-center z-[700] mb-2">
             <div
                 className={`transition-all duration-300 transform pointer-events-auto cursor-pointer flex items-center gap-4 p-4 pr-6 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] border backdrop-blur-xl ${isDark ? 'bg-indigo-900/90 text-white border-indigo-500/30' : 'bg-white/95 text-slate-900 border-indigo-500/20'} ${isVisible ? 'translate-y-0 opacity-100 scale-100' : '-translate-y-10 opacity-0 scale-95'}`}
                 onClick={() => {

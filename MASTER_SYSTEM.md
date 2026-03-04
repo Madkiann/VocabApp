@@ -12,3 +12,8 @@
 ## 13. Premium Interaction Rules
 - **Gentle Throw**: Kart fırlatma mesafesi 600px ile sınırlandırılmalı ve 0.5s süreyle yavaşlatılarak (Cubic-Bezier [0.32, 0.72, 0, 1]) "süzülme" hissi verilmelidir. [cite: 2026-03-02]
 - **Fixed Viewport Structure**: Uygulama ana sarmalayıcısı her zaman `h-dvh` olmalı ve dikeyde taşmaları engellemek için `flex-col` + `overflow-hidden` yapısı kullanılmalıdır. [cite: 2026-03-02]
+
+## 14. Zero-Overlap Layout Rules
+- **Vertical Header Stack**: Achievements, Discovery Bar ve Mode Selector birbirini ezmeyecek şekilde `flex flex-col` içinde dikey olarak istiflenmelidir. [cite: 2026-03-04]
+- **Main Content Separation**: Orta gövde (`main`), alt navigasyondan (`nav`) net bir şekilde ayrılmalı; kartın navbar'a yapışmasını önlemek için `pb-24` (mobile) güvenlik boşluğu korunmalıdır. [cite: 2026-03-04]
+- **Semantic Hierarchy**: Layout yapısı `header`, `main` ve `nav` etiketleri ile hiyerarşik olarak bölünmeli, z-index çakışmaları bu katmanlarda yönetilmelidir. [cite: 2026-03-04]

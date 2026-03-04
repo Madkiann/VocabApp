@@ -1331,7 +1331,6 @@ export default function App() {
   // Common UI Wrapper variables
   const bottomNavigation = (
     <>
-      <AchievementPopup queue={achievementQueue} onComplete={handleAchievementComplete} isDark={isDark} t={t} isAdmin={isAdmin} />
       <BottomNav
         isDark={isDark}
         showVault={showVault}
@@ -1442,7 +1441,7 @@ export default function App() {
   );
 
   const modeSelector = (
-    <div className="absolute top-0 left-0 right-0 flex justify-center w-full z-[600] pt-4 pointer-events-none">
+    <div className="flex justify-center w-full z-[600] pointer-events-none">
       <div className={`flex w-auto p-1.5 rounded-full border shadow-2xl pointer-events-auto transition-all ${isDark ? 'bg-slate-900/60 border-slate-700/50 backdrop-blur-2xl' : 'bg-white/60 border-slate-200/50 backdrop-blur-2xl'}`}>
         {[
           { id: 'words', label: t.modeWords, icon: BookOpen },
@@ -1638,9 +1637,9 @@ export default function App() {
         </div>
       )}
 
-      {/* Top Section: Mode Selector & Discovery Bar (Compact) */}
-      <div className="flex flex-col items-center pt-6 md:pt-14 px-4 gap-4 z-[600] w-full shrink-0">
-        {modeSelector}
+      {/* ÜST BÖLÜM: Sıralı ve Temiz */}
+      <header className="w-full flex flex-col items-center pt-safe px-4 gap-y-1 z-[600] shrink-0">
+        <AchievementPopup queue={achievementQueue} onComplete={handleAchievementComplete} isDark={isDark} t={t} isAdmin={isAdmin} />
 
         {!isLogoVisible && (
           <div className="w-full max-w-sm">
@@ -1654,10 +1653,14 @@ export default function App() {
             />
           </div>
         )}
-      </div>
 
-      {/* Main Content Area: Flexible & Zero-Scroll */}
-      <div className="flex-1 w-full flex flex-col items-center justify-center p-4 relative overflow-hidden min-h-0">
+        <div className="mt-1">
+          {modeSelector}
+        </div>
+      </header>
+
+      {/* Main Content Area: Flexible & Navbar-separated */}
+      <main className="flex-1 w-full flex flex-col items-center justify-center p-4 pb-24 md:pb-28 relative overflow-hidden min-h-0">
 
         {isLogoVisible ? (
           <div
@@ -1734,7 +1737,7 @@ export default function App() {
                 </button>
               </div>
             ) : (
-              <div className="relative w-full max-w-[460px] h-[calc(100dvh-220px)] max-h-[700px]">
+              <div className="relative w-full max-w-[460px] h-full max-h-[650px]">
 
                 <SwipeableCard
                   key={currentWordIndex}
@@ -1750,18 +1753,18 @@ export default function App() {
             )}
           </div>
         )}
-      </div>
+      </main>
 
       {/* Fixed Bottom Section */}
-      <div className="relative z-[500] w-full shrink-0">
+      <nav className="relative z-[500] w-full shrink-0 pb-safe">
         <footer className="w-full flex-col items-center gap-2 opacity-60 hidden md:flex mb-4">
           <div className="flex gap-6">
-            <a href="https://www.instagram.com/ferhat_hoca_ingilizce/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-bold"><Instagram size={12} /> instagram</a>
-            <a href="https://ferhathocaingilizce.com" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-bold"><Globe size={12} /> ferhathocaingilizce.com</a>
+            <a href="https://www.instagram.com/ferhat_hoca_ingilizce/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Instagram size={12} /> instagram</a>
+            <a href="https://ferhathocaingilizce.com" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Globe size={12} /> ferhathocaingilizce.com</a>
           </div>
         </footer>
         {bottomNavigation}
-      </div>
+      </nav>
     </div>
   );
 }
