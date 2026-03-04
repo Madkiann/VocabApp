@@ -373,7 +373,7 @@ export const PhrasalCard = ({
                                         <Mascot isDark={isDark} size="xs" isAdmin={isAdmin} /> MINI CASE STORY
                                     </h4>
                                     <p className={`text-xl font-black leading-tight mb-4 tracking-tight ${isDark ? 'text-indigo-100' : 'text-indigo-950'}`}>
-                                        {typeof wordObj.details.miniCase === 'object' ? wordObj.details.miniCase.en : wordObj.details.miniCase}
+                                        {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : wordObj.details.trMiniCase}
                                     </p>
 
                                     <div className="mt-4">
@@ -383,14 +383,14 @@ export const PhrasalCard = ({
                                                 onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(true); }}
                                                 className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}
                                             >
-                                                <RefreshCw size={14} /> {t.showTranslation || "Çeviriyi Gör"}
+                                                <RefreshCw size={14} /> {t.showEn || "İngilizcesini Gör"}
                                             </button>
                                         ) : (
                                             <div
                                                 onPointerDown={(e) => e.stopPropagation()}
                                                 onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrOpen(false); }}
                                                 className={`p-5 rounded-2xl border-l-[6px] italic text-sm font-bold cursor-pointer animate-fade-in ${isDark ? 'bg-indigo-950/40 border-indigo-600/50 text-slate-400' : 'bg-indigo-100/80 border-indigo-400 text-slate-800'}`}>
-                                                {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : wordObj.details.trMiniCase}
+                                                {typeof wordObj.details.miniCase === 'object' ? wordObj.details.miniCase.en : wordObj.details.miniCase}
                                             </div>
                                         )}
                                     </div>
@@ -409,19 +409,19 @@ export const PhrasalCard = ({
                                                 onClick={() => setRevealedCaseEn(prev => ({ ...prev, [i]: !prev[i] }))}
                                                 className={`p-6 rounded-[2rem] border transition-all cursor-pointer group relative overflow-hidden ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-amber-50/50 border-amber-100/50'}`}
                                             >
-                                                <p className={`text-base font-black leading-tight tracking-tight mb-2 ${isDark ? 'text-amber-400/90' : 'text-amber-600'}`}>"{ex?.en || ''}"</p>
+                                                <p className={`text-base font-black leading-tight tracking-tight mb-2 ${isDark ? 'text-amber-400/90' : 'text-amber-600'}`}>"{ex?.tr || ''}"</p>
 
                                                 <div className={`grid transition-all duration-300 ease-in-out ${(revealedCaseEn || {})[i] ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                                                     <div className="overflow-hidden">
                                                         <p className={`text-sm font-bold italic pt-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                                            {ex?.tr || ''}
+                                                            {ex?.en || ''}
                                                         </p>
                                                     </div>
                                                 </div>
 
                                                 {!(revealedCaseEn || {})[i] && (
                                                     <div className="flex items-center gap-2 mt-1 text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-80 transition-opacity text-amber-500">
-                                                        <RefreshCw size={14} className="animate-spin-slow" /> {t.toTr}
+                                                        <RefreshCw size={14} className="animate-spin-slow" /> {t.toEn || 'İngilizcesini Gör'}
                                                     </div>
                                                 )}
                                             </div>

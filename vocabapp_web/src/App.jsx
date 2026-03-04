@@ -1648,7 +1648,7 @@ export default function App() {
       </header>
 
       {/* ORTA BÖLÜM: Kart Arenası (Yukarı Çapa) */}
-      <main className="flex-grow w-full flex flex-col items-center justify-start pt-16 px-4 relative overflow-hidden min-h-0">
+      <main className={`flex-grow w-full flex flex-col items-center justify-start ${appMode.startsWith('quiz_') ? 'pt-4' : 'pt-16'} px-4 relative overflow-hidden min-h-0`}>
 
         {isLogoVisible ? (
           <div
@@ -1672,61 +1672,57 @@ export default function App() {
                 </div>
               </div>
             )}
-            {appMode.startsWith('quiz_') ? (
-              <Quiz
-                t={t}
-                isDark={isDark}
-                isAdmin={isAdmin}
-                appMode={appMode}
-                quizQuestion={quizQuestion}
-                isTranslated={isTranslated}
-                setIsTranslated={setIsTranslated}
-                quizFeedback={quizFeedback}
-                handleQuizAction={handleQuizAction}
-                selectedTokens={selectedTokens}
-                availableTokens={availableTokens}
-                toggleToken={toggleToken}
-                handleSentenceCheck={handleSentenceCheck}
-                onDragStart={onDragStart}
-                onDragEnter={onDragEnter}
-                onDragEnd={onDragEnd}
-                quizExplanation={quizExplanation}
-                explainMistake={explainMistake}
-                isExplaining={isExplaining}
-                setAppMode={setAppMode}
-                deck={deck}
-                currentWordIndex={currentWordIndex}
-                setIsRevealed={setIsRevealed}
-                cardBg={cardBg}
-                bgMain={bgMain}
-                textMain={textMain}
-                isQuizReview={isQuizReview}
-              />
-            ) : isDeckFinished ? (
-              <div className={`text-center w-full max-w-sm ${cardBg} p-8 pt-16 rounded-[3.5rem] shadow-premium border animate-fade-in relative overflow-visible`}>
-                {/* Celebratory Mascot peeking from behind the text */}
-                <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 z-0 pointer-events-none drop-shadow-2xl opacity-90 scale-110">
-                  <Mascot look="happy" size="xl" isDark={isDark} />
-                </div>
-
-                <h2 className={`text-4xl font-black mb-4 tracking-tighter relative z-10 drop-shadow-md ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{t.congrats}</h2>
-                <p className="mb-6 font-bold opacity-60 uppercase tracking-widest text-[10px]">{t.deckFinished}</p>
-
-                <div className={`mb-8 p-5 rounded-2xl border-2 border-dashed ${isDark ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
-                  <div className="flex items-center justify-center gap-2 mb-3 text-indigo-500">
-                    <Brain size={24} />
-                    <p className="font-black uppercase tracking-widest text-xs">SM-2 Motoru Aktif</p>
+            <div className={`relative w-full max-w-[400px] ${appMode.startsWith('quiz_') ? 'h-[75vh]' : 'aspect-[3/4] max-h-[70vh]'} mb-20`}>
+              {appMode.startsWith('quiz_') ? (
+                <Quiz
+                  t={t}
+                  isDark={isDark}
+                  isAdmin={isAdmin}
+                  appMode={appMode}
+                  quizQuestion={quizQuestion}
+                  isTranslated={isTranslated}
+                  setIsTranslated={setIsTranslated}
+                  quizFeedback={quizFeedback}
+                  handleQuizAction={handleQuizAction}
+                  selectedTokens={selectedTokens}
+                  availableTokens={availableTokens}
+                  toggleToken={toggleToken}
+                  handleSentenceCheck={handleSentenceCheck}
+                  onDragStart={onDragStart}
+                  onDragEnter={onDragEnter}
+                  onDragEnd={onDragEnd}
+                  quizExplanation={quizExplanation}
+                  explainMistake={explainMistake}
+                  isExplaining={isExplaining}
+                  setAppMode={setAppMode}
+                  deck={deck}
+                  currentWordIndex={currentWordIndex}
+                  setIsRevealed={setIsRevealed}
+                  cardBg={cardBg}
+                  bgMain={bgMain}
+                  textMain={textMain}
+                  isQuizReview={isQuizReview}
+                />
+              ) : isDeckFinished ? (
+                <div className={`text-center w-full h-full ${cardBg} p-8 pt-16 rounded-[3.5rem] shadow-premium border animate-fade-in relative overflow-visible flex flex-col items-center justify-center`}>
+                  <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 z-0 pointer-events-none drop-shadow-2xl opacity-90 scale-110">
+                    <Mascot look="happy" size="xl" isDark={isDark} />
                   </div>
-                  <p className="font-bold text-lg">{t.dueTomorrowMins.replace('{words}', dueTomorrowCount).replace('{mins}', dueTomorrowMins)}</p>
+                  <h2 className={`text-4xl font-black mb-4 tracking-tighter relative z-10 drop-shadow-md ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{t.congrats}</h2>
+                  <p className="mb-6 font-bold opacity-60 uppercase tracking-widest text-[10px]">{t.deckFinished}</p>
+                  <div className={`w-full mb-8 p-5 rounded-2xl border-2 border-dashed ${isDark ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                    <input type="hidden" value="reassurance" />
+                    <div className="flex items-center justify-center gap-2 mb-3 text-indigo-500">
+                      <Brain size={24} />
+                      <p className="font-black uppercase tracking-widest text-xs">SM-2 Motoru Aktif</p>
+                    </div>
+                    <p className="font-bold text-lg">{t.dueTomorrowMins.replace('{words}', dueTomorrowCount).replace('{mins}', dueTomorrowMins)}</p>
+                  </div>
+                  <button onClick={() => refreshDeck(true)} className="w-full py-4 rounded-2xl font-black text-slate-900 bg-amber-400 hover:bg-amber-500 transition-transform active:scale-95 shadow-lg">
+                    <RefreshCw size={20} className="inline mr-2" /> {t.continueTraining}
+                  </button>
                 </div>
-
-                <button onClick={() => refreshDeck(true)} className="w-full py-4 rounded-2xl font-black text-slate-900 bg-amber-400 hover:bg-amber-500 transition-transform active:scale-95 shadow-lg">
-                  <RefreshCw size={20} className="inline mr-2" /> {t.continueTraining}
-                </button>
-              </div>
-            ) : (
-              <div className="relative w-full max-w-[400px] aspect-[3/4] max-h-[70vh] mb-20">
-
+              ) : (
                 <SwipeableCard
                   key={currentWordIndex}
                   isDark={isDark}
@@ -1737,8 +1733,8 @@ export default function App() {
                 >
                   {renderCardContentWrapper(currentWord, isSaved)}
                 </SwipeableCard>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </main>
