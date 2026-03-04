@@ -97,10 +97,11 @@ export const SwipeableCard = ({
             const duration = Math.max(0.15, Math.min(0.35, 300 / Math.abs(velocity)));
 
             controls.start({
-                x: 1000, // Daha uzağa fırlat (Momentum etkisi)
-                rotate: 35,
+                x: 1000,
+                y: -300, // Hafif yukarı fırlat (Tinder/Bumble stili)
+                rotate: 25,
                 opacity: 0,
-                scale: 0.9,
+                scale: 0.95,
                 transition: { duration, ease: "easeOut" }
             }).then(() => onSwipe('right', true));
         } else if (offset < -swipeThreshold || velocity < -velocityThreshold) {
@@ -109,9 +110,10 @@ export const SwipeableCard = ({
 
             controls.start({
                 x: -1000,
-                rotate: -35,
+                y: -300, // Hafif yukarı fırlat
+                rotate: -25,
                 opacity: 0,
-                scale: 0.9,
+                scale: 0.95,
                 transition: { duration, ease: "easeOut" }
             }).then(() => onSwipe('left', true));
         } else {
@@ -147,7 +149,7 @@ export const SwipeableCard = ({
                 transformStyle: "preserve-3d",
                 // -------------------------------------------
             }}
-            drag={isSwipingOut.current ? false : (isRevealed ? "x" : true)}
+            drag={isSwipingOut.current ? false : "x"}
             dragDirectionLock={true}
             dragPropagation={false}
             dragElastic={0.5} // Daha sıkı kontrol için 0.5'e çekildi
