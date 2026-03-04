@@ -1640,7 +1640,7 @@ export default function App() {
         </div>
       )}
 
-      <div className={`flex-grow flex flex-col items-center justify-start w-full ${appMode.startsWith('quiz_') ? 'pt-14' : 'pt-28'} mb-20 relative`}>
+      <div className={`flex-grow flex flex-col items-center justify-start w-full ${appMode.startsWith('quiz_') ? 'pt-10' : 'pt-14 md:pt-28'} mb-4 md:mb-20 relative`}>
         {modeSelector}
 
         {isLogoVisible ? (
@@ -1734,7 +1734,7 @@ export default function App() {
                 </button>
               </div>
             ) : (
-              <div className="relative w-full max-w-[460px] h-[calc(100vh-280px)] min-h-[550px] max-h-[750px]">
+              <div className="relative w-full max-w-[460px] h-[calc(100dvh-220px)] max-h-[700px]">
 
                 <SwipeableCard
                   key={currentWordIndex}

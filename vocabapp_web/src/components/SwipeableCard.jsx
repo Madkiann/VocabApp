@@ -35,11 +35,13 @@ export const SwipeableCard = ({
     const isDragging = useRef(false);
 
     useEffect(() => {
+        // EĞER KART DIŞARI FIRLIYORSA HİÇBİR RESETLEME YAPMA
+        if (isSwipingOut.current) return;
+
         if (!swipeDirection) {
             // Guard: Don't reset if we are currently dragging
             if (isDragging.current) return;
 
-            isSwipingOut.current = false;
             // Explicitly reset position values
             x.set(0);
             y.set(0);
@@ -49,25 +51,25 @@ export const SwipeableCard = ({
                 opacity: 1,
                 scale: 1,
                 rotate: 0,
-                transition: { type: 'spring', stiffness: 400, damping: 30 }
+                transition: { type: 'spring', stiffness: 350, damping: 30, mass: 1 }
             });
         } else if (swipeDirection === 'left') {
             isSwipingOut.current = true;
             controls.start({
-                x: -800,
+                x: -1200,
                 rotate: -45,
                 opacity: 0,
                 scale: 0.8,
-                transition: { duration: 0.4, ease: "circOut" }
+                transition: { duration: 0.45, ease: "circOut" }
             }).then(() => onSwipe('left', true));
         } else if (swipeDirection === 'right') {
             isSwipingOut.current = true;
             controls.start({
-                x: 800,
+                x: 1200,
                 rotate: 45,
                 opacity: 0,
                 scale: 0.8,
-                transition: { duration: 0.4, ease: "circOut" }
+                transition: { duration: 0.45, ease: "circOut" }
             }).then(() => onSwipe('right', true));
         }
     }, [swipeDirection, controls, onSwipe, x, y]);
@@ -151,11 +153,11 @@ export const SwipeableCard = ({
                 transformStyle: "preserve-3d",
                 // -------------------------------------------
             }}
-            drag={isSwipingOut.current ? false : "x"}
+            drag={!isSwipingOut.current ? "x" : false}
             dragDirectionLock={true}
             dragListener={!isSwipingOut.current}
             dragPropagation={false}
-            dragElastic={0.4} // Daha "tok" ve kontrollü bir sürükleme hissi
+            dragElastic={0.35} // Daha "premium" bir direnç
             dragTransition={{ bounceStiffness: 600, bounceDamping: 35 }} // Geri sekme kalitesi
             dragMomentum={false}
             dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
@@ -167,16 +169,16 @@ export const SwipeableCard = ({
                     // Tarayıcının doğal scroll'u için boş bırakıyoruz
                 }
             }}
-            whileDrag={{ scale: 1.01, transition: { duration: 0.1 } }}
+            whileDrag={{ scale: 1.03 }}
             animate={controls}
             transition={{
                 type: 'spring',
                 stiffness: 450,
                 damping: 35,
-                mass: 0.8,
+                mass: 1, // Sekmeyi engeller
                 restDelta: 0.01
             }}
-            initial={{ y: 80, opacity: 0, scale: 0.85 }}
+            initial={{ y: 40, opacity: 0, scale: 0.9 }}
         >
             {children}
 

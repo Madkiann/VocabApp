@@ -347,7 +347,7 @@ export const Card = ({
                                 className="mb-2 relative cursor-pointer group hover:bg-slate-500/5 p-4 -ml-4 rounded-3xl transition-colors"
                                 onClick={() => setIsRevealed(false)}
                             >
-                                <h2 className={`font-black tracking-tight mb-0.5 leading-tight pr-8 ${isDark ? 'text-white' : 'text-slate-900'} ${wordObj.word.length > 8 ? (wordObj.word.length > 12 ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl') : 'text-4xl sm:text-5xl'}`} style={{ wordBreak: 'break-word' }}>{wordObj.word.charAt(0).toUpperCase() + wordObj.word.slice(1)}</h2>
+                                <h2 className={`card-title font-black tracking-tight mb-0.5 leading-tight pr-8 ${isDark ? 'text-white' : 'text-slate-900'} ${wordObj.word.length > 8 ? (wordObj.word.length > 12 ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl') : 'text-4xl sm:text-5xl'}`} style={{ wordBreak: 'break-word' }}>{wordObj.word.charAt(0).toUpperCase() + wordObj.word.slice(1)}</h2>
                                 <h3 className={`text-xl font-bold mb-2 ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>{wordObj.trWord.charAt(0).toUpperCase() + wordObj.trWord.slice(1)}</h3>
                                 <div className="flex items-center gap-2 opacity-50 relative z-20" style={{ fontFamily: '"Arial Unicode MS", "Lucida Sans Unicode", "Segoe UI", sans-serif' }}>
                                     <Volume2
@@ -369,7 +369,7 @@ export const Card = ({
                                 </h3>
                                 <div className={`p-6 rounded-[2.5rem] border-2 transition-all duration-500 ${isDark ? 'bg-indigo-950/20 border-indigo-500/20 shadow-premium' : 'bg-indigo-50/50 border-indigo-100 shadow-premium'}`}>
                                     <div className="space-y-4">
-                                        <p className={`text-3xl font-black leading-tight ${isDark ? 'text-blue-100' : 'text-blue-900'}`}>
+                                        <p className={`card-description text-3xl font-black leading-tight ${isDark ? 'text-blue-100' : 'text-blue-900'}`}>
                                             {renderClickableText(isTranslated ? wordObj.trDef : wordObj.engDef)}
                                         </p>
                                         <button
@@ -388,7 +388,7 @@ export const Card = ({
                                 <h3 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-4 flex items-center gap-2">
                                     <span className="w-4 h-[2px] bg-current opacity-20"></span> {t.ex}
                                 </h3>
-                                <p className={`text-xl font-bold leading-relaxed mb-4 ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                                <p className={`card-example text-xl font-bold leading-relaxed mb-4 ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
                                     "{renderClickableText(wordObj.engExample)}"
                                 </p>
                                 <div className="space-y-3">

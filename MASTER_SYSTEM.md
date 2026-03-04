@@ -1,0 +1,10 @@
+# MASTER_SYSTEM.md - Mind Bonds Constitution
+
+## 11. Animation Guard Rules
+- **Anti-Snapback**: Kart çıkış animasyonuna (`isSwipingOut`) girdiğinde, parent'tan gelen state güncellemeleri kartın pozisyonunu (x, y) asla resetlememelidir. [cite: 2026-03-02]
+- **Entry Dynamics**: Yeni kart girişleri her zaman `y` ekseninde hafif bir yükselme (+40px) ve `scale` büyümesiyle yapılmalı; aşırı sekmeleri önlemek için `mass: 1` ayarı korunmalıdır. [cite: 2026-03-02]
+
+## 12. Viewport-First Design Rules
+- **No Static Overflow**: Ana kaydırma ekranında (Swipe Mode) asla `min-height` piksel bazlı verilmemelidir; bunun yerine `dvh` (Dynamic Viewport Height) kullanılmalıdır. [cite: 2026-03-02]
+- **Padding Scalability**: Üst padding değerleri (pt-xx), ekran yüksekliğine göre (vh) veya mobile özel breakpointler ile dinamik olarak küçültülmelidir. [cite: 2026-03-02]
+- **Zero-Scroll Policy**: Aktif çalışma modunda (Vocab/Phrasal) kullanıcının aşağı kaydırma yapma zorunluluğu %0'a indirilmelidir. [cite: 2026-03-02]
