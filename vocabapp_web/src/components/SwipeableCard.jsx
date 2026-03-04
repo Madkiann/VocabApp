@@ -81,42 +81,48 @@ export const SwipeableCard = ({
     const handleDragEnd = (event, info) => {
         isDragging.current = false;
 
-        if (appMode !== 'swipe' || swipeDirection || isSwipingOut.current) {
-            controls.start({ x: 0, y: 0, rotate: 0, transition: { type: 'spring', stiffness: 500, damping: 30 } });
-            return;
-        }
+        // Early exit protection
+        if (appMode !== 'swipe' || isSwipingOut.current) return;
 
         const offset = info.offset.x;
         const velocity = info.velocity.x;
-        const threshold = 130;
-        const velocityThreshold = 500;
 
-        if (offset > threshold || velocity > velocityThreshold) {
+        // Değerleri daha hassas hale getirdik (90px eşik, 400 velocity)
+        const swipeThreshold = 90;
+        const velocityThreshold = 400;
+
+        if (offset > swipeThreshold || velocity > velocityThreshold) {
             isSwipingOut.current = true;
+            // Hıza göre dinamik süre: Ne kadar hızlı atarsa o kadar hızlı gider (Momentum)
+            const duration = Math.max(0.15, Math.min(0.35, 300 / Math.abs(velocity)));
+
             controls.start({
-                x: 800,
-                rotate: 25,
+                x: 1000, // Daha uzağa fırlat (Momentum etkisi)
+                rotate: 35,
                 opacity: 0,
-                scale: 0.8,
-                transition: { duration: 0.35, ease: "easeOut" }
+                scale: 0.9,
+                transition: { duration, ease: "easeOut" }
             }).then(() => onSwipe('right', true));
-        } else if (offset < -threshold || velocity < -velocityThreshold) {
+        } else if (offset < -swipeThreshold || velocity < -velocityThreshold) {
             isSwipingOut.current = true;
+            const duration = Math.max(0.15, Math.min(0.35, 300 / Math.abs(velocity)));
+
             controls.start({
-                x: -800,
-                rotate: -25,
+                x: -1000,
+                rotate: -35,
                 opacity: 0,
-                scale: 0.8,
-                transition: { duration: 0.35, ease: "easeOut" }
+                scale: 0.9,
+                transition: { duration, ease: "easeOut" }
             }).then(() => onSwipe('left', true));
         } else {
+            // Geri dönüşü daha "snappy" (sert/hızlı) ve istikrarlı yaptık
             controls.start({
                 x: 0,
                 y: 0,
                 scale: 1,
                 rotate: 0,
                 opacity: 1,
-                transition: { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 }
+                transition: { type: 'spring', stiffness: 600, damping: 35, mass: 0.8 }
             });
         }
     };
@@ -133,15 +139,29 @@ export const SwipeableCard = ({
                 scale,
                 borderRadius,
                 perspective: 1200,
-                cursor: 'grab'
+                cursor: 'grab',
+                // --- Zen Browser & Firefox Optimizasyonu ---
+                willChange: "transform, opacity",
+                backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
+                transformStyle: "preserve-3d",
+                // -------------------------------------------
             }}
             drag={!isSwipingOut.current}
-            dragElastic={0.6} // Reduced for a more "connected" feel
+            dragElastic={0.5} // Daha sıkı kontrol için 0.5'e çekildi
+            dragMomentum={false} // Gecko motoru için momentum kapatıldı
             dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             whileDrag={{ scale: 1.02, transition: { duration: 0.1 } }}
             animate={controls}
+            transition={{
+                type: 'spring',
+                stiffness: 450,
+                damping: 35,
+                mass: 0.8,
+                restDelta: 0.01 // Animasyonun bittiğini tarayıcıya daha hızlı bildirir
+            }}
             initial={{ y: 80, opacity: 0, scale: 0.85 }}
         >
             {children}

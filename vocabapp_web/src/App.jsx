@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { RefreshCw, Check, X, Sun, Moon, Instagram, Globe, Archive, Languages, Hourglass, BarChart3, Brain, Flame, Clock, Sparkles, ArrowRight, Menu, Settings, Layers, Coffee, BookOpen, ServerCrash, Undo2 } from 'lucide-react';
 import { rawVocabulary, initialVocabulary, initialPhrasalVerbs, localDict } from './data/vocabulary';
 import { translations } from './data/translations';
@@ -195,6 +195,8 @@ export default function App() {
       const hour = new Date().getHours();
       const dayData = prev[todayStr] || {
         swiped: 0,
+        swiped_words: 0,
+        swiped_phrasal: 0,
         correct: 0,
         wrong: 0,
         quiz: 0,
@@ -216,23 +218,28 @@ export default function App() {
       const alreadySwiped = cardId && (dayData.swipedIds || []).includes(cardId);
       const newSwipedIds = (cardId && !alreadySwiped) ? [...(dayData.swipedIds || []), cardId] : (dayData.swipedIds || []);
 
-      // Discovery Logic (Global 12 Quota)
-      // Only "Stranger" cards (rep === 0) that are swiped for the first time TODAY
-      // and successfully learned (quality >= 4) advance the bar.
-      // Quizzes (isQuiz) now also count if the target word is a Stranger.
+      // Discovery Logic (Mode-specific 12 Quota)
       const isReview = card && card.sm2 && card.sm2.rep > 0;
       const isStranger = card && card.sm2 && card.sm2.rep === 0;
-      // Discovery counts when we meet a Stranger word for the first time TODAY.
       const isDiscovery = !alreadySwiped && isStranger && !isReview && !isRetryMode;
+
+      // Determine which counter to increment
+      let actualMode = modeParam;
+      if (isQuiz && card) {
+        // If it's a quiz, infer mode from card
+        actualMode = phrasalVocab.some(pw => pw.id === card.id) ? 'phrasal' : 'words';
+      }
 
       return {
         ...prev,
         [todayStr]: {
           ...dayData,
-          swiped: dayData.swiped + (isDiscovery ? 1 : 0),
-          correct: dayData.correct + (isSuccess ? 1 : 0),
-          wrong: dayData.wrong + (!isSuccess ? 1 : 0),
-          quiz: dayData.quiz + (isQuiz ? 1 : 0),
+          swiped: (dayData.swiped || 0) + (isDiscovery ? 1 : 0),
+          swiped_words: (dayData.swiped_words || 0) + (isDiscovery && actualMode === 'words' ? 1 : 0),
+          swiped_phrasal: (dayData.swiped_phrasal || 0) + (isDiscovery && actualMode === 'phrasal' ? 1 : 0),
+          correct: (dayData.correct || 0) + (isSuccess ? 1 : 0),
+          wrong: (dayData.wrong || 0) + (!isSuccess ? 1 : 0),
+          quiz: (dayData.quiz || 0) + (isQuiz ? 1 : 0),
           hourlyActions: newHourlyActions,
           swipedIds: newSwipedIds
         }
@@ -590,7 +597,8 @@ export default function App() {
         (w.sm2.nextDate <= currentDate && w.sm2.rep > 0)
       );
 
-      newDeck = shuffleArray(sessionContent);
+      // Limit to 12 for consistent UI and session feel
+      newDeck = shuffleArray(sessionContent).slice(0, 12);
       setIsRetryMode(true);
     } else if (vocabMode !== 'chill') {
       const todayStr = new Date(currentDate).toDateString();
@@ -612,8 +620,9 @@ export default function App() {
       const strangerCards = pool.filter(w => w.sm2.rep === 0 && !alreadySwipedToday.has(w.id));
       const shuffledStrangers = shuffleArray(strangerCards);
 
-      // Rule: Take until daily limit (12) is reached
-      const remainingDiscoveryQuota = Math.max(0, 12 - (stats.swiped || 0));
+      // Rule: Take until daily limit (12) is reached for the specific mode
+      const currentSwiped = vocabMode === 'phrasal' ? (stats.swiped_phrasal || 0) : (stats.swiped_words || 0);
+      const remainingDiscoveryQuota = Math.max(0, 12 - currentSwiped);
       const discoveriesForDeck = shuffledStrangers.slice(0, remainingDiscoveryQuota);
 
       // MIX: Shuffle Due + Discoveries for a truly stochastic feel
@@ -707,13 +716,13 @@ export default function App() {
     if (isAiLoading || !apiKey) return;
     setIsAiLoading(true); setShowAi(true);
     const systemPrompt = `You are Ferhat Hoca. Provide feedback in ${getSystemLang()}. 
-    STRICTLY return ONLY a valid raw JSON object. Do NOT wrap it in markdown. Do NOT use \`\`\`json.
-    {
-      "sentences": [{"type": "Professional", "eng": "...", "tr": "..."}, {"type": "Casual", "eng": "...", "tr": "..."}, {"type": "Academic", "eng": "...", "tr": "..."}],
-      "mnemonic": "A creative memory tactic.",
-      "scenario": "A short 2-line dialogue."
-    }
-    `;
+      STRICTLY return ONLY a valid raw JSON object. Do NOT wrap it in markdown. Do NOT use \`\`\`json.
+      {
+        "sentences": [{"type": "Professional", "eng": "...", "tr": "..."}, {"type": "Casual", "eng": "...", "tr": "..."}, {"type": "Academic", "eng": "...", "tr": "..."}],
+        "mnemonic": "A creative memory tactic.",
+        "scenario": "A short 2-line dialogue."
+      }
+      `;
     try {
       const text = await geminiFetch(`Analyze: "${word}"`, systemPrompt, true);
       setAiData(safeJsonParse(text));
@@ -726,11 +735,11 @@ export default function App() {
     if (!userSentence.trim() || isEvaluating || !apiKey) return;
     setIsEvaluating(true);
     const systemPrompt = `Sen Ferhat Hoca's─▒n. Dilin: ${getSystemLang()}. Hedef kelime: "${targetWordStr}". ├û─şrenci Girdisi: "${userSentence}".
-    DURUM 1: ├û─şrenci ─░ngilizce bir c├╝mle kurmaya ├ğal─▒┼şm─▒┼ş.
-    DURUM 2: ├û─şrenci T├╝rk├ğe yard─▒m istiyor veya mazeret bildiriyor.
-    E─şer DURUM 2 ise: Score k─▒sm─▒na motivasyon ama├ğl─▒ 10 ver. Feedback k─▒sm─▒nda ├Âzne/y├╝klem dizilimini ├ğok samimi bir dille ad─▒m ad─▒m ├Â─şret. CorrectedSentence k─▒sm─▒na ├ğevirisini yaz.
-    SADECE A┼ŞA─ŞIDAK─░ RAW JSON FORMATINDA D├ûN:
-    { "score": 10, "feedback": "Hoca'n─▒n samimi geri bildirimi.", "correctedSentence": "Do─şru ─░ngilizce c├╝mle." }`;
+      DURUM 1: ├û─şrenci ─░ngilizce bir c├╝mle kurmaya ├ğal─▒┼şm─▒┼ş.
+      DURUM 2: ├û─şrenci T├╝rk├ğe yard─▒m istiyor veya mazeret bildiriyor.
+      E─şer DURUM 2 ise: Score k─▒sm─▒na motivasyon ama├ğl─▒ 10 ver. Feedback k─▒sm─▒nda ├Âzne/y├╝klem dizilimini ├ğok samimi bir dille ad─▒m ad─▒m ├Â─şret. CorrectedSentence k─▒sm─▒na ├ğevirisini yaz.
+      SADECE A┼ŞA─ŞIDAK─░ RAW JSON FORMATINDA D├ûN:
+      { "score": 10, "feedback": "Hoca'n─▒n samimi geri bildirimi.", "correctedSentence": "Do─şru ─░ngilizce c├╝mle." }`;
     try {
       const text = await geminiFetch(`Kelime: "${targetWordStr}", ├û─şrenci: "${userSentence}"`, systemPrompt, true);
       setWritingFeedback(safeJsonParse(text));
@@ -743,8 +752,8 @@ export default function App() {
     setIsExplaining(true);
     const questionText = quizQuestion.type === 'mc' ? quizQuestion.target.engDef : quizQuestion.type === 'tf' ? `${quizQuestion.target.word} = ${quizQuestion.displayedEngDef}` : quizQuestion.target.trExample;
     const systemPrompt = `You are Ferhat Hoca. Explain why the answer to this English question is "${quizQuestion.target.word}". Respond in ${getSystemLang()}. 
-    STRICTLY return ONLY a valid raw JSON object.
-    { "explanation": "..." }`;
+      STRICTLY return ONLY a valid raw JSON object.
+      { "explanation": "..." }`;
     try {
       const text = await geminiFetch(`Question: ${questionText}, Answer: ${quizQuestion.target.word}`, systemPrompt, true);
       setQuizExplanation(safeJsonParse(text).explanation);
@@ -859,9 +868,10 @@ export default function App() {
       const isReview = currentWord && currentWord.sm2.rep > 0;
       const alreadySwipedToday = currentWord && (stats.swipedIds || []).includes(currentWord.id);
 
-      // Only block if it's a NEW discovery (Stranger) and quota is met
+      // Only block if it's a NEW discovery (Stranger) and quota is met for that mode
       // Chill mode is exempt from daily limits
-      if (vocabMode !== 'chill' && !isReview && !alreadySwipedToday && stats.swiped >= 12 && !isRetryMode) {
+      const currentSwipedInMode = vocabMode === 'phrasal' ? (stats.swiped_phrasal || 0) : (stats.swiped_words || 0);
+      if (vocabMode !== 'chill' && !isReview && !alreadySwipedToday && currentSwipedInMode >= 12 && !isRetryMode) {
         alert("G├╝nl├╝k yeni ke┼şif kotana ula┼şt─▒n (12/12). Daha ├Ânce g├Ârd├╝─ş├╝n kelimelere (Tan─▒┼ş/S─▒rda┼ş) s─▒n─▒rs─▒z devam edebilirsin ama yeni kelime i├ğin yar─▒n─▒ bekle!");
         return;
       }
@@ -1144,8 +1154,8 @@ export default function App() {
   const learnedCount = vocab.filter(w => w.sm2.rep > 0).length;
   const strongCount = bondStats.companion; // For backward compatibility with some dashboard logic or achievements
 
-  const todayStats = dailyStats[new Date(currentDate).toDateString()] || { swiped: 0 };
-  const swipedToday = todayStats.swiped || 0;
+  const todayStats = dailyStats[new Date(currentDate).toDateString()] || { swiped: 0, swiped_words: 0, swiped_phrasal: 0 };
+  const swipedToday = vocabMode === 'phrasal' ? (todayStats.swiped_phrasal || 0) : (todayStats.swiped_words || 0);
   const isDeckFinished = deck.length === 0 || currentWordIndex >= deck.length || (!isRetryMode && swipedToday >= 12);
 
   const dueTodayCount = vocab.filter(w => w.sm2.nextDate <= currentDate).length;
@@ -1219,7 +1229,8 @@ export default function App() {
 
   const renderCardContentWrapper = (word, isSaved, isSystem = false) => {
     const todayStr = new Date(currentDate).toDateString();
-    const swipedToday = (dailyStats[todayStr]?.swiped || 0);
+    const modeSwiped = vocabMode === 'phrasal' ? (dailyStats[todayStr]?.swiped_phrasal || 0) : (dailyStats[todayStr]?.swiped_words || 0);
+    const swipedToday = modeSwiped;
     const isStranger = word && word.sm2.rep === 0;
 
     const cardBgClass = isDark ? 'glass-dark border-transparent shadow-premium' : 'glass border-transparent shadow-premium';
@@ -1638,13 +1649,15 @@ export default function App() {
         ) : (
           <div className="animate-fade-in w-full flex flex-col items-center">
 
-            {/* Discovery Bar - Top Mounted (Unified Limit) */}
+            {/* Discovery Bar - Top Mounted (Unified Limit + Retry Support) */}
             <div className="mb-4 w-full max-w-sm px-4">
               <DiscoveryBar
-                current={Math.min(swipedToday, 12)}
+                current={isRetryMode ? currentWordIndex : Math.min(swipedToday, 12)}
                 total={12}
                 isDark={isDark}
                 t={t}
+                isRetry={isRetryMode}
+                label={isRetryMode ? (t.review || "TEKRAR YAPILAN") : null}
               />
             </div>
 

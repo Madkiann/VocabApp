@@ -64,7 +64,7 @@ export const translations = {
         maintenanceActive: "Bakım Modu Yayında", maintenanceDesc: "Tüm kullanıcılar için uygulamayı kapa.", publishSuccess: "Duyuru Yayında!", logsEmpty: "Henüz sistem hatası kaydedilmedi.",
         dailyGoal: "GÜNLÜK HEDEF", totalProgress: "TOPLAM İLERLEME", timeRemainingLabel: "SÜRE",
         maxLevelCompanion: "Maksimum Seviye: Yoldaş (%100)",
-        practiceArena: "Antrenman Sahası", practiceArenaDesc: "Hızlı Kelime Pratiği", exerciseLibrary: "Alıştırma Kütüphanesi", exerciseLibDesc: "Alıştırma Kitaplığı",
+        practiceArena: "ARENA", practiceArenaDesc: "Hızlı Kelime Pratiği", exerciseLibrary: "Alıştırma Kütüphanesi", exerciseLibDesc: "Alıştırma Kitaplığı",
     },
     en: {
         learned: "Learned", mastered: "Mastered", card: "Card", vault: "Your Vault", vaultEmpty: "Vault is empty.", back: "Go Back", backToVault: "Back to Vault",
