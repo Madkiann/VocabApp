@@ -221,8 +221,7 @@
 @layer base {
     body {
         margin: 0;
-        /* Hardware Awareness: Safe Area Handling */
-        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        padding: 0; /* Reset body padding to allow background to bleed into safe area */
         height: 100%;
         width: 100%;
         overflow: hidden;
@@ -247,6 +246,23 @@
     .scrollbar-hide {
         -ms-overflow-style: none;
         scrollbar-width: none;
+    }
+
+    /* Safe Area Utilities */
+    .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .mt-safe {
+        margin-top: env(safe-area-inset-top, 0px);
+    }
+
+    .mb-safe {
+        margin-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     .custom-scrollbar::-webkit-scrollbar {

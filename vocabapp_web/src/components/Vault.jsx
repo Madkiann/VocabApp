@@ -96,7 +96,7 @@ export const Vault = ({
                         </div>
                     </div>
                 )}
-                <div className="absolute top-6 left-6 z-20">
+                <div className="absolute top-safe left-6 z-20 mt-6">
                     <button onClick={() => { setSelectedVaultWord(null); setIsTranslated(false); setShowForms(false); setShowAi(false); setShowWriting(false); setQuickTx(prev => ({ ...prev, visible: false })); }} className={`px-5 py-2.5 rounded-2xl font-black flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-premium ${isDark ? 'glass-dark text-slate-300' : 'glass text-slate-700'}`}>
                         <ArrowLeft size={20} /> {t.backToVault || "Geri"}
                     </button>
@@ -154,8 +154,8 @@ export const Vault = ({
         }
 
         return (
-            <div className={`h-dvh w-full transition-colors duration-500 pb-32 flex flex-col items-center p-4 overflow-y-auto scroll-y font-sans ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
-                <div className="w-full max-w-md mt-6 animate-fade-in px-2">
+            <div className={`h-dvh w-full transition-colors duration-500 pb-32 flex flex-col items-center p-4 pt-safe overflow-y-auto scroll-y font-sans ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
+                <div className="w-full max-w-md mt-4 animate-fade-in px-2">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
                             <h2 className={`text-2xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'} truncate max-w-[200px]`}>
@@ -354,7 +354,7 @@ export const Vault = ({
     };
 
     return (
-        <div className={`h-dvh w-full transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
+        <div className={`h-dvh w-full transition-all duration-500 p-4 pt-safe pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
             <div className="fixed inset-0 pointer-events-none -z-0 overflow-hidden">
                 <div className={`absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full blur-[120px] opacity-[0.08] ${isDark ? 'bg-indigo-600' : 'bg-indigo-300'}`}></div>
                 <div className={`absolute bottom-[-5%] left-[-5%] w-[50%] h-[50%] rounded-full blur-[100px] opacity-[0.05] ${isDark ? 'bg-emerald-600' : 'bg-emerald-300'}`}></div>

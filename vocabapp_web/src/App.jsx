@@ -1714,8 +1714,9 @@ export default function App() {
       )}
 
       {/* ÜST BÖLÜM: Minimalist & Sabit Header */}
-      <header className="fixed top-0 left-0 right-0 flex flex-col items-center pt-6 z-[600] pointer-events-none">
-        <div className="w-full flex flex-col items-center pointer-events-auto">
+      <header className="fixed top-0 left-0 right-0 flex flex-col items-center z-[600] pointer-events-none">
+        <div className="w-full pt-safe" /> 
+        <div className="w-full flex flex-col items-center pointer-events-auto pt-4">
           <AchievementPopup queue={achievementQueue} onComplete={handleAchievementComplete} isDark={isDark} t={t} isAdmin={isAdmin} />
 
           <div className="scale-90 opacity-80 hover:opacity-100 transition-all duration-300 transform origin-top">
@@ -1725,7 +1726,7 @@ export default function App() {
       </header>
 
       {/* ORTA BÖLÜM: Kart Arenası (Yukarı Çapa) */}
-      <main className={`flex-grow w-full flex flex-col items-center justify-start ${appMode.startsWith('quiz_') ? 'pt-4' : 'pt-16'} px-4 relative overflow-hidden min-h-0`}>
+      <main className={`flex-grow w-full flex flex-col items-center justify-start ${appMode.startsWith('quiz_') ? 'pt-4' : 'pt-24'} pt-safe px-4 relative overflow-hidden min-h-0`}>
 
         {isLogoVisible ? (
           <div
@@ -1817,15 +1818,17 @@ export default function App() {
       </main>
 
       {/* ALT BÖLÜM: Sabit Navbar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-[500] pb-safe bg-background/80 backdrop-blur-lg">
+      <div className="fixed bottom-0 left-0 right-0 z-[500] pointer-events-none">
         <footer className="w-full flex-col items-center gap-2 opacity-60 hidden md:flex mb-4">
           <div className="flex gap-6">
             <a href="https://www.instagram.com/ferhat_hoca_ingilizce/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Instagram size={12} /> instagram</a>
             <a href="https://ferhathocaingilizce.com" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Globe size={12} /> ferhathocaingilizce.com</a>
           </div>
         </footer>
-        {bottomNavigation}
-      </nav>
+        <div className="pointer-events-auto relative">
+          {bottomNavigation}
+        </div>
+      </div>
       {globalModals}
     </div>
   );

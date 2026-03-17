@@ -82,7 +82,7 @@ export const Dashboard = ({
     };
 
     return (
-        <div className={`h-dvh w-full flex flex-col items-center p-4 font-sans transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
+        <div className={`h-dvh w-full flex flex-col items-center p-4 pt-safe font-sans transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
 
             <div className="fixed inset-0 pointer-events-none -z-0 overflow-hidden">
                 <div className={`absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] opacity-[0.15] ${isDark ? 'bg-indigo-600' : 'bg-indigo-400'}`}></div>
