@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { RefreshCw, Check, X, Sun, Moon, Instagram, Globe, Archive, Languages, Hourglass, BarChart3, Brain, Flame, Clock, Sparkles, ArrowRight, Menu, Settings, Layers, Coffee, BookOpen, ServerCrash, Undo2 } from 'lucide-react';
-import { rawVocabulary, initialVocabulary, initialPhrasalVerbs, localDict } from './data/vocabulary';
-import { translations } from './data/translations';
+import { initialVocabulary, initialPhrasalVerbs, localDict } from './data/vocabulary';
 import { safeJsonParse, calculateAdvancedSM2, shuffleArray } from './utils/helpers';
+
+// Contexts
+import { useApp } from './context/AppContext';
+import { useSettings } from './context/SettingsContext';
+import { useVocab } from './context/VocabContext';
 
 // Components
 import { BrandLogo } from './components/BrandLogo';
@@ -27,8 +31,6 @@ import { StreakRunArena } from './components/StreakRunArena';
 import { SpeedBlitzArena } from './components/SpeedBlitzArena';
 
 // Hooks
-import { useAdmin } from './hooks/useAdmin';
-import { useTheme } from './hooks/useTheme';
 import { useVocabStats } from './hooks/useVocabStats';
 import { useAchievements } from './hooks/useAchievements';
 
@@ -36,106 +38,99 @@ import { useAchievements } from './hooks/useAchievements';
 import { sounds } from './utils/sounds';
 
 export default function App() {
-  const [appLang, setAppLang] = useState('tr');
-  const t = translations[appLang];
+  const { 
+    appLang, setAppLang, t, 
+    isAdmin, handleVersionClick, verifyMasterKey, userEmail, setUserEmail,
+    themePref, setThemePref, isDark, cycleTheme, getThemeText,
+    soundEnabled, setSoundEnabled,
+    maintenanceMode, setMaintenanceMode,
+    sm2Multiplier, setSm2Multiplier,
+    globalAnnouncement, setGlobalAnnouncement
+  } = useSettings();
 
-  // Auth / Admin State
-  const [userEmail, setUserEmail] = useState(null);
-  const { isAdmin, handleVersionClick, verifyMasterKey } = useAdmin(userEmail);
+  const {
+    appMode, setAppMode,
+    isLogoVisible, setIsLogoVisible,
+    currentDate, setCurrentDate,
+    totalSwipes, setTotalSwipes,
+    streak, setStreak,
+    maxStreak, setMaxStreak,
+    totalSecondsSpent, setTotalSecondsSpent,
+    modeSwipes, setModeSwipes,
+    rightSwipes, setRightSwipes,
+    leftSwipes, setLeftSwipes,
+    modeTime, setModeTime,
+    hourlySwipes, setHourlySwipes,
+    dailyStats, setDailyStats,
+    difficultWords, setDifficultWords,
+    systemLogs, setSystemLogs,
+    lastActionStatus, setLastActionStatus,
+    isRevealed, setIsRevealed,
+    isRetryMode, setIsRetryMode,
+    cardsSwipedSinceQuiz, setCardsSwipedSinceQuiz,
+    advanceTime,
+    isQuizReview, setIsQuizReview,
+    reviewingEntryId, setReviewingEntryId,
+    quizLog, setQuizLog,
+    swipeLog, setSwipeLog,
+    quizQuestion, setQuizQuestion,
+    quizFeedback, setQuizFeedback,
+    quizExplanation, setQuizExplanation,
+    availableTokens, setAvailableTokens,
+    selectedTokens, setSelectedTokens,
+    lastQuizType, setLastQuizType,
+    showAdminPanel, setShowAdminPanel,
+    showVault, setShowVault,
+    showDashboard, setShowDashboard,
+    showLevelTest, setShowLevelTest,
+    showArenaGate, setShowArenaGate,
+    showStreakRun, setShowStreakRun,
+    showSpeedBlitz, setShowSpeedBlitz,
+    showLibrary, setShowLibrary,
+    showSettings, setShowSettings,
+    showCommunityHub, setShowCommunityHub,
+    showQuizHistory, setShowQuizHistory,
+    activeVaultFolder, setActiveVaultFolder,
+    selectedVaultWord, setSelectedVaultWord,
+    editingWord, setEditingWord
+  } = useApp();
 
-  const [appMode, setAppMode] = useState('swipe');
-  const [cardsSwipedSinceQuiz, setCardsSwipedSinceQuiz] = useState(0);
-  const [vocabMode, setVocabMode] = useState('words'); // words, phrasal, chill
+  const {
+    wordVocab, setWordVocab,
+    phrasalVocab, setPhrasalVocab,
+    chillVocab, setChillVocab,
+    customWords, setCustomWords,
+    deletedWords, setDeletedWords,
+    vocabMode, setVocabMode,
+    chillSortMode, setChillSortMode,
+    computedWords, computedPhrasals, computedChill, vocab,
+    savedWords, setSavedWords,
+    vaultFolders, setVaultFolders,
+    deck, setDeck,
+    currentWordIndex, setCurrentWordIndex,
+    learningWords, setLearningWords,
+    history, setHistory,
+    deleteWord, toggleSaveWord, updateWordFolder, deleteVaultFolder, renameVaultFolder,
+    trackSwipe, refreshDeck, jumpToCard, evolveBond, setVocab
+  } = useVocab();
 
-  const [themePref, setThemePref] = useState(() => localStorage.getItem('vocabapp_theme') || 'system');
-  const [systemIsDark, setSystemIsDark] = useState(window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : false);
-  const [isLogoVisible, setIsLogoVisible] = useState(true);
-  const [currentDate, setCurrentDate] = useState(Date.now());
-  const [streak, setStreak] = useState(1);
-  const [history, setHistory] = useState([]);
-  const [isQuizReview, setIsQuizReview] = useState(false);
-  const [reviewingEntryId, setReviewingEntryId] = useState(null);
-  const [maxStreak, setMaxStreak] = useState(() => parseInt(localStorage.getItem('vocabapp_max_streak') || '0', 10));
-  const [quizLog, setQuizLog] = useState(() => {
-    const stored = safeJsonParse(localStorage.getItem('vocabapp_quiz_log'));
-    return { total: 0, correct: 0, history: [], ...(stored || {}) };
-  });
-  const [swipeLog, setSwipeLog] = useState(() => {
-    const stored = safeJsonParse(localStorage.getItem('vocabapp_swipe_log'));
-    return { correctIds: [], wrongIds: [], ...(stored || {}) };
-  });
+  const {
+    totalReviewsAll, globalRetention, bondStats, learnedCount, strongCount,
+    swipedToday: swipedTodayTotal, dueTodayCount, dueTodayMins, dueTomorrowCount, dueTomorrowMins,
+    dailyProgress, weakWordsArray
+  } = useVocabStats();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLogoVisible(false);
     }, 2800);
     return () => clearTimeout(timer);
-  }, []);
+  }, [setIsLogoVisible]);
 
-  // Admin Features States
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
-  const [sm2Multiplier, setSm2Multiplier] = useState(() => parseFloat(localStorage.getItem('vocabapp_sm2_multiplier') || '1.0'));
-  const [globalAnnouncement, setGlobalAnnouncement] = useState(() => localStorage.getItem('vocabapp_announcement') || '');
-  const [difficultWords, setDifficultWords] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_difficult_words')) || []);
-  const [totalSwipes, setTotalSwipes] = useState(() => parseInt(localStorage.getItem('vocabapp_total_swipes') || '0', 10));
-  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('vocabapp_sound_enabled') !== 'false');
+  // UI Local States
+  const [dauDisplay, setDauDisplay] = useState(1);
 
   useEffect(() => {
-    sounds.enabled = soundEnabled;
-    localStorage.setItem('vocabapp_sound_enabled', soundEnabled);
-  }, [soundEnabled]);
-
-
-  // Advanced System States
-  const [modeSwipes, setModeSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_mode_swipes')) }));
-  const [hourlySwipes, setHourlySwipes] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_hourly_swipes')) || new Array(24).fill(0));
-  const [systemLogs, setSystemLogs] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_system_logs')) || []);
-  const [appStartDate] = useState(() => {
-    const stored = localStorage.getItem('vocabapp_start_date');
-    if (stored) return parseInt(stored, 10);
-    const now = Date.now();
-    localStorage.setItem('vocabapp_start_date', now.toString());
-    return now;
-  });
-
-  const appDay = Math.min(3, Math.floor((currentDate - appStartDate) / (24 * 60 * 60 * 1000)) + 1);
-
-  const [maintenanceMode, setMaintenanceMode] = useState(() => localStorage.getItem('vocabapp_maintenance') === 'true');
-  const [customWords, setCustomWords] = useState(() => {
-    const stored = safeJsonParse(localStorage.getItem('vocabapp_custom_words'));
-    if (!stored) return [];
-    // Migration for schema change: eng/tr -> word/trWord
-    return stored.map(w => {
-      if (w.eng && !w.word) {
-        return {
-          ...w,
-          word: w.eng,
-          trWord: w.tr || w.trWord,
-          engDef: w.engDef || '',
-          trDef: w.trDef || '',
-          engExample: w.engExample || '',
-          trExample: w.trExample || ''
-        };
-      }
-      return w;
-    });
-  });
-
-  const [editingWord, setEditingWord] = useState(null);
-  const [deletedWords, setDeletedWords] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_deleted_words')) || []);
-
-  // Analytics Enhancement
-  const [rightSwipes, setRightSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_right_swipes')) }));
-  const [leftSwipes, setLeftSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_left_swipes')) }));
-  const [modeTime, setModeTime] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_mode_time')) }));
-  const [dailyStats, setDailyStats] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_daily_stats')) || {});
-
-  const [lastActionStatus, setLastActionStatus] = useState(null); // 'correct', 'wrong', null
-  const [dauDisplay, setDauDisplay] = useState(1); // Set to exact usage counter
-  const [chillSortMode, setChillSortMode] = useState('random'); // Default to random discovery
-
-  useEffect(() => {
-    // Intercept console.error to log to User Shadowing system
     const originalError = console.error;
     console.error = (...args) => {
       const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
@@ -144,389 +139,33 @@ export default function App() {
       originalError(...args);
     };
     return () => console.error = originalError;
-  }, []);
+  }, [setSystemLogs]);
 
-  useEffect(() => localStorage.setItem('vocabapp_sm2_multiplier', sm2Multiplier.toString()), [sm2Multiplier]);
-  useEffect(() => localStorage.setItem('vocabapp_announcement', globalAnnouncement), [globalAnnouncement]);
-  useEffect(() => localStorage.setItem('vocabapp_difficult_words', JSON.stringify(difficultWords)), [difficultWords]);
-  useEffect(() => localStorage.setItem('vocabapp_total_swipes', totalSwipes.toString()), [totalSwipes]);
-  useEffect(() => localStorage.setItem('vocabapp_mode_swipes', JSON.stringify(modeSwipes)), [modeSwipes]);
-  useEffect(() => localStorage.setItem('vocabapp_hourly_swipes', JSON.stringify(hourlySwipes)), [hourlySwipes]);
-  useEffect(() => localStorage.setItem('vocabapp_system_logs', JSON.stringify(systemLogs)), [systemLogs]);
-  useEffect(() => localStorage.setItem('vocabapp_maintenance', String(maintenanceMode)), [maintenanceMode]);
-  useEffect(() => localStorage.setItem('vocabapp_custom_words', JSON.stringify(customWords)), [customWords]);
-  useEffect(() => localStorage.setItem('vocabapp_right_swipes', JSON.stringify(rightSwipes)), [rightSwipes]);
-  useEffect(() => localStorage.setItem('vocabapp_left_swipes', JSON.stringify(leftSwipes)), [leftSwipes]);
-  useEffect(() => localStorage.setItem('vocabapp_mode_time', JSON.stringify(modeTime)), [modeTime]);
-  useEffect(() => localStorage.setItem('vocabapp_deleted_words', JSON.stringify(deletedWords)), [deletedWords]);
-  useEffect(() => localStorage.setItem('vocabapp_daily_stats', JSON.stringify(dailyStats)), [dailyStats]);
 
-  const trackSwipe = (wordText, quality, modeParam = 'words', isSuccess = true) => {
-    setTotalSwipes(prev => prev + 1);
-
-    setModeSwipes(prev => ({ ...prev, [modeParam]: (prev[modeParam] || 0) + 1 }));
-
-    if (isSuccess) {
-      setRightSwipes(prev => ({ ...prev, [modeParam]: (prev[modeParam] || 0) + 1 }));
-    } else {
-      setLeftSwipes(prev => ({ ...prev, [modeParam]: (prev[modeParam] || 0) + 1 }));
-    }
-
-    const hour = new Date().getHours();
-    setLastActionStatus(isSuccess ? 'correct' : 'wrong');
-    setTimeout(() => setLastActionStatus(null), 400);
-
-    setHourlySwipes(prev => {
-      const next = [...prev];
-      next[hour] += 1;
-      return next;
-    });
-
-    if (quality === 1) {
-      setDifficultWords(prev => {
-        const idx = prev.findIndex(w => w.text === wordText);
-        if (idx > -1) {
-          const updated = [...prev];
-          updated[idx] = { ...updated[idx], fails: updated[idx].fails + 1 };
-          return updated.sort((a, b) => b.fails - a.fails);
-        }
-        return [...prev, { text: wordText, fails: 1 }].sort((a, b) => b.fails - a.fails);
-      });
-    }
-
-    setDailyStats(prev => {
-      const todayStr = new Date(currentDate).toDateString();
-      const hour = new Date().getHours();
-      const dayData = prev[todayStr] || {
-        swiped: 0,
-        swiped_words: 0,
-        swiped_phrasal: 0,
-        correct: 0,
-        wrong: 0,
-        quiz: 0,
-        time: 0,
-        hourlyActions: new Array(24).fill(0),
-        hourlyTime: new Array(24).fill(0),
-        swipedIds: [] // Track unique words swiped today
-      };
-
-      const isQuiz = modeParam === 'quiz';
-      const newHourlyActions = [...(dayData.hourlyActions || new Array(24).fill(0))];
-      newHourlyActions[hour] = (newHourlyActions[hour] || 0) + 1;
-
-      // Find the card ID to track unique swipes - search all possible sources
-      const allPossibleVocab = [...wordVocab, ...phrasalVocab, ...chillVocab, ...customWords];
-      const card = allPossibleVocab.find(w => (w.text || w.eng) === wordText || w.word === wordText);
-      const cardId = card?.id;
-
-      const alreadySwiped = cardId && (dayData.swipedIds || []).includes(cardId);
-      const newSwipedIds = (cardId && !alreadySwiped) ? [...(dayData.swipedIds || []), cardId] : (dayData.swipedIds || []);
-
-      // Discovery Logic (Mode-specific 12 Quota)
-      const isReview = card && card.sm2 && card.sm2.rep > 0;
-      const isStranger = card && card.sm2 && card.sm2.rep === 0;
-      const isDiscovery = !alreadySwiped && isStranger && !isReview && !isRetryMode;
-
-      // Determine which counter to increment
-      let actualMode = modeParam;
-      if (isQuiz && card) {
-        // If it's a quiz, infer mode from card
-        actualMode = phrasalVocab.some(pw => pw.id === card.id) ? 'phrasal' : 'words';
-      }
-
-      return {
-        ...prev,
-        [todayStr]: {
-          ...dayData,
-          swiped: (dayData.swiped || 0) + (isDiscovery ? 1 : 0),
-          swiped_words: (dayData.swiped_words || 0) + (isDiscovery && actualMode === 'words' ? 1 : 0),
-          swiped_phrasal: (dayData.swiped_phrasal || 0) + (isDiscovery && actualMode === 'phrasal' ? 1 : 0),
-          correct: (dayData.correct || 0) + (isSuccess ? 1 : 0),
-          wrong: (dayData.wrong || 0) + (!isSuccess ? 1 : 0),
-          quiz: (dayData.quiz || 0) + (isQuiz ? 1 : 0),
-          hourlyActions: newHourlyActions,
-          swipedIds: newSwipedIds
-        }
-      };
-    });
-
-    localStorage.setItem('vocabapp_last_active_date', new Date(currentDate).toDateString());
-  };
-
-  const deleteWord = (wordId) => {
-    if (!window.confirm("Bu kelimeyi silmek istedi─şine emin misin?")) return;
-    setCustomWords(prev => prev.filter(w => w.id !== wordId));
-    setWordVocab(prev => prev.filter(w => w.id !== wordId));
-    setPhrasalVocab(prev => prev.filter(w => w.id !== wordId));
-    setChillVocab(prev => prev.filter(w => w.id !== wordId));
-    setDeletedWords(prev => {
-      if (!prev.includes(wordId)) return [...prev, wordId];
-      return prev;
-    });
-  };
 
   const editWord = (wordObj) => {
     setEditingWord(wordObj);
     setShowAdminPanel(true);
   };
 
-  useEffect(() => {
-    localStorage.setItem('vocabapp_theme', themePref);
-
-    // Force immediate check on mount/pref change
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setSystemIsDark(mediaQuery.matches);
-
-    const handler = (e) => setSystemIsDark(e.matches);
-
-    // Modern way
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handler);
-      return () => mediaQuery.removeEventListener('change', handler);
-    } else {
-      // Legacy way (Safari/Old Chrome)
-      mediaQuery.addListener(handler);
-      return () => mediaQuery.removeListener(handler);
-    }
-  }, [themePref]);
-
-  const isDark = themePref === 'system' ? systemIsDark : themePref === 'dark';
-
-  // Sync theme class to root for better CSS targeting (fixes Android background)
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add('dark');
-      root.style.colorScheme = 'dark';
-    } else {
-      root.classList.remove('dark');
-      root.style.colorScheme = 'light';
-    }
-
-    // Update theme-color meta tag for mobile browser UI
-    let metaTheme = document.querySelector('meta[name="theme-color"]');
-    if (!metaTheme) {
-      metaTheme = document.createElement('meta');
-      metaTheme.name = 'theme-color';
-      document.head.appendChild(metaTheme);
-    }
-    metaTheme.content = isDark ? '#051025' : '#f1f5f9';
-  }, [isDark]);
-
-  const cycleTheme = () => {
-    if (themePref === 'system') setThemePref('light');
-    else if (themePref === 'light') setThemePref('dark');
-    else setThemePref('system');
-  };
-
-  const getThemeText = () => {
-    if (themePref === 'system') return 'Sistem';
-    return themePref === 'dark' ? 'Karanlık' : 'Aydınlık';
-  };
-
-  const [wordVocab, setWordVocab] = useState([...initialVocabulary]);
-  const [phrasalVocab, setPhrasalVocab] = useState([...initialPhrasalVerbs]);
-  const [chillVocab, setChillVocab] = useState([...initialVocabulary].map(w => ({ ...w, sm2: { ...w.sm2, ef: 3.0 } })));
-
-  const computedWords = useMemo(() => {
-    const custom = customWords.filter(w => w.targetMode === 'words');
-    const overrideIds = new Set(custom.map(w => w.id));
-    const deletedIds = new Set(deletedWords);
-
-    // Show all words for the vocab tab
-    const baseWords = wordVocab.filter(w => !overrideIds.has(w.id) && !deletedIds.has(w.id));
-    
-    return [...baseWords, ...custom].filter(w => !deletedIds.has(w.id));
-  }, [wordVocab, customWords, deletedWords]);
-
-  const computedPhrasals = useMemo(() => {
-    const custom = customWords.filter(w => w.targetMode === 'phrasal');
-    const overrideIds = new Set(custom.map(w => w.id));
-    const deletedIds = new Set(deletedWords);
-    return [...phrasalVocab.filter(w => !overrideIds.has(w.id) && !deletedIds.has(w.id)), ...custom].filter(w => !deletedIds.has(w.id));
-  }, [phrasalVocab, customWords, deletedWords]);
-
-  const computedChill = useMemo(() => {
-    const wordsForChill = customWords.filter(w => w.targetMode === 'words' || w.targetMode === 'chill');
-    const phrasalsForChill = phrasalVocab.map(w => ({ ...w, sm2: { ...w.sm2, ef: 3.0 } }));
-    const overrideIds = new Set(wordsForChill.map(w => w.id));
-    const deletedIds = new Set(deletedWords);
-    let baseChill = [
-      ...chillVocab.filter(w => !overrideIds.has(w.id) && !deletedIds.has(w.id)),
-      ...wordsForChill.map(w => ({ ...w, sm2: { ...w.sm2, ef: 3.0 } })),
-      ...phrasalsForChill
-    ].filter(w => !deletedIds.has(w.id));
-
-    if (chillSortMode === 'alphabetical') {
-      return [...baseChill].sort((a, b) => (a.word || '').localeCompare(b.word || ''));
-    } else if (chillSortMode === 'newest') {
-      return [...baseChill].reverse(); // Assuming original order is chronological
-    }
-    // Default: Random Discovery (Fisher-Yates)
-    return shuffleArray(baseChill);
-  }, [chillVocab, customWords, deletedWords, chillSortMode]);
-
-  // Compute active vocab based on mode
-  const vocab = useMemo(() => {
-    if (vocabMode === 'words') return computedWords;
-    if (vocabMode === 'phrasal') return computedPhrasals;
-    return computedChill;
-  }, [vocabMode, computedWords, computedPhrasals, computedChill]);
-
-  const setVocab = (setter) => {
-    if (vocabMode === 'words') setWordVocab(setter);
-    else if (vocabMode === 'phrasal') setPhrasalVocab(setter);
-    else setChillVocab(setter);
-  };
 
 
-  const [deck, setDeck] = useState([]);
-  const [learningWords, setLearningWords] = useState([]);
-  const [savedWords, setSavedWords] = useState([]);
-  const [currentWordIndex, setCurrentWordIndex] = useState(() => {
-    const saved = localStorage.getItem('vocabapp_current_index');
-    return saved ? parseInt(saved, 10) : 0;
-  });
-  const [vaultFolders, setVaultFolders] = useState(['General']);
-  const [activeVaultFolder, setActiveVaultFolder] = useState(null);
-  const [showQuizHistory, setShowQuizHistory] = useState(false);
-
-  useEffect(() => {
-    if (streak > maxStreak) {
-      setMaxStreak(streak);
-      localStorage.setItem('vocabapp_max_streak', streak.toString());
-    }
-  }, [streak, maxStreak]);
-
-  useEffect(() => {
-    localStorage.setItem('vocabapp_current_index', currentWordIndex.toString());
-  }, [currentWordIndex]);
-
-  useEffect(() => {
-    localStorage.setItem('vocabapp_quiz_log', JSON.stringify(quizLog));
-  }, [quizLog]);
-
-  useEffect(() => {
-    localStorage.setItem('vocabapp_swipe_log', JSON.stringify(swipeLog));
-  }, [swipeLog]);
-
-  const toggleSaveWord = (word) => {
-    let newSaved;
-    if (savedWords.some(w => w.id === word.id)) {
-      newSaved = savedWords.filter(w => w.id !== word.id);
-    } else {
-      newSaved = [...savedWords, { ...word, folder: 'General' }];
-    }
-    setSavedWords(newSaved);
-  };
-
-  const updateWordFolder = (wordId, folderName) => {
-    setSavedWords(prev => prev.map(w => w.id === wordId ? { ...w, folder: folderName } : w));
-  };
-
-  const deleteVaultFolder = (folderName) => {
-    if (folderName === 'General') return;
-    setVaultFolders(prev => prev.filter(f => f !== folderName));
-    setSavedWords(prev => prev.map(w => w.folder === folderName ? { ...w, folder: 'General' } : w));
-  };
-
-  const renameVaultFolder = (oldName, newName) => {
-    const trimmed = newName.trim();
-    if (oldName === 'General' || !trimmed || vaultFolders.includes(trimmed)) return;
-    setVaultFolders(prev => prev.map(f => f === oldName ? trimmed : f));
-    setSavedWords(prev => prev.map(w => w.folder === oldName ? { ...w, folder: trimmed } : w));
-  };
-
-  const jumpToCard = (cardId, targetMode) => {
-    setVocabMode(targetMode);
-    setShowAdminPanel(false);
-    setShowDashboard(false);
-    setShowVault(false);
-    setAppMode('swipe');
-    // We need the index in the deck. Since deck is derived from vocab, 
-    // we find it in the vocab for that mode.
-    let targetVocab;
-    if (targetMode === 'words') targetVocab = computedWords;
-    else if (targetMode === 'phrasal') targetVocab = computedPhrasals;
-    else targetVocab = computedChill;
-
-    const idx = targetVocab.findIndex(w => w.id === cardId);
-    if (idx > -1) {
-      // Create a temporary deck with this word at the start if it's not due
-      // or just refresh deck and hope? Better to force it into the current deck.
-      setDeck(targetVocab.slice(idx, idx + 1)); // Solo deck for jump
-      setCurrentWordIndex(0);
-    }
-  };
 
 
-  // Initialize total time from localStorage
-  const [totalSecondsSpent, setTotalSecondsSpent] = useState(() => {
-    const saved = localStorage.getItem('vocabapp_total_time');
-    return saved ? parseInt(saved, 10) : 0;
-  });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTotalSecondsSpent(prev => {
-        const newValue = prev + 1;
-        localStorage.setItem('vocabapp_total_time', newValue.toString());
-        return newValue;
-      });
-
-      const todayStr = new Date(currentDate).toDateString();
-      const hour = new Date().getHours();
-      setDailyStats(prev => {
-        const dayData = prev[todayStr] || { swiped: 0, correct: 0, wrong: 0, quiz: 0, time: 0, hourlyActions: new Array(24).fill(0), hourlyTime: new Array(24).fill(0) };
-        const newHourlyTime = [...(dayData.hourlyTime || new Array(24).fill(0))];
-        newHourlyTime[hour] = (newHourlyTime[hour] || 0) + 1;
-
-        return {
-          ...prev,
-          [todayStr]: {
-            ...dayData,
-            time: (dayData.time || 0) + 1,
-            hourlyTime: newHourlyTime
-          }
-        };
-      });
-
-      // Track time per mode
-      setModeTime(prev => {
-        let activeKey = vocabMode;
-        if (appMode.startsWith('quiz')) activeKey = 'quiz';
-        return { ...prev, [activeKey]: (prev[activeKey] || 0) + 1 };
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [vocabMode, appMode]); // Added modes to ensure correct tracking if they change
 
   // UI States
   const [isTranslated, setIsTranslated] = useState(false);
   const [showForms, setShowForms] = useState(false);
-  const [showVault, setShowVault] = useState(false);
-  const [showDashboard, setShowDashboard] = useState(false);
-  const [showLevelTest, setShowLevelTest] = useState(false);
-  const [showArenaGate, setShowArenaGate] = useState(false);
-  const [showStreakRun, setShowStreakRun] = useState(false);
-  const [showSpeedBlitz, setShowSpeedBlitz] = useState(false);
-  const [showLibrary, setShowLibrary] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [selectedVaultWord, setSelectedVaultWord] = useState(null);
-
-  // Active Recall State
-  const [isRevealed, setIsRevealed] = useState(true);
+  const [showAi, setShowAi] = useState(false);
 
   // AI States
-  const [showAi, setShowAi] = useState(false);
   const [aiData, setAiData] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   // Details State
   const [showDetails, setShowDetails] = useState(false);
-
-  // Community Hub State
-  const [showCommunityHub, setShowCommunityHub] = useState(false);
+  const [showCaseExamples, setShowCaseExamples] = useState(false);
 
   // Quick Translate State
   const [quickTx, setQuickTx] = useState({ text: '', visible: false, x: 0, y: 0 });
@@ -536,35 +175,14 @@ export default function App() {
   const [userSentence, setUserSentence] = useState("");
   const [writingFeedback, setWritingFeedback] = useState(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
-  const [isRetryMode, setIsRetryMode] = useState(false);
-  const [showCaseExamples, setShowCaseExamples] = useState(false);
   const [showMiniStory, setShowMiniStory] = useState(false);
 
-  // Quiz States
-  const [quizExplanation, setQuizExplanation] = useState(null);
+  // Quiz & Swipe States
   const [isExplaining, setIsExplaining] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState(null);
   const [swipeDelta, setSwipeDelta] = useState({ x: 0, y: 0 });
   const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0, isTop: true });
   const [isDragging, setIsDragging] = useState(false);
-  const [lastQuizType, setLastQuizType] = useState(null);
-  const [quizQuestion, setQuizQuestion] = useState(null);
-  const [quizFeedback, setQuizFeedback] = useState(null);
-
-  // Achievements State
-  const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
-    try {
-      const stored = localStorage.getItem('vocabapp_achievements');
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
-  const [achievementQueue, setAchievementQueue] = useState([]);
-
-  // Sentence Builder States
-  const [selectedTokens, setSelectedTokens] = useState([]);
-  const [availableTokens, setAvailableTokens] = useState([]);
 
   // Refs
   const dragItemIndex = useRef(null);
@@ -574,9 +192,6 @@ export default function App() {
   const minSwipeDistance = 100;
   const apiKey = "";
 
-  useEffect(() => {
-    refreshDeck();
-  }, [currentDate, vocabMode]);
 
   useEffect(() => {
     const handleGlobalScroll = () => {
@@ -591,68 +206,6 @@ export default function App() {
   }, []);
 
 
-  const refreshDeck = (isRetry = false) => {
-    let newDeck = [];
-    if (isRetry) {
-      // "Tekrar Yap" (isRetryMode) focuses on what we did today + any missed reviews
-      const todayStr = new Date(currentDate).toDateString();
-      const stats = dailyStats[todayStr] || { swipedIds: [] };
-      const swipedTodayIds = new Set(stats.swipedIds || []);
-
-      const sessionContent = vocab.filter(w =>
-        swipedTodayIds.has(w.id) ||
-        (w.sm2.nextDate <= currentDate && w.sm2.rep > 0)
-      );
-
-      // Limit to 12 for consistent UI and session feel
-      newDeck = shuffleArray(sessionContent).slice(0, 12);
-      setIsRetryMode(true);
-    } else if (vocabMode !== 'chill') {
-      const todayStr = new Date(currentDate).toDateString();
-      const stats = dailyStats[todayStr] || { swiped: 0, swipedIds: [] };
-
-      // 1. Due Cards: Reviews coming from the SM-2 engine
-      const dueCards = vocab.filter(w => w.sm2.nextDate <= currentDate && w.sm2.rep > 0);
-
-      // Stochastic approach: We don't necessarily show all due cards at once, 
-      // but we pull a random selection (0-20 as requested) or just shuffle all.
-      // Let's take up to 20 random due cards for a better "Mix".
-      const shuffledDue = shuffleArray(dueCards).slice(0, Math.floor(Math.random() * 21));
-
-      // 2. Stranger Cards: New discoveries for today. 
-      // CRITICAL: Pull from the FULL wordVocab/phrasalVocab instead of the limited 'vocab' 
-      // so we don't run out of strangers after a few days.
-      const pool = vocabMode === 'phrasal' ? phrasalVocab : wordVocab;
-      const alreadySwipedToday = new Set(stats.swipedIds || []);
-      const strangerCards = pool.filter(w => w.sm2.rep === 0 && !alreadySwipedToday.has(w.id));
-      const shuffledStrangers = shuffleArray(strangerCards);
-
-      // Rule: Take until daily limit (12) is reached for the specific mode
-      const currentSwiped = vocabMode === 'phrasal' ? (stats.swiped_phrasal || 0) : (stats.swiped_words || 0);
-      const remainingDiscoveryQuota = Math.max(0, 12 - currentSwiped);
-      const discoveriesForDeck = shuffledStrangers.slice(0, remainingDiscoveryQuota);
-
-      // MIX: Shuffle Due + Discoveries for a truly stochastic feel
-      newDeck = shuffleArray([...shuffledDue, ...discoveriesForDeck]);
-      setIsRetryMode(false);
-    } else {
-      newDeck = vocab; // ChillMode handles its own sorting via computedChill
-      setIsRetryMode(false);
-    }
-
-    setDeck(newDeck);
-    setCurrentWordIndex(0);
-    setCardsSwipedSinceQuiz(0);
-    setAppMode('swipe');
-    if (newDeck.length > 0) {
-      setIsRevealed(false);
-    }
-  };
-
-  const advanceTime = () => {
-    setCurrentDate(prev => prev + 24 * 60 * 60 * 1000);
-    setStreak(prev => prev + 1);
-  };
 
   const geminiFetch = async (userQuery, systemPrompt, isJson = true) => {
     if (!apiKey) {
@@ -1147,91 +700,12 @@ export default function App() {
   const textMain = isDark ? 'text-slate-100' : 'text-slate-900';
   const cardBg = isDark ? 'glass-dark border-transparent shadow-premium' : 'glass border-transparent shadow-premium';
 
-  const totalReviewsAll = vocab.reduce((acc, curr) => acc + curr.sm2.totalReviews, 0);
-  const correctReviewsAll = vocab.reduce((acc, curr) => acc + curr.sm2.correctReviews, 0);
-  const globalRetention = totalReviewsAll === 0 ? 0 : Math.round((correctReviewsAll / totalReviewsAll) * 100);
-
-  const bondStats = {
-    stranger: vocab.filter(w => !w.sm2.bondXP || w.sm2.bondXP === 0).length,
-    acquaintance: vocab.filter(w => w.sm2.bondXP > 0 && w.sm2.bondXP < 100).length,
-    confidant: vocab.filter(w => w.sm2.bondXP >= 100 && w.sm2.bondXP < 250).length,
-    companion: vocab.filter(w => w.sm2.bondXP >= 250).length,
-    stubborn: vocab.filter(w => w.sm2.lastQualityScore === 2).length
-  };
-  const learnedCount = vocab.filter(w => w.sm2.rep > 0).length;
-  const strongCount = bondStats.companion; // For backward compatibility with some dashboard logic or achievements
-
-  const todayStats = dailyStats[new Date(currentDate).toDateString()] || { swiped: 0, swiped_words: 0, swiped_phrasal: 0 };
-  const swipedToday = vocabMode === 'phrasal' ? (todayStats.swiped_phrasal || 0) : (todayStats.swiped_words || 0);
+  const swipedToday = vocabMode === 'phrasal' ? (dailyStats[new Date(currentDate).toDateString()]?.swiped_phrasal || 0) : (dailyStats[new Date(currentDate).toDateString()]?.swiped_words || 0);
   const isDeckFinished = deck.length === 0 || currentWordIndex >= deck.length || (!isRetryMode && swipedToday >= 12);
+  useAchievements(learnedCount, totalReviewsAll, strongCount);
 
-  const dueTodayCount = vocab.filter(w => w.sm2.nextDate <= currentDate).length;
-  const dueTodayMins = Math.max(1, Math.round((dueTodayCount * 15) / 60));
+  const { unlockedAchievements, achievementQueue, handleAchievementComplete } = useApp();
 
-  const dueTomorrowCount = vocab.filter(w => w.sm2.nextDate > currentDate && w.sm2.nextDate <= currentDate + 24 * 60 * 60 * 1000).length;
-  const dueTomorrowMins = Math.max(1, Math.round((dueTomorrowCount * 15) / 60));
-
-  const dailyProgress = Math.min(1, learnedCount / Math.max(1, vocab.length));
-
-  // Achievement Check Logic
-  useEffect(() => {
-    const achievementsList = [
-      { id: 'first_word', title: t.ach_first_word_title || '─░lk Ad─▒m', requirement: 1, current: learnedCount },
-      { id: 'consistent_3', title: t.ach_consistent_3_title || 'Is─▒nma Turu', requirement: 3, current: streak },
-      { id: 'hard_worker', title: t.ach_hard_worker_title || '├çal─▒┼şkan', requirement: 50, current: totalReviewsAll },
-      { id: 'consistent_7', title: t.ach_consistent_7_title || '─░stikrarl─▒', requirement: 7, current: streak },
-      { id: 'master_1', title: t.ach_master_1_title || 'Uzman Aday─▒', requirement: 10, current: strongCount },
-    ];
-
-    let newUnlocked = [];
-    achievementsList.forEach(ach => {
-      if (ach.current >= ach.requirement && !unlockedAchievements.includes(ach.id)) {
-        newUnlocked.push(ach);
-      }
-    });
-
-    if (newUnlocked.length > 0) {
-      setUnlockedAchievements(prev => {
-        const next = [...prev, ...newUnlocked.map(a => a.id)];
-        return next;
-      });
-      setAchievementQueue(prev => [...prev, ...newUnlocked]);
-    }
-  }, [learnedCount, streak, totalReviewsAll, strongCount, unlockedAchievements]);
-
-  const handleAchievementComplete = useCallback((id) => {
-    setAchievementQueue(prev => prev.filter(a => a.id !== id));
-  }, []);
-
-  const evolveBond = useCallback((wordId) => {
-    if (!isAdmin) return;
-    const updateFn = w => {
-      if (String(w.id) === String(wordId)) {
-        let currentXp = w.sm2.bondXP || 0;
-        let nextXp, nextInt;
-
-        if (currentXp === 0) { nextXp = 50; nextInt = 1; } // Stranger -> Acquaintance
-        else if (currentXp < 100) { nextXp = 100; nextInt = 7; } // Acquaintance -> Confidant
-        else if (currentXp < 250) { nextXp = 250; nextInt = 21; } // Confidant -> Companion
-        else { nextXp = currentXp + 100; nextInt = Math.max(w.sm2.int || 0, 30); } // Beyond Companion, just add XP
-
-        return {
-          ...w,
-          sm2: {
-            ...w.sm2,
-            bondXP: nextXp,
-            int: nextInt,
-            rep: Math.max(w.sm2.rep, 1)
-          }
-        };
-      }
-      return w;
-    };
-
-    setWordVocab(prev => prev.map(updateFn));
-    setPhrasalVocab(prev => prev.map(updateFn));
-    setDeck(prev => prev.map(updateFn));
-  }, [isAdmin]);
 
 
   const renderCardContentWrapper = (word, isSaved, isSystem = false) => {
@@ -1338,26 +812,7 @@ export default function App() {
   // Common UI components that should be globally accessible and appear on top
   const globalModals = (
     <>
-      <SettingsModal
-        t={t}
-        isDark={isDark}
-        themePref={themePref}
-        cycleTheme={cycleTheme}
-        getThemeText={getThemeText}
-        appLang={appLang}
-        setAppLang={setAppLang}
-        advanceTime={advanceTime}
-        showSettings={showSettings}
-        setShowSettings={setShowSettings}
-        setThemePref={setThemePref}
-        setShowCommunityHub={setShowCommunityHub}
-        isAdmin={isAdmin}
-        handleVersionClick={handleVersionClick}
-        verifyMasterKey={verifyMasterKey}
-        setShowAdminPanel={setShowAdminPanel}
-        soundEnabled={soundEnabled}
-        setSoundEnabled={setSoundEnabled}
-      />
+      <SettingsModal />
 
       <LevelTestModal
         isOpen={showLevelTest}
@@ -1378,35 +833,9 @@ export default function App() {
             });
             window.location.reload();
           }}
-          isDark={isDark}
-          appLang={appLang}
-          t={t}
           onClose={() => { setShowAdminPanel(false); setEditingWord(null); }}
-          stats={{ dau: dauDisplay, totalSwipes }}
-          difficultWords={difficultWords}
-          sm2Multiplier={sm2Multiplier}
-          setSm2Multiplier={setSm2Multiplier}
-          globalAnnouncement={globalAnnouncement}
-          setGlobalAnnouncement={setGlobalAnnouncement}
-          advanceTime={advanceTime}
-          hourlySwipes={hourlySwipes}
-          modeSwipes={modeSwipes}
-          systemLogs={systemLogs}
-          maintenanceMode={maintenanceMode}
-          setMaintenanceMode={setMaintenanceMode}
-          customWords={customWords}
-          setCustomWords={setCustomWords}
-          rightSwipes={rightSwipes}
-          leftSwipes={leftSwipes}
-          modeTime={modeTime}
           editingWord={editingWord}
           setEditingWord={setEditingWord}
-          allWords={computedWords}
-          allPhrasals={computedPhrasals}
-          allChill={computedChill}
-          onEditWord={editWord}
-          onDeleteWord={deleteWord}
-          onJumpToCard={jumpToCard}
         />
       )}
 
@@ -1420,21 +849,7 @@ export default function App() {
         />
       )}
 
-      {showLibrary && (
-        <Library
-          isDark={isDark}
-          t={t}
-          isAdmin={isAdmin}
-          appLang={appLang}
-          onClose={() => setShowLibrary(false)}
-          allWords={computedWords}
-          allPhrasals={computedPhrasals}
-          allChill={computedChill}
-          onEditWord={editWord}
-          onDeleteWord={deleteWord}
-          onJumpToCard={jumpToCard}
-        />
-      )}
+      {showLibrary && <Library />}
 
       {showArenaGate && (
         <ArenaGate
@@ -1531,12 +946,7 @@ export default function App() {
     </div>
   );
 
-  const weakWordsArray = useMemo(() => {
-    return (difficultWords || []).map(dw => {
-      const card = (vocab || []).find(v => (v.text || v.eng) === dw.text);
-      return card ? { ...card, fails: dw.fails } : null;
-    }).filter(Boolean).slice(0, 8);
-  }, [difficultWords, vocab]);
+
 
   if (maintenanceMode) {
     return (
@@ -1573,56 +983,7 @@ export default function App() {
     return (
       <>
         <Dashboard
-          isDark={isDark}
-          stats={{
-            totalTime: totalSecondsSpent,
-            totalSwipes: totalSwipes,
-            streak: streak,
-            maxStreak: maxStreak,
-            quizLog: quizLog,
-            modeSwipes: modeSwipes,
-            rightSwipes: rightSwipes,
-            leftSwipes: leftSwipes,
-            dailyProgress: dailyProgress,
-            difficultWords: difficultWords,
-            dailyStats: dailyStats
-          }}
-          t={t}
-          setShowDashboard={setShowDashboard}
-          streak={streak}
-          dueTodayCount={dueTodayCount}
-          dueTodayMins={dueTodayMins}
-          learnedCount={learnedCount}
-          vocab={vocab}
-          totalReviewsAll={totalReviewsAll}
-          globalRetention={globalRetention}
-          bondStats={bondStats}
-          strongCount={strongCount}
-          weakWordsArray={weakWordsArray}
-          bgMain={bgMain}
-          textMain={textMain}
-          totalSecondsSpent={totalSecondsSpent}
-          setQuickTx={setQuickTx}
-          vocabMode={vocabMode}
-          setVocabMode={setVocabMode}
-          onLevelTestClick={() => setShowLevelTest(true)}
-          maxStreak={maxStreak}
-          quizLog={quizLog}
-          onVaultClick={(folder) => {
-            setShowVault(true);
-            setActiveVaultFolder(folder);
-            setShowDashboard(false);
-          }}
           onRetryQuiz={handleRetryQuiz}
-          showQuizHistory={showQuizHistory}
-          setShowQuizHistory={setShowQuizHistory}
-          dailyStats={dailyStats}
-          isAdmin={isAdmin}
-          advanceTime={advanceTime}
-          onJumpToCard={jumpToCard}
-          setShowLibrary={setShowLibrary}
-          onArenaClick={() => setShowArenaGate(true)}
-          onStreakRunClick={() => setShowStreakRun(true)}
         />
         {bottomNavigation}
         {globalModals}
@@ -1634,35 +995,9 @@ export default function App() {
     return (
       <>
         <Vault
-          t={t}
-          isDark={isDark}
-          isAdmin={isAdmin}
-          bgMain={bgMain}
-          textMain={textMain}
-          cardBg={cardBg}
-          vocab={vocab} // Added full vocab for systemic tracking
-          savedWords={savedWords}
-          setSelectedVaultWord={setSelectedVaultWord}
-          setIsRevealed={setIsRevealed}
-          setIsTranslated={setIsTranslated}
-          setShowForms={setShowForms}
-          setShowAi={setShowAi}
-          setShowWriting={setShowWriting}
-          toggleSaveWord={toggleSaveWord}
-          setShowVault={setShowVault}
-          selectedVaultWord={selectedVaultWord}
           renderCardContent={renderCardContentWrapper}
           quickTx={quickTx}
           setQuickTx={setQuickTx}
-          appLang={appLang}
-          vaultFolders={vaultFolders}
-          setVaultFolders={setVaultFolders}
-          updateWordFolder={updateWordFolder}
-          deleteVaultFolder={deleteVaultFolder}
-          renameVaultFolder={renameVaultFolder}
-          swipeLog={swipeLog}
-          activeFolder={activeVaultFolder}
-          setActiveFolder={setActiveVaultFolder}
         />
         {bottomNavigation}
         {globalModals}
@@ -1674,17 +1009,8 @@ export default function App() {
     return (
       <div className={`min-h-screen flex flex-col items-center justify-start font-sans overflow-hidden transition-all duration-300 relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
         <ChillMode
-          vocab={vocab}
-          isDark={isDark}
-          appLang={appLang}
-          t={t}
-          dueTodayCount={dueTodayCount}
-          dueTodayMins={dueTodayMins}
-          isAdmin={isAdmin}
           onDeleteWord={deleteWord}
           onEditWord={editWord}
-          chillSortMode={chillSortMode}
-          setChillSortMode={setChillSortMode}
         />
         {modeSelector}
         <div className="relative z-[500] w-full">
@@ -1713,8 +1039,8 @@ export default function App() {
         </div>
       )}
 
-      {/* ÜST: Siyah adadan kaçan başlık */}
-      <header className="w-full pt-safe-island px-4 z-[600] flex flex-col items-center">
+      {/* ÜST: Dynamic Island / Çentik güvenli başlık */}
+      <header className="w-full z-[600] flex flex-col items-center" style={{ paddingTop: 'calc(env(safe-area-inset-top, 20px) + 16px)' }}>
         <AchievementPopup queue={achievementQueue} onComplete={handleAchievementComplete} isDark={isDark} t={t} isAdmin={isAdmin} />
         <div className="scale-90 transform origin-top pointer-events-auto">
           {modeSelector}
@@ -1750,33 +1076,14 @@ export default function App() {
               <div className="relative w-full h-full">
                 {appMode.startsWith('quiz_') ? (
                   <Quiz
-                    t={t}
-                    isDark={isDark}
-                    isAdmin={isAdmin}
-                    appMode={appMode}
-                    quizQuestion={quizQuestion}
-                    isTranslated={isTranslated}
-                    setIsTranslated={setIsTranslated}
-                    quizFeedback={quizFeedback}
                     handleQuizAction={handleQuizAction}
-                    selectedTokens={selectedTokens}
-                    availableTokens={availableTokens}
                     toggleToken={toggleToken}
                     handleSentenceCheck={handleSentenceCheck}
                     onDragStart={onDragStart}
                     onDragEnter={onDragEnter}
                     onDragEnd={onDragEnd}
-                    quizExplanation={quizExplanation}
                     explainMistake={explainMistake}
                     isExplaining={isExplaining}
-                    setAppMode={setAppMode}
-                    deck={deck}
-                    currentWordIndex={currentWordIndex}
-                    setIsRevealed={setIsRevealed}
-                    cardBg={cardBg}
-                    bgMain={bgMain}
-                    textMain={textMain}
-                    isQuizReview={isQuizReview}
                   />
                 ) : isDeckFinished ? (
                   <div className={`text-center w-full h-full ${cardBg} p-8 pt-16 rounded-[3.5rem] shadow-premium border animate-fade-in relative overflow-visible flex flex-col items-center justify-center`}>
@@ -1822,9 +1129,18 @@ export default function App() {
           <a href="https://ferhathocaingilizce.com" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Globe size={12} /> ferhathocaingilizce.com</a>
         </div>
       </footer>
-      <nav className={`fixed bottom-0 left-0 right-0 z-[500] pb-safe-nav backdrop-blur-xl ${isDark ? 'bg-slate-900/80' : 'bg-white/80'}`}>
+
+      {/* Fixed nav + iOS Safari bottom gap filler */}
+      <nav className={`fixed bottom-0 left-0 right-0 z-[500] backdrop-blur-xl ${isDark ? 'bg-slate-900/80' : 'bg-white/80'}`}
+           style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         {bottomNavigation}
       </nav>
+      {/* Safari URL-bar-gizlenince oluşan siyah boşluğu kapatır */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-[499] ${isDark ? 'bg-slate-900' : 'bg-white'}`}
+        style={{ height: 'env(safe-area-inset-bottom, 0px)' }}
+        aria-hidden="true"
+      />
       {globalModals}
     </div>
   );

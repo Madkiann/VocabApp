@@ -1,38 +1,28 @@
+
 import React, { useState } from 'react';
 import { Archive, Trash2, ArrowLeft, Folder, Plus, Move, Sparkles, Bookmark, Heart, History, Search, ArrowDownUp, Pin, X, Lock, BookOpen, Layers, CheckCircle2, ChevronRight, CheckCircle, AlertCircle, List } from 'lucide-react';
 import { Mascot } from './Mascot';
+import { useVocab } from '../context/VocabContext';
+import { useApp } from '../context/AppContext';
+import { useSettings } from '../context/SettingsContext';
 
 export const Vault = ({
-    t,
-    isDark,
-    bgMain,
-    textMain,
-    cardBg,
-    vocab = [],
-    savedWords,
-    setSelectedVaultWord,
-    setIsRevealed,
-    setIsTranslated,
-    setShowForms,
-    setShowAi,
-    setShowWriting,
-    toggleSaveWord,
-    setShowVault,
-    selectedVaultWord,
     renderCardContent,
     quickTx,
-    setQuickTx,
-    appLang,
-    vaultFolders,
-    setVaultFolders,
-    updateWordFolder,
-    deleteVaultFolder,
-    renameVaultFolder,
-    isAdmin = false,
-    swipeLog = { correctIds: [], wrongIds: [] },
-    activeFolder,
-    setActiveFolder
+    setQuickTx
 }) => {
+    const { t, isDark, isAdmin, appLang } = useSettings();
+    const { 
+        vocab, savedWords, vaultFolders, setVaultFolders, 
+        toggleSaveWord, updateWordFolder, deleteVaultFolder, renameVaultFolder 
+    } = useVocab();
+    const { 
+        showVault, setShowVault, swipeLog, activeVaultFolder: activeFolder, setActiveVaultFolder: setActiveFolder,
+        selectedVaultWord, setSelectedVaultWord, setIsRevealed, setAppMode, setIsRetryMode
+    } = useApp();
+
+    const cardBg = isDark ? 'glass-dark border-transparent shadow-premium' : 'glass border-transparent shadow-premium';
+
     const [learningTab, setLearningTab] = useState('all'); // 'all', 'success', 'wrong'
     const [isAdding, setIsAdding] = useState(false);
     const [newFolderName, setNewFolderName] = useState('');
@@ -47,7 +37,6 @@ export const Vault = ({
 
     const calculateMastery = (sm2) => {
         if (!sm2 || sm2.rep === 0) return 0;
-        // Interval-based mastery: 60 days is considered 100% mastered for a daily learner
         const mastery = Math.min(100, Math.round((sm2.int / 60) * 100));
         return mastery;
     };
@@ -87,7 +76,7 @@ export const Vault = ({
     // Card Detail View
     if (selectedVaultWord) {
         return (
-            <div className={`h-dvh w-full flex flex-col items-center p-4 font-sans transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
+            <div className={`h-dvh w-full flex flex-col items-center p-4 font-sans transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
                 {quickTx.visible && (
                     <div className="fixed z-50 pointer-events-none" style={{ left: `${quickTx.x}px`, top: `${quickTx.y - 12}px` }}>
                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 px-5 py-3 bg-indigo-600 text-white text-base font-black rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.4)] animate-fade-in whitespace-nowrap">
@@ -97,7 +86,7 @@ export const Vault = ({
                     </div>
                 )}
                 <div className="absolute top-safe left-6 z-20 mt-6">
-                    <button onClick={() => { setSelectedVaultWord(null); setIsTranslated(false); setShowForms(false); setShowAi(false); setShowWriting(false); setQuickTx(prev => ({ ...prev, visible: false })); }} className={`px-5 py-2.5 rounded-2xl font-black flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-premium ${isDark ? 'glass-dark text-slate-300' : 'glass text-slate-700'}`}>
+                    <button onClick={() => { setSelectedVaultWord(null); setQuickTx(prev => ({ ...prev, visible: false })); }} className={`px-5 py-2.5 rounded-2xl font-black flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-premium ${isDark ? 'glass-dark text-slate-300' : 'glass text-slate-700'}`}>
                         <ArrowLeft size={20} /> {t.backToVault || "Geri"}
                     </button>
                 </div>
@@ -222,7 +211,7 @@ export const Vault = ({
                             {wordsInFolder.map(w => {
                                 const mastery = calculateMastery(w.sm2);
                                 return (
-                                    <div key={w.id} onClick={() => { setSelectedVaultWord(w); setIsRevealed(true); setIsTranslated(false); setShowForms(false); setShowAi(false); setShowWriting(false); }} className={`p-5 rounded-[2rem] flex justify-between items-center shadow-lg cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98] ${isDark ? 'bg-slate-900/80 border border-slate-800' : 'bg-white border border-slate-100'}`}>
+                                    <div key={w.id} onClick={() => { setSelectedVaultWord(w); setIsRevealed(true); }} className={`p-5 rounded-[2rem] flex justify-between items-center shadow-lg cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98] ${isDark ? 'bg-slate-900/80 border border-slate-800' : 'bg-white border border-slate-100'}`}>
                                         <div className="flex-1 min-w-0 pr-4">
                                             <div className="flex items-center gap-3 mb-1.5">
                                                 <h3 className={`text-xl font-black tracking-tighter capitalize truncate ${isDark ? 'text-indigo-300' : 'text-indigo-800'}`}>

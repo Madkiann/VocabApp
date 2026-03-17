@@ -1,9 +1,14 @@
+
 import React, { useState, useMemo } from 'react';
 import { Book, Quote, BookOpen, ChevronRight, X, Languages, Shuffle, Plus, ChevronDown, Feather, LayoutGrid, ArrowLeft, Layers, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { grammarCases, quotes, readingPassages } from '../data/libraryData';
+import { useSettings } from '../context/SettingsContext';
+import { useApp } from '../context/AppContext';
 
-export const Library = ({ isDark, t, onClose }) => {
+export const Library = () => {
+    const { isDark, t } = useSettings();
+    const { setShowLibrary } = useApp();
     const [activeTab, setActiveTab] = useState('cases'); // cases, quotes, reading
 
     // Drill-down states for Cases
@@ -15,7 +20,7 @@ export const Library = ({ isDark, t, onClose }) => {
     const modules = [
         { id: 'core', name: 'İSİMLEŞTİRME & PASİF', description: 'Eylemden kavrama, temel dil sistemi.', color: 'indigo', categories: ['İsimleştirme', 'Pasif & Ettirgen'], icon: LayoutGrid },
         { id: 'architecture', name: 'CÜMLE MİMARİSİ (CLAUSES)', description: 'Yan cümlecikler ve kompleks yapılar.', color: 'emerald', categories: ['Clauses'], icon: BookOpen },
-        { id: 'advanced', name: 'KISALTMALAR & EDATLAR', description: 'Akademik akıcılık ve Reduction.', color: 'amber', categories: ['Kısaltma (Reduction)', 'Prepositions'], icon: Feather },
+        { id: 'advanced', name: 'KISALTMALAR & EDATLAR', description: 'Akademik akıcılık ve Reduction.', color: 'emerald', categories: ['Kısaltma (Reduction)', 'Prepositions'], icon: Feather },
         { id: 'patterns', name: 'MODALLAR & ÖZEL İFADELER', description: 'Duygu tonlamaları ve özel kalıplar.', color: 'rose', categories: ['Modals', 'Özel Kalıplar'], icon: Quote }
     ];
 
@@ -74,6 +79,8 @@ export const Library = ({ isDark, t, onClose }) => {
         setSelectedTitleId(null);
         setExpandedCategory(null);
     };
+
+    const onClose = () => setShowLibrary(false);
 
     return (
         <div className={`fixed inset-0 z-[600] flex flex-col pt-safe animate-fade-in ${isDark ? 'bg-[#0a0a0c] text-white' : 'bg-[#fcfcfd] text-slate-900'}`}>

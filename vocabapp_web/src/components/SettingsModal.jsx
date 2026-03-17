@@ -1,28 +1,18 @@
+
 import React from 'react';
 import { ArrowLeft, Settings, X, Languages, Moon, Sun, Hourglass, Share, Instagram, Globe, Heart, Sparkles, MessageSquare, ChevronRight } from 'lucide-react';
 import { Mascot } from './Mascot';
 import FlamingooImg from '../assets/Mascot/Flamingoo.png';
+import { useSettings } from '../context/SettingsContext';
+import { useApp } from '../context/AppContext';
 
-export const SettingsModal = ({
-    t,
-    isDark,
-    themePref,
-    cycleTheme,
-    getThemeText,
-    appLang,
-    setAppLang,
-    advanceTime,
-    showSettings,
-    setShowSettings,
-    setThemePref,
-    setShowCommunityHub,
-    isAdmin,
-    handleVersionClick,
-    verifyMasterKey,
-    setShowAdminPanel,
-    soundEnabled,
-    setSoundEnabled
-}) => {
+export const SettingsModal = () => {
+    const { 
+        t, isDark, themePref, cycleTheme, getThemeText, appLang, setAppLang, 
+        setThemePref, soundEnabled, setSoundEnabled, handleVersionClick, verifyMasterKey 
+    } = useSettings();
+    const { advanceTime, isAdmin, showSettings, setShowSettings, setShowCommunityHub, setShowAdminPanel } = useApp();
+
     const [themeDragStartX, setThemeDragStartX] = React.useState(0);
     const [isDraggingTheme, setIsDraggingTheme] = React.useState(false);
     const [showKeyModal, setShowKeyModal] = React.useState(false);
@@ -211,7 +201,6 @@ export const SettingsModal = ({
                                     </div>
                                 </div>
 
-                                {/* Decorative background element */}
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
                             </button>
 

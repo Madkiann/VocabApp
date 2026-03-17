@@ -1,13 +1,18 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, ChevronDown, Hand, Sparkles, BookOpen, Users, Compass, RefreshCw, Clock, Edit3, Trash2, Wind, Shuffle, SortAsc, Info, Music2, X, Flame, CloudRain, Waves } from 'lucide-react';
 import { motion, AnimatePresence, useSpring, useMotionValue, useTransform } from 'framer-motion';
 import FlamingoImg from '../assets/Mascot/Flamingoo.png';
 import { Mascot } from './Mascot';
 import { ChillModeAudio } from './ChillModeAudio';
+import { useSettings } from '../context/SettingsContext';
+import { useVocab } from '../context/VocabContext';
+import { useApp } from '../context/AppContext';
 
-// Audio assets are located in public/Audio and are referenced by static URL
-
-const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isAdmin, onDeleteWord, onEditWord, chillSortMode, setChillSortMode, showAmbientLounge, setShowAmbientLounge }) => {
+const ChillCard = ({ wordObj, index, total, onEditWord, onDeleteWord }) => {
+    const { t, isDark, isAdmin, appLang } = useSettings();
+    const { chillSortMode, setChillSortMode } = useVocab();
+    
     if (!wordObj) return null;
     const [isRevealed, setIsRevealed] = useState(false);
     const [isExampleTrRevealed, setIsExampleTrRevealed] = useState(false);
@@ -29,7 +34,16 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
         setIsCaseExamplesOpen(false);
     }, [wordObj?.id]);
 
-    const minsRemaining = Math.max(1, Math.ceil((total - index + 1) * 0.25));
+    const handleSpeak = (word, e) => {
+        if (e) e.stopPropagation();
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+    };
 
     const toggleSection = (section, e) => {
         if (e) e.stopPropagation();
@@ -416,7 +430,10 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
     );
 };
 
-export const ChillMode = ({ vocab, isDark, appLang, t, dueTodayCount, dueTodayMins, isAdmin, onDeleteWord, onEditWord, chillSortMode, setChillSortMode }) => {
+export const ChillMode = ({ onEditWord, onDeleteWord }) => {
+    const { t, isDark, isAdmin, appLang } = useSettings();
+    const { vocab, chillSortMode, setChillSortMode } = useVocab();
+    
     const [currentIndex, setCurrentIndex] = useState(1);
     const [showAmbientLounge, setShowAmbientLounge] = useState(false);
     const [activeSound, setActiveSound] = useState(null);
@@ -478,17 +495,6 @@ export const ChillMode = ({ vocab, isDark, appLang, t, dueTodayCount, dueTodayMi
             return () => container.removeEventListener('scroll', handleScroll);
         }
     }, [vocab.length, currentIndex]);
-
-    const handleSpeak = (word, e) => {
-        if (e) e.stopPropagation();
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-        }
-    };
 
     return (
         <div className="absolute inset-0 z-[150] overflow-hidden pointer-events-none">
@@ -568,19 +574,10 @@ export const ChillMode = ({ vocab, isDark, appLang, t, dueTodayCount, dueTodayMi
                         <ChillCard
                             key={`${wordObj.word}-${i}`}
                             wordObj={wordObj}
-                            isDark={isDark}
-                            appLang={appLang}
-                            t={t}
-                            handleSpeak={handleSpeak}
                             index={i + 1}
                             total={vocab.length}
-                            isAdmin={isAdmin}
-                            onDeleteWord={onDeleteWord}
                             onEditWord={onEditWord}
-                            chillSortMode={chillSortMode}
-                            setChillSortMode={setChillSortMode}
-                            showAmbientLounge={showAmbientLounge}
-                            setShowAmbientLounge={setShowAmbientLounge}
+                            onDeleteWord={onDeleteWord}
                         />
                     ))}
                 </div>

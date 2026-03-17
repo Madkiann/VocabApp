@@ -1,6 +1,12 @@
-import { useMemo } from 'react';
 
-export const useVocabStats = (vocab, dailyStats, currentDate, difficultWords) => {
+import { useMemo } from 'react';
+import { useVocab } from '../context/VocabContext';
+import { useApp } from '../context/AppContext';
+
+export const useVocabStats = () => {
+    const { vocab } = useVocab();
+    const { dailyStats, currentDate, difficultWords } = useApp();
+
     const totalReviewsAll = useMemo(
         () => vocab.reduce((acc, curr) => acc + (curr.sm2.totalReviews || 0), 0),
         [vocab]
@@ -45,7 +51,7 @@ export const useVocabStats = (vocab, dailyStats, currentDate, difficultWords) =>
 
     const weakWordsArray = useMemo(() => {
         return (difficultWords || []).map(dw => {
-            const card = (vocab || []).find(v => (v.text || v.eng) === dw.text);
+            const card = (vocab || []).find(v => (v.text || v.eng || v.word) === dw.text);
             return card ? { ...card, fails: dw.fails } : null;
         }).filter(Boolean).slice(0, 8);
     }, [difficultWords, vocab]);

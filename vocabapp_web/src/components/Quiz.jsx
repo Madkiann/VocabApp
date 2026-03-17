@@ -1,35 +1,39 @@
+
+import React from 'react';
 import { RefreshCw, GraduationCap, AlertCircle, Target, ArrowRight, Sparkles, Loader2, Check, RotateCcw } from 'lucide-react';
-import { BrandLogo } from './BrandLogo';
 import { Mascot } from './Mascot';
+import { useSettings } from '../context/SettingsContext';
+import { useApp } from '../context/AppContext';
+import { useVocab } from '../context/VocabContext';
+
 export const Quiz = ({
-    t,
-    isDark,
-    appMode,
-    quizQuestion,
-    isTranslated,
-    setIsTranslated,
-    quizFeedback,
     handleQuizAction,
-    selectedTokens,
-    availableTokens,
     toggleToken,
     handleSentenceCheck,
     onDragStart,
     onDragEnter,
     onDragEnd,
-    quizExplanation,
     explainMistake,
-    isExplaining,
-    setAppMode,
-    deck,
-    currentWordIndex,
-    setIsRevealed,
-    cardBg,
-    bgMain,
-    textMain,
-    isAdmin = false,
-    isQuizReview = false
+    isExplaining
 }) => {
+    const { t, isDark, isAdmin } = useSettings();
+    const { 
+        appMode, setAppMode,
+        quizQuestion, 
+        isRevealed, setIsRevealed,
+        quizFeedback, 
+        selectedTokens, 
+        availableTokens, 
+        quizExplanation,
+        isQuizReview
+    } = useApp();
+    const { deck, currentWordIndex } = useVocab();
+    
+    // UI Local States for Quiz only
+    const [isTranslated, setIsTranslated] = React.useState(false);
+
+    const cardBg = isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-100';
+
     const renderQuizFeedback = () => (
         <div className="flex flex-col h-full w-full animate-fade-in">
             <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 mb-4">

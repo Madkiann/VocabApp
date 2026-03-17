@@ -1,42 +1,38 @@
+
 import React, { useState } from 'react';
 import { BarChart3, Moon, Clock, Brain, RefreshCw, Zap, Hourglass, Share2, MoreHorizontal, Target, TrendingUp, Copy, ArrowRight, Trophy, Lock, ChevronDown, Award, FileText, Check, X, Languages, ChevronRight, Feather, RotateCcw } from 'lucide-react';
 import { Mascot } from './Mascot';
 import AbstractIcon from './AchievementIcons';
+import { useSettings } from '../context/SettingsContext';
+import { useApp } from '../context/AppContext';
+import { useVocab } from '../context/VocabContext';
+import { useVocabStats } from '../hooks/useVocabStats';
 
 export const Dashboard = ({
-    t,
-    isDark,
-    setShowDashboard,
-    streak,
-    dueTodayCount,
-    dueTodayMins,
-    learnedCount,
-    vocab,
-    totalReviewsAll,
-    globalRetention,
-    bondStats,
-    strongCount,
-    weakWordsArray,
-    bgMain,
-    textMain,
-    totalSecondsSpent,
-    setQuickTx,
-    vocabMode,
-    setVocabMode,
-    onLevelTestClick,
-    maxStreak = 0,
-    quizLog = { total: 0, correct: 0, history: [] },
-    onVaultClick,
-    onRetryQuiz,
-    showQuizHistory,
-    setShowQuizHistory,
-    dailyStats = {},
-    isAdmin = false,
-    advanceTime,
-    setShowLibrary,
-    onArenaClick,
-    onStreakRunClick
+    onRetryQuiz
 }) => {
+    const { t, isDark, isAdmin } = useSettings();
+    const { 
+        streak, maxStreak, totalSecondsSpent, quizLog, showQuizHistory, setShowQuizHistory, 
+        dailyStats, advanceTime, setShowDashboard, setShowVault, setActiveVaultFolder,
+        setShowLevelTest, setShowLibrary, setShowArenaGate, setShowStreakRun,
+        modeSwipes, rightSwipes, leftSwipes, difficultWords, totalSwipes
+    } = useApp();
+    const { vocab, vocabMode, setVocabMode, jumpToCard } = useVocab();
+    const statsFromHook = useVocabStats();
+
+    const {
+        totalReviewsAll,
+        globalRetention,
+        bondStats,
+        learnedCount,
+        strongCount,
+        dueTodayCount,
+        dueTodayMins,
+        dailyProgress,
+        weakWordsArray
+    } = statsFromHook;
+
     const [sortMode, setSortMode] = useState('name');
     const [achievementsExpanded, setAchievementsExpanded] = useState(false);
     const [achFilter, setAchFilter] = useState('all'); // all, locked, unlocked
@@ -45,8 +41,13 @@ export const Dashboard = ({
     const [selectedDayStats, setSelectedDayStats] = useState(null);
     const [showFocusHistory, setShowFocusHistory] = useState(false);
     const [detailedFocusDay, setDetailedFocusDay] = useState(null);
+    const [toast, setToast] = useState(null);
 
-    const currentDate = new Date().setHours(0, 0, 0, 0);
+    const showToast = (text) => {
+        setToast(text);
+        setTimeout(() => setToast(null), 3000);
+    };
+
     const hours = Math.floor(totalSecondsSpent / 3600);
     const mins = Math.floor((totalSecondsSpent % 3600) / 60);
 
@@ -59,8 +60,7 @@ export const Dashboard = ({
                     text: textToShare,
                     url: 'https://ferhathocaingilizce.com',
                 });
-                if (setQuickTx) setQuickTx({ visible: true, text: 'Harika! Başarıyla paylaşıldı. 🚀', x: window.innerWidth / 2, y: window.innerHeight - 100 });
-                setTimeout(() => setQuickTx(prev => ({ ...prev, visible: false })), 3000);
+                showToast('Harika! Başarıyla paylaşıldı. 🚀');
                 return;
             } catch (err) {
                 if (err.name === 'AbortError') return;
@@ -68,7 +68,7 @@ export const Dashboard = ({
         }
         try {
             await navigator.clipboard.writeText(textToShare);
-            if (setQuickTx) setQuickTx({ visible: true, text: 'Bağlantı kopyalandı! 🎉', x: window.innerWidth / 2, y: window.innerHeight - 100 });
+            showToast('Bağlantı kopyalandı! 🎉');
         } catch (e) {
             const textArea = document.createElement("textarea");
             textArea.value = textToShare;
@@ -76,13 +76,25 @@ export const Dashboard = ({
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
-            if (setQuickTx) setQuickTx({ visible: true, text: 'Kopyalandı! 🎉', x: window.innerWidth / 2, y: window.innerHeight - 100 });
+            showToast('Kopyalandı! 🎉');
         }
-        setTimeout(() => { if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }, 3000);
+    };
+
+    const handleVaultClick = (folder) => {
+        setShowVault(true);
+        setActiveVaultFolder(folder);
+        setShowDashboard(false);
     };
 
     return (
-        <div className={`h-dvh w-full flex flex-col items-center p-4 pt-safe font-sans transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
+        <div className={`h-dvh w-full flex flex-col items-center p-4 pt-safe font-sans transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => setShowStreakMenu(false)}>
+
+            {/* Local Toast */}
+            {toast && (
+                <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-[999] px-5 py-3 bg-indigo-600 text-white text-sm font-black rounded-xl shadow-xl animate-fade-in whitespace-nowrap">
+                    {toast}
+                </div>
+            )}
 
             <div className="fixed inset-0 pointer-events-none -z-0 overflow-hidden">
                 <div className={`absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] opacity-[0.15] ${isDark ? 'bg-indigo-600' : 'bg-indigo-400'}`}></div>
@@ -144,7 +156,7 @@ export const Dashboard = ({
                                         {t.share || "Paylaş"} <Copy size={16} className="opacity-50" />
                                     </button>
                                     <div className={`h-px w-full my-1 opacity-50 ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`}></div>
-                                    <button onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx({ visible: true, text: (t.comingSoon || 'Çok Yakında'), x: window.innerWidth / 2, y: window.innerHeight - 100 }); setTimeout(() => setQuickTx(prev => ({ ...prev, visible: false })), 2000); }} className={`w-full flex items-center justify-between px-3 py-2 text-sm font-bold rounded-xl transition-colors ${isDark ? 'text-emerald-400 hover:bg-slate-700' : 'text-emerald-600 hover:bg-slate-100'}`}>
+                                    <button onClick={() => { setShowStreakMenu(false); showToast(t.comingSoon || 'Çok Yakında'); }} className={`w-full flex items-center justify-between px-3 py-2 text-sm font-bold rounded-xl transition-colors ${isDark ? 'text-emerald-400 hover:bg-slate-700' : 'text-emerald-600 hover:bg-slate-100'}`}>
                                         {t.protectStreak || "Seriyi Koru"} <Target size={16} className="opacity-50" />
                                     </button>
                                     {isAdmin && (
@@ -223,7 +235,7 @@ export const Dashboard = ({
 
                     <div className="grid grid-cols-3 gap-3 mb-6">
                         <div
-                            onClick={() => onVaultClick && onVaultClick('Mastered')}
+                            onClick={() => handleVaultClick('Mastered')}
                             className={`p-4 rounded-[2rem] flex flex-col items-center justify-between aspect-square border cursor-pointer transition-all hover:scale-105 active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}
                         >
                             <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${isDark ? 'bg-emerald-500/10 text-emerald-500' : 'bg-emerald-50 text-emerald-500'}`}>
@@ -235,7 +247,7 @@ export const Dashboard = ({
                             </div>
                         </div>
                         <div
-                            onClick={() => onVaultClick && onVaultClick('Learning')}
+                            onClick={() => handleVaultClick('Learning')}
                             className={`p-4 rounded-[2rem] flex flex-col items-center justify-between aspect-square border cursor-pointer transition-all hover:scale-105 active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}
                         >
                             <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${isDark ? 'bg-amber-500/10 text-amber-500' : 'bg-amber-50 text-amber-500'}`}>
@@ -247,7 +259,7 @@ export const Dashboard = ({
                             </div>
                         </div>
                         <div
-                            onClick={() => setShowQuizHistory && setShowQuizHistory(true)}
+                            onClick={() => setShowQuizHistory(true)}
                             className={`p-4 rounded-[2rem] flex flex-col items-center justify-between aspect-square border cursor-pointer transition-all hover:scale-105 active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}
                         >
                             <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${isDark ? 'bg-indigo-500/10 text-indigo-500' : 'bg-indigo-50 text-indigo-500'}`}>
@@ -321,7 +333,7 @@ export const Dashboard = ({
 
                         {/* ARENA - Principal Growth Mode */}
                         <div
-                            onClick={(e) => { e.stopPropagation(); if (onVaultClick) onVaultClick('Learning'); }}
+                            onClick={(e) => { e.stopPropagation(); handleVaultClick('Learning'); }}
                             className={`p-7 rounded-[2.8rem] border mb-4 cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.98] relative overflow-hidden group ${isDark ? 'bg-gradient-to-br from-indigo-500/10 to-transparent border-indigo-500/20 shadow-glow-indigo/5' : 'bg-gradient-to-br from-indigo-50 to-white border-indigo-100 shadow-sm'}`}
                         >
                             {/* Background Mascot - Arena Variant */}
@@ -361,7 +373,7 @@ export const Dashboard = ({
                                 </div>
 
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); onArenaClick && onArenaClick(); }}
+                                    onClick={(e) => { e.stopPropagation(); setShowArenaGate(true); }}
                                     className={`w-full py-4 rounded-[1.8rem] text-[11px] font-black uppercase tracking-widest transition-all ${isDark ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'}`}
                                 >
                                     ARENAYA GİRİŞ YAP <ArrowRight size={14} className="inline ml-1" />
@@ -373,7 +385,7 @@ export const Dashboard = ({
                             {/* Exercise Library System */}
                             <div
                                 onClick={(e) => { e.stopPropagation(); setShowLibrary(true); }}
-                                className={`p-6 rounded-[2.5rem] border cursor-pointer transition-all hover:scale-[1.03] active:scale-95 flex flex-col items-center text-center relative overflow-hidden group ${isDark ? 'bg-emerald-500/10 border-emerald-500/20 shadow-glow-emerald/5' : 'bg-emerald-50 border-emerald-100 shadow-sm'}`}
+                                className={`p-6 rounded-[2.5rem] border cursor-pointer transition-all hover:scale-[1.03] active:scale-[95] flex flex-col items-center text-center relative overflow-hidden group ${isDark ? 'bg-emerald-500/10 border-emerald-500/20 shadow-glow-emerald/5' : 'bg-emerald-50 border-emerald-100 shadow-sm'}`}
                             >
                                 <div className="absolute -top-4 -right-4 opacity-[0.08] group-hover:opacity-20 transition-all duration-700 group-hover:scale-125">
                                     <Mascot isDark={isDark} size="lg" variant="3d" look="book" />
@@ -390,8 +402,8 @@ export const Dashboard = ({
 
                             {/* Enhanced Level Test Portal */}
                             <div
-                                onClick={(e) => { e.stopPropagation(); onLevelTestClick && onLevelTestClick(); }}
-                                className={`p-6 rounded-[2.5rem] border cursor-pointer transition-all hover:scale-[1.03] active:scale-95 flex flex-col items-center text-center relative overflow-hidden group ${isDark ? 'bg-amber-500/10 border-amber-500/20 shadow-glow-amber/5' : 'bg-amber-50 border-amber-100 shadow-sm'}`}
+                                onClick={(e) => { e.stopPropagation(); setShowLevelTest(true); }}
+                                className={`p-6 rounded-[2.5rem] border cursor-pointer transition-all hover:scale-[1.03] active:scale-[95] flex flex-col items-center text-center relative overflow-hidden group ${isDark ? 'bg-amber-500/10 border-amber-500/20 shadow-glow-amber/5' : 'bg-amber-50 border-amber-100 shadow-sm'}`}
                             >
                                 <div className="absolute -top-4 -right-4 opacity-[0.08] group-hover:opacity-20 transition-all duration-700 group-hover:scale-125">
                                     <Mascot isDark={isDark} size="lg" variant="3d" look="glasses" />

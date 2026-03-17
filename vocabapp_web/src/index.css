@@ -22,9 +22,9 @@
         user-select: none;
         -webkit-tap-highlight-color: transparent;
 
-        /* Dynamic Island için güvenli tampon alanı */
-        --ios-top-buffer: env(safe-area-inset-top, 20px);
-        --ios-bottom-buffer: env(safe-area-inset-bottom, 20px);
+        /* Dynamic Island / Notch için güvenli tampon alanı */
+        --ios-top-buffer: max(env(safe-area-inset-top, 20px), 20px);
+        --ios-bottom-buffer: max(env(safe-area-inset-bottom, 0px), 0px);
     }
 
     @keyframes fade-in {
@@ -270,12 +270,13 @@
     }
 
     .pt-safe-island {
-        /* Hem güvenli alanı al hem de 12px ekstra nefes payı bırak */
-        padding-top: calc(var(--ios-top-buffer) + 12px);
+        /* Dynamic Island / Notch + extra breathing room */
+        padding-top: calc(max(env(safe-area-inset-top, 20px), 20px) + 14px);
     }
 
     .pb-safe-nav {
-        padding-bottom: calc(var(--ios-bottom-buffer) + 4px);
+        /* Bottom padding inside the nav bar itself */
+        padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     .custom-scrollbar::-webkit-scrollbar {
