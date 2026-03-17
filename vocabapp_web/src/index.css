@@ -13,6 +13,14 @@
         --shadow-glow-blue: 0 0 30px rgba(59, 130, 246, 0.4);
         --shadow-glow-emerald: 0 0 30px rgba(16, 185, 129, 0.4);
         --shadow-glow-rose: 0 0 30px rgba(244, 63, 94, 0.4);
+
+        /* Zero-Scroll Persistence */
+        height: 100dvh;
+        width: 100vw;
+        overflow: hidden;
+        overscroll-behavior: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
     }
 
     @keyframes fade-in {
@@ -212,6 +220,13 @@
 
 @layer base {
     body {
+        margin: 0;
+        /* Hardware Awareness: Safe Area Handling */
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
         transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         transition-duration: 300ms;
@@ -221,6 +236,12 @@
 @layer utilities {
     .scrollbar-hide::-webkit-scrollbar {
         display: none;
+    }
+
+    .scroll-y {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
     }
 
     .scrollbar-hide {

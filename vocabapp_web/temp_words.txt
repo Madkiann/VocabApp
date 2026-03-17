@@ -1,0 +1,1005 @@
+	{
+		"id": "word_1772870100001",
+		"word": "Ambiguity",
+		"trWord": "Belirsizlik/Anlam Karmaşası",
+		"phonetic": "/ˌæmbɪˈɡjuːəti/",
+		"targetMode": "vocabulary",
+		"engDef": "The quality of being open to more than one interpretation; inexactness.",
+		"trDef": "Birden fazla yoruma açık olma durumu; tam olarak belirgin olmama, karmaşıklık.",
+		"details": {
+			"origin": {
+				"root": "Agere (Latin: To Drive)",
+				"prefix": "Ambi- (Both ways)",
+				"suffix": "-ity (Noun forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Vagueness",
+					"Obscurity",
+					"Uncertainty"
+				],
+				"antonyms": [
+					"Clarity",
+					"Precision",
+					"Certainty"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "The writer used ambiguity to create a sense of mystery.",
+					"tr": "Yazar, bir gizem duygusu yaratmak için belirsizliği kullandı."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Sözleşmedeki anlam karmaşasından kaçınmak için her maddeyi netleştirdiler.",
+					"en": "They clarified every clause to avoid ambiguity in the contract."
+				},
+				{
+					"tr": "Gelecek hakkındaki bu belirsizlik herkesi endişelendiriyor.",
+					"en": "This ambiguity about the future worries everyone."
+				}
+			],
+			"root": "Agere (Latin: To Drive)"
+		},
+		"wordFamily": {
+			"noun": "Ambiguity",
+			"verb": "None",
+			"adjective": "Ambiguous",
+			"adverb": "Ambiguously"
+		},
+		"syncToChill": true,
+		"pos": "Noun",
+		"engExample": "The ambiguity of the law caused many legal disputes.",
+		"trExample": "Yasanın belirsizliği pek çok hukuki ihtilafa neden oldu.",
+		"posTr": "isim"
+	},
+	{
+		"id": "word_1772870100002",
+		"word": "Advocate",
+		"trWord": "Savunmak/Desteklemek",
+		"phonetic": "/ˈædvəkeɪt/",
+		"targetMode": "vocabulary",
+		"engDef": "To publicly recommend or support a particular cause or policy.",
+		"trDef": "Belirli bir davayı veya politikayı kamuya açıkça tavsiye etmek veya desteklemek.",
+		"details": {
+			"origin": {
+				"root": "Vocare (Latin: To Call)",
+				"prefix": "Ad- (To)",
+				"suffix": "None"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Support",
+					"Promote",
+					"Uphold",
+					"Champion"
+				],
+				"antonyms": [
+					"Oppose",
+					"Condemn",
+					"Reject"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "Many doctors advocate a healthy diet and regular exercise.",
+					"tr": "Pek çok doktor sağlıklı bir diyeti ve düzenli egzersizi savunur."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Yerel topluluk, yeni bir okulun inşa edilmesini savunuyor.",
+					"en": "The local community advocates building a new school."
+				},
+				{
+					"tr": "Şiddete başvurmadan barışı savunmak gerçek cesarettir.",
+					"en": "Advocating peace without resorting to violence is true courage."
+				}
+			],
+			"root": "Vocare (Latin: To Call)"
+		},
+		"wordFamily": {
+			"noun": "Advocate/Advocacy",
+			"verb": "Advocate",
+			"adjective": "Advocatory",
+			"adverb": "None"
+		},
+		"syncToChill": true,
+		"pos": "Verb",
+		"engExample": "The organization advocates for the rights of indigenous people.",
+		"trExample": "Kuruluş, yerli halkların haklarını savunuyor.",
+		"posTr": "fiil"
+	},
+	{
+		"id": "word_1772870100003",
+		"word": "Obsolete",
+		"trWord": "Modası Geçmiş/Kullanımdan Kalkmış",
+		"phonetic": "/ˌɒbsəˈliːt/",
+		"targetMode": "vocabulary",
+		"engDef": "No longer produced or used; out of date.",
+		"trDef": "Artık üretilmeyen veya kullanılmayan; güncelliğini yitirmiş.",
+		"details": {
+			"origin": {
+				"root": "Ere (Latin: To Go)",
+				"prefix": "Ob- (Away)",
+				"suffix": "None"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Outdated",
+					"Antique",
+					"Archaic"
+				],
+				"antonyms": [
+					"Modern",
+					"Current",
+					"Contemporary"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "Gas lamps became obsolete after the invention of light bulbs.",
+					"tr": "Ampulün icadından sonra gaz lambalarının modası geçti."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Bu makine parçaları artık tamamen kullanımdan kalktı.",
+					"en": "These machine parts have become completely obsolete now."
+				},
+				{
+					"tr": "Eski yasalar günümüz ihtiyaçlarını karşılamadığı için modası geçmiş sayılıyor.",
+					"en": "Old laws are considered obsolete as they do not meet today's needs."
+				}
+			],
+			"root": "Ere (Latin: To Go)"
+		},
+		"wordFamily": {
+			"noun": "Obsolescence",
+			"verb": "None",
+			"adjective": "Obsolete",
+			"adverb": "None"
+		},
+		"syncToChill": true,
+		"pos": "Adjective",
+		"engExample": "New technology has made these old computers obsolete.",
+		"trExample": "Yeni teknoloji bu eski bilgisayarları kullanımdan kaldırdı.",
+		"posTr": "sıfat"
+	},
+	{
+		"id": "word_1772870100004",
+		"word": "Merely",
+		"trWord": "Sadece/Yalnızca/Ancak",
+		"phonetic": "/ˈmɪərli/",
+		"targetMode": "vocabulary",
+		"engDef": "Just; only; used to emphasize that you mean exactly what you are saying and nothing more.",
+		"trDef": "Sadece, yalnızca; söylenenin ötesinde başka bir anlam olmadığını vurgulamak için kullanılır.",
+		"details": {
+			"origin": {
+				"root": "Merus (Latin: Pure, Undiluted)",
+				"prefix": "None",
+				"suffix": "-ly (Adverb forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Purely",
+					"Simply",
+					"Only"
+				],
+				"antonyms": [
+					"Greatly",
+					"Significantly",
+					"Entirely"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "I wasn't complaining; I was merely making a suggestion.",
+					"tr": "Şikayet etmiyordum; sadece bir öneride bulunuyordum."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Bu sadece bir başlangıç, daha yapacak çok işimiz var.",
+					"en": "This is merely a beginning; we have much more work to do."
+				},
+				{
+					"tr": "Olayı yalnızca kendi perspektifinden değerlendiriyordu.",
+					"en": "He was evaluating the event merely from his own perspective."
+				}
+			],
+			"root": "Merus (Latin: Pure, Undiluted)"
+		},
+		"wordFamily": {
+			"noun": "None",
+			"verb": "None",
+			"adjective": "Mere",
+			"adverb": "Merely"
+		},
+		"syncToChill": true,
+		"pos": "Adverb",
+		"engExample": "He is merely a child and doesn't understand the consequences.",
+		"trExample": "O yalnızca bir çocuk ve sonuçları anlamıyor.",
+		"posTr": "zarf"
+	},
+	{
+		"id": "word_1772870100005",
+		"word": "Consensus",
+		"trWord": "Fikir Birliği/Uzlaşma",
+		"phonetic": "/kənˈsensəs/",
+		"targetMode": "vocabulary",
+		"engDef": "A general agreement among a group of people.",
+		"trDef": "Bir grup insan arasındaki genel fikir birliği veya anlaşma.",
+		"details": {
+			"origin": {
+				"root": "Sentire (Latin: To Feel)",
+				"prefix": "Con- (Together)",
+				"suffix": "None"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Accord",
+					"Harmony",
+					"Unanimity"
+				],
+				"antonyms": [
+					"Disagreement",
+					"Conflict",
+					"Dissent"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "There is a broad consensus that the education system needs reform.",
+					"tr": "Eğitim sisteminin reforma ihtiyacı olduğu konusunda geniş bir uzlaşma var."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Toplantının sonunda ortak bir karara varmak imkansızdı.",
+					"en": "It was impossible to reach a general consensus at the end of the meeting."
+				},
+				{
+					"tr": "Bilim dünyasında iklim değişikliği konusunda bir fikir birliği mevcuttur.",
+					"en": "A consensus exists in the scientific community regarding climate change."
+				}
+			],
+			"root": "Sentire (Latin: To Feel)"
+		},
+		"wordFamily": {
+			"noun": "Consensus",
+			"verb": "Consent",
+			"adjective": "Consensual",
+			"adverb": "Consensually"
+		},
+		"syncToChill": true,
+		"pos": "Noun",
+		"engExample": "The committee reached a consensus after hours of discussion.",
+		"trExample": "Komite, saatler süren tartışmaların ardından bir fikir birliğine vardı.",
+		"posTr": "isim"
+	},
+	{
+		"id": "word_1772870100006",
+		"word": "Implement",
+		"trWord": "Uygulamak/Yürürlüğe Koymak",
+		"phonetic": "/ˈɪmplɪment/",
+		"targetMode": "vocabulary",
+		"engDef": "To put a decision, plan, or agreement into effect.",
+		"trDef": "Bir kararı, planı veya anlaşmayı uygulamaya geçirmek.",
+		"details": {
+			"origin": {
+				"root": "Plere (Latin: To Fill)",
+				"prefix": "In- (In/Upon)",
+				"suffix": "None"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Execute",
+					"Apply",
+					"Enforce"
+				],
+				"antonyms": [
+					"Neglect",
+					"Halt",
+					"Ignore"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "It is often harder to implement a strategy than to design one.",
+					"tr": "Bir stratejiyi uygulamak, onu tasarlamaktan genellikle daha zordur."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Okul yönetimi yeni güvenlik kurallarını derhal uygulayacak.",
+					"en": "The school administration will implement new security rules immediately."
+				},
+				{
+					"tr": "Planı hayata geçirmek için yeterli bütçemiz yok.",
+					"en": "We don't have enough budget to implement the plan."
+				}
+			],
+			"root": "Plere (Latin: To Fill)"
+		},
+		"wordFamily": {
+			"noun": "Implementation/Implement",
+			"verb": "Implement",
+			"adjective": "Implementable",
+			"adverb": "None"
+		},
+		"syncToChill": true,
+		"pos": "Verb",
+		"engExample": "The government is determined to implement the new tax reforms.",
+		"trExample": "Hükümet, yeni vergi reformlarını uygulamaya kararlı.",
+		"posTr": "fiil"
+	},
+	{
+		"id": "word_1772870100007",
+		"word": "Diligent",
+		"trWord": "Çalışkan/Gayretli/Titiz",
+		"phonetic": "/ˈdɪlɪdʒənt/",
+		"targetMode": "vocabulary",
+		"engDef": "Having or showing care and conscientiousness in one's work or duties.",
+		"trDef": "İşinde veya görevlerinde özen ve vicdanlılık gösteren.",
+		"details": {
+			"origin": {
+				"root": "Legere (Latin: To Choose)",
+				"prefix": "Di- (Apart)",
+				"suffix": "None"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Industrious",
+					"Assiduous",
+					"Hard-working"
+				],
+				"antonyms": [
+					"Lazy",
+					"Negligent",
+					"Idle"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "Thanks to his diligent efforts, the project was a huge success.",
+					"tr": "Onun gayretli çabaları sayesinde proje büyük bir başarıya ulaştı."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Hukuk bürosu, davayı kazanmak için çok titiz bir çalışma yürüttü.",
+					"en": "The law firm conducted a very diligent investigation to win the case."
+				},
+				{
+					"tr": "Müdür, her zaman en çalışkan çalışanlarını ödüllendirir.",
+					"en": "The manager always rewards his most diligent employees."
+				}
+			],
+			"root": "Legere (Latin: To Choose)"
+		},
+		"wordFamily": {
+			"noun": "Diligence",
+			"verb": "None",
+			"adjective": "Diligent",
+			"adverb": "Diligently"
+		},
+		"syncToChill": true,
+		"pos": "Adjective",
+		"engExample": "She is a diligent student who always finishes her homework on time.",
+		"trExample": "O, ödevlerini her zaman vaktinde bitiren çalışkan bir öğrencidir.",
+		"posTr": "sıfat"
+	},
+	{
+		"id": "word_1772870100008",
+		"word": "Virtually",
+		"trWord": "Neredeyse/Hemen Hemen/Sanal Olarak",
+		"phonetic": "/ˈvɜːtʃuəli/",
+		"targetMode": "vocabulary",
+		"engDef": "Nearly; almost; or by means of optical or computer software.",
+		"trDef": "Neredeyse, hemen hemen; veya bilgisayar yazılımı aracılığıyla.",
+		"details": {
+			"origin": {
+				"root": "Virtus (Latin: Virtue/Power)",
+				"prefix": "None",
+				"suffix": "-ally (Adverb forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Practically",
+					"Nearly",
+					"Almost"
+				],
+				"antonyms": [
+					"Actually",
+					"Exactly",
+					"Barely"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "It is virtually impossible to solve this puzzle in five minutes.",
+					"tr": "Bu bulmacayı beş dakikada çözmek neredeyse imkansızdır."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Teknoloji sayesinde artık dünyanın her yeriyle sanal olarak bağlantı kurabiliyoruz.",
+					"en": "Thanks to technology, we can now connect with virtually everywhere in the world."
+				},
+				{
+					"tr": "Kaza anında araçta bulunanların hepsi yara almadan kurtuldu.",
+					"en": "Virtually everyone in the car survived the accident without injuries."
+				}
+			],
+			"root": "Virtus (Latin: Virtue/Power)"
+		},
+		"wordFamily": {
+			"noun": "Virtuality",
+			"verb": "None",
+			"adjective": "Virtual",
+			"adverb": "Virtually"
+		},
+		"syncToChill": true,
+		"pos": "Adverb",
+		"engExample": "The stadium was virtually empty by the end of the game.",
+		"trExample": "Maçın sonunda stadyum neredeyse boşalmıştı.",
+		"posTr": "zarf"
+	},
+	{
+		"id": "word_1772870100010",
+		"word": "Facilitate",
+		"trWord": "Kolaylaştırmak",
+		"phonetic": "/fəˈsɪlɪteɪt/",
+		"targetMode": "vocabulary",
+		"engDef": "To make an action or process easy or easier.",
+		"trDef": "Bir eylemi veya süreci kolaylaştırmak veya daha kolay hale getirmek.",
+		"details": {
+			"origin": {
+				"root": "Facilis (Latin: Easy)",
+				"prefix": "None",
+				"suffix": "-ate (Verb forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Ease",
+					"Assist",
+					"Simplify"
+				],
+				"antonyms": [
+					"Hinder",
+					"Obstruct",
+					"Complicate"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "The goal of the meeting is to facilitate cooperation between departments.",
+					"tr": "Toplantının amacı bölümler arasındaki iş birliğini kolaylaştırmaktır."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Modern teknolojiler bilgiye erişimi büyük ölçüde kolaylaştırdı.",
+					"en": "Modern technologies have greatly facilitated access to information."
+				},
+				{
+					"tr": "Öğretmen, tartışmayı yöneterek öğrencilerin fikirlerini paylaşmasını kolaylaştırdı.",
+					"en": "The teacher facilitated the discussion, making it easier for students to share their ideas."
+				}
+			],
+			"root": "Facilis (Latin: Easy)"
+		},
+		"wordFamily": {
+			"noun": "Facilitation/Facilitator",
+			"verb": "Facilitate",
+			"adjective": "Facilitative",
+			"adverb": "None"
+		},
+		"syncToChill": true,
+		"pos": "Verb",
+		"engExample": "The new bridge will facilitate travel between the two islands.",
+		"trExample": "Yeni köprü, iki ada arasındaki ulaşımı kolaylaştıracak.",
+		"posTr": "fiil"
+	},
+	{
+		"id": "word_1772870100011",
+		"word": "Vulnerable",
+		"trWord": "Savunmasız/Hassas/İncinebilir",
+		"phonetic": "/ˈvʌlnərəbl/",
+		"targetMode": "vocabulary",
+		"engDef": "Susceptible to physical or emotional attack or harm.",
+		"trDef": "Fiziksel veya duygusal saldırı veya zarara açık; hassas.",
+		"details": {
+			"origin": {
+				"root": "Vulnus (Latin: Wound)",
+				"prefix": "None",
+				"suffix": "-able (Adjective forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Defenseless",
+					"Exposed",
+					"Susceptible"
+				],
+				"antonyms": [
+					"Resilient",
+					"Invulnerable",
+					"Protected"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "Children are the most vulnerable members of society.",
+					"tr": "Çocuklar toplumun en savunmasız üyeleridir."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Siber saldırılara karşı sistemimiz şu an oldukça hassas bir durumda.",
+					"en": "Our system is currently very vulnerable to cyber attacks."
+				},
+				{
+					"tr": "Yavru kuşlar, uçmayı öğrenene kadar avcılara karşı savunmasızdır.",
+					"en": "Baby birds are vulnerable to predators until they learn to fly."
+				}
+			],
+			"root": "Vulnus (Latin: Wound)"
+		},
+		"wordFamily": {
+			"noun": "Vulnerability",
+			"verb": "None",
+			"adjective": "Vulnerable",
+			"adverb": "Vulnerably"
+		},
+		"syncToChill": true,
+		"pos": "Adjective",
+		"engExample": "Old people are particularly vulnerable to the flu.",
+		"trExample": "Yaşlı insanlar gribe karşı özellikle savunmasızdırlar.",
+		"posTr": "sıfat"
+	},
+	{
+		"id": "word_1772870100012",
+		"word": "Reluctantly",
+		"trWord": "İsteksizce/Gönülsüzce",
+		"phonetic": "/rɪˈlʌktəntli/",
+		"targetMode": "vocabulary",
+		"engDef": "In an unwilling and hesitant way.",
+		"trDef": "İsteksiz ve tereddütlü bir şekilde.",
+		"details": {
+			"origin": {
+				"root": "Luctari (Latin: To Struggle)",
+				"prefix": "Re- (Against)",
+				"suffix": "-ly (Adverb forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Unwillingly",
+					"Grudgingly",
+					"Hesitantly"
+				],
+				"antonyms": [
+					"Willingly",
+					"Eagerly",
+					"Readily"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "He reluctantly handed over the keys to his car.",
+					"tr": "Araba anahtarlarını isteksizce teslim etti."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Çocuklar tatilden sonra okula gönülsüzce döndüler.",
+					"en": "The children returned to school reluctantly after the holiday."
+				},
+				{
+					"tr": "Hata yaptığını sonunda ama isteksizce kabul etti.",
+					"en": "He finally, but reluctantly, admitted that he made a mistake."
+				}
+			],
+			"root": "Luctari (Latin: To Struggle)"
+		},
+		"wordFamily": {
+			"noun": "Reluctance",
+			"verb": "None",
+			"adjective": "Reluctant",
+			"adverb": "Reluctantly"
+		},
+		"syncToChill": true,
+		"pos": "Adverb",
+		"engExample": "She reluctantly agreed to help him with his project.",
+		"trExample": "Onun projesine yardım etmeyi isteksizce kabul etti.",
+		"posTr": "zarf"
+	},
+	{
+		"id": "word_1772870100013",
+		"word": "Infrastructure",
+		"trWord": "Altyapı",
+		"phonetic": "/ˈɪnfrəstrʌktʃə(r)/",
+		"targetMode": "vocabulary",
+		"engDef": "The basic physical and organizational structures and facilities needed for the operation of a society or enterprise.",
+		"trDef": "Bir toplumun veya kuruluşun işleyişi için gerekli olan temel fiziksel ve organizasyonel yapılar ve tesisler.",
+		"details": {
+			"origin": {
+				"root": "Struere (Latin: To Build)",
+				"prefix": "Infra- (Below)",
+				"suffix": "None"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Base",
+					"Foundation",
+					"Framework"
+				],
+				"antonyms": [
+					"Superstructure"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "A strong digital infrastructure is essential for modern businesses.",
+					"tr": "Modern işletmeler için güçlü bir dijital altyapı şarttır."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Depremden sonra kentin su ve elektrik altyapısı büyük zarar gördü.",
+					"en": "The city's water and electricity infrastructure was heavily damaged after the earthquake."
+				},
+				{
+					"tr": "Ulaşım altyapısını geliştirmek ekonomik büyümeyi destekler.",
+					"en": "Improving the transportation infrastructure supports economic growth."
+				}
+			],
+			"root": "Struere (Latin: To Build)"
+		},
+		"wordFamily": {
+			"noun": "Infrastructure",
+			"verb": "None",
+			"adjective": "Infrastructural",
+			"adverb": "Infrastructurally"
+		},
+		"syncToChill": true,
+		"pos": "Noun",
+		"engExample": "The city needs to invest more in its aging infrastructure.",
+		"trExample": "Şehir, yaşlanan altyapısına daha fazla yatırım yapmalı.",
+		"posTr": "isim"
+	},
+	{
+		"id": "word_1772870100014",
+		"word": "Contradict",
+		"trWord": "Çelişmek/Aksini Söylemek",
+		"phonetic": "/ˌkɒntrəˈdɪkt/",
+		"targetMode": "vocabulary",
+		"engDef": "To deny the truth of a statement by asserting the opposite.",
+		"trDef": "Aksini iddia ederek bir ifadenin doğruluğunu reddetmek veya bir durumla zıt düşmek.",
+		"details": {
+			"origin": {
+				"root": "Dicere (Latin: To Speak)",
+				"prefix": "Contra- (Against)",
+				"suffix": "None"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Deny",
+					"Oppose",
+					"Conflict"
+				],
+				"antonyms": [
+					"Agree",
+					"Confirm",
+					"Support"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "Don't contradict me when I'm speaking to the children.",
+					"tr": "Ben çocuklarla konuşurken benimle çelişme (aksini söyleme)."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Yapılan yeni araştırmalar eski teorileri yalanlıyor.",
+					"en": "New research contradicts previous theories."
+				},
+				{
+					"tr": "Onun sözleri ve eylemleri her zaman birbiriyle çelişiyor.",
+					"en": "His words and actions always contradict each other."
+				}
+			],
+			"root": "Dicere (Latin: To Speak)"
+		},
+		"wordFamily": {
+			"noun": "Contradiction",
+			"verb": "Contradict",
+			"adjective": "Contradictory",
+			"adverb": "Contradictorily"
+		},
+		"syncToChill": true,
+		"pos": "Verb",
+		"engExample": "The witness's testimony seems to contradict the physical evidence.",
+		"trExample": "Tanığın ifadesi fiziksel kanıtlarla çelişiyor gibi görünüyor.",
+		"posTr": "fiil"
+	},
+	{
+		"id": "word_1772870100016",
+		"word": "Precisely",
+		"trWord": "Tam Olarak/Kesinlikle",
+		"phonetic": "/prɪˈsaɪsli/",
+		"targetMode": "vocabulary",
+		"engDef": "In a way that is exact and accurate; used to emphasize the accuracy of a statement.",
+		"trDef": "Tam ve doğru bir şekilde; bir ifadenin doğruluğunu vurgulamak için kullanılır.",
+		"details": {
+			"origin": {
+				"root": "Caedere (Latin: To Cut)",
+				"prefix": "Pre- (Before)",
+				"suffix": "-ly (Adverb forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Exactly",
+					"Accurately",
+					"Correctly"
+				],
+				"antonyms": [
+					"Approximately",
+					"Vaguely",
+					"Inaccurately"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "That is precisely what I was trying to say.",
+					"tr": "Tam olarak söylemeye çalıştığım şey buydu."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Bilim insanları bu iki maddenin nasıl etkileşime girdiğini tam olarak biliyorlar.",
+					"en": "Scientists know precisely how these two substances interact."
+				},
+				{
+					"tr": "Talimatları kesinlikle belirtildiği şekilde uygulamanız gerekiyor.",
+					"en": "You need to follow the instructions precisely as stated."
+				}
+			],
+			"root": "Caedere (Latin: To Cut)"
+		},
+		"wordFamily": {
+			"noun": "Precision",
+			"verb": "None",
+			"adjective": "Precise",
+			"adverb": "Precisely"
+		},
+		"syncToChill": true,
+		"pos": "Adverb",
+		"engExample": "The meeting started at 10:00 AM precisely.",
+		"trExample": "Toplantı tam olarak sabah 10:00'da başladı.",
+		"posTr": "zarf"
+	},
+	{
+		"id": "word_1772870100017",
+		"word": "Resilience",
+		"trWord": "Dayanıklılık/Kendini Toparlama Gücü",
+		"phonetic": "/rɪˈzɪliəns/",
+		"targetMode": "vocabulary",
+		"engDef": "The capacity to recover quickly from difficulties; toughness.",
+		"trDef": "Zorluklardan çabuk kurtulma kapasitesi; psikolojik veya fiziksel dayanıklılık.",
+		"details": {
+			"origin": {
+				"root": "Salire (Latin: To Leap)",
+				"prefix": "Re- (Back)",
+				"suffix": "-ence (Noun forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Flexibility",
+					"Toughness",
+					"Durability"
+				],
+				"antonyms": [
+					"Fragility",
+					"Weakness",
+					"Vulnerability"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "Building emotional resilience is key to managing stress.",
+					"tr": "Duygusal dayanıklılık geliştirmek, stresi yönetmenin anahtarıdır."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Ekonomi, küresel krize karşı şaşırtıcı bir dayanıklılık gösterdi.",
+					"en": "The economy showed surprising resilience against the global crisis."
+				},
+				{
+					"tr": "Bitkinin soğuk havaya karşı direnci oldukça yüksektir.",
+					"en": "The plant's resilience to cold weather is quite high."
+				}
+			],
+			"root": "Salire (Latin: To Leap)"
+		},
+		"wordFamily": {
+			"noun": "Resilience",
+			"verb": "Resile",
+			"adjective": "Resilient",
+			"adverb": "Resiliently"
+		},
+		"syncToChill": true,
+		"pos": "Noun",
+		"engExample": "The resilience of the local people after the flood was inspiring.",
+		"trExample": "Selden sonra yerel halkın gösterdiği dayanıklılık ilham vericiydi.",
+		"posTr": "isim"
+	},
+	{
+		"id": "word_1772870100018",
+		"word": "Diminish",
+		"trWord": "Azalmak/Eksilmek/Küçültmek",
+		"phonetic": "/dɪˈmɪnɪʃ/",
+		"targetMode": "vocabulary",
+		"engDef": "To make or become less.",
+		"trDef": "Bir şeyi azaltmak veya kendiliğinden azalmak, etkisini kaybetmek.",
+		"details": {
+			"origin": {
+				"root": "Minus (Latin: Less)",
+				"prefix": "None",
+				"suffix": "-ish (Verb forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Decrease",
+					"Decline",
+					"Reduce"
+				],
+				"antonyms": [
+					"Increase",
+					"Expand",
+					"Enhance"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "We must not diminish the importance of their contribution.",
+					"tr": "Onların katkılarının önemini küçümsememeliyiz (azaltmamalıyız)."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Sürekli eleştiriler onun özgüvenini iyice azalttı.",
+					"en": "Constant criticism diminished his self-confidence significantly."
+				},
+				{
+					"tr": "Yaz aylarında barajlardaki su seviyesi hızla düşüyor.",
+					"en": "The water level in the dams diminishes rapidly during summer."
+				}
+			],
+			"root": "Minus (Latin: Less)"
+		},
+		"wordFamily": {
+			"noun": "Diminution",
+			"verb": "Diminish",
+			"adjective": "Diminished/Diminishing",
+			"adverb": "Diminishingly"
+		},
+		"syncToChill": true,
+		"pos": "Verb",
+		"engExample": "The pain slowly began to diminish after he took the medicine.",
+		"trExample": "İlacı aldıktan sonra ağrısı yavaş yavaş azalmaya başladı.",
+		"posTr": "fiil"
+	},
+	{
+		"id": "word_1772870100019",
+		"word": "Spontaneous",
+		"trWord": "Kendiliğinden Olan/Doğal",
+		"phonetic": "/spɒnˈteɪniəs/",
+		"targetMode": "vocabulary",
+		"engDef": "Performed or occurring as a result of a sudden inner impulse or inclination and without premeditation or external stimulus.",
+		"trDef": "Önceden planlanmadan, içten gelen bir dürtüyle aniden gerçekleşen; doğal.",
+		"details": {
+			"origin": {
+				"root": "Sponte (Latin: Of one's own accord)",
+				"prefix": "None",
+				"suffix": "-ous (Adjective forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Impulsive",
+					"Unplanned",
+					"Instinctive"
+				],
+				"antonyms": [
+					"Planned",
+					"Deliberate",
+					"Intended"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "Their decision to go on a trip was entirely spontaneous.",
+					"tr": "Geziye çıkma kararları tamamen anlık bir karardı."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Doğal ve samimi davranışları onu herkesin gözünde sevimli kılıyordu.",
+					"en": "His spontaneous and sincere behavior made him lovable in everyone's eyes."
+				},
+				{
+					"tr": "Ormanda kendiliğinden çıkan yangınlar ekosistemin bir parçasıdır.",
+					"en": "Spontaneous fires in the forest are part of the ecosystem."
+				}
+			],
+			"root": "Sponte (Latin: Of one's own accord)"
+		},
+		"wordFamily": {
+			"noun": "Spontaneity",
+			"verb": "None",
+			"adjective": "Spontaneous",
+			"adverb": "Spontaneously"
+		},
+		"syncToChill": true,
+		"pos": "Adjective",
+		"engExample": "The audience broke into spontaneous applause.",
+		"trExample": "İzleyiciler kendiliğinden (aniden) alkışlamaya başladı.",
+		"posTr": "sıfat"
+	},
+	{
+		"id": "word_1772870100020",
+		"word": "Paradoxically",
+		"trWord": "Çelişkili Bir Şekilde",
+		"phonetic": "/ˌpærəˈdɒksɪkli/",
+		"targetMode": "vocabulary",
+		"engDef": "In a seemingly absurd or self-contradictory way.",
+		"trDef": "Görünüşte mantıksız veya kendiyle çelişen bir biçimde.",
+		"details": {
+			"origin": {
+				"root": "Doxa (Greek: Opinion)",
+				"prefix": "Para- (Beyond)",
+				"suffix": "-ally (Adverb forming suffix)"
+			},
+			"similarWords": {
+				"synonyms": [
+					"Contradictorily",
+					"Inconsistently"
+				],
+				"antonyms": [
+					"Logically",
+					"Consistently"
+				]
+			},
+			"moreExamples": [
+				{
+					"en": "Paradoxically, being alone made her feel more connected to the world.",
+					"tr": "Çelişkili bir biçimde, yalnız olmak onun dünyayla daha bağlantılı hissetmesini sağladı."
+				}
+			],
+			"caseExamples": [
+				{
+					"tr": "Zenginleştikçe daha mutsuz olması çelişkili bir durumdur.",
+					"en": "Paradoxically, he became unhappier as he grew wealthier."
+				},
+				{
+					"tr": "İlaç, çelişkili bir şekilde, iyileştirmesi gereken ağrıyı daha da artırdı.",
+					"en": "The medicine, paradoxically, increased the pain it was supposed to cure."
+				}
+			],
+			"root": "Doxa (Greek: Opinion)"
+		},
+		"wordFamily": {
+			"noun": "Paradox",
+			"verb": "None",
+			"adjective": "Paradoxical",
+			"adverb": "Paradoxically"
+		},
+		"syncToChill": true,
+		"pos": "Adverb",
+		"engExample": "Paradoxically, the more he practiced, the worse he got at the game.",
+		"trExample": "Çelişkili bir şekilde, ne kadar çok pratik yaparsa oyunda o kadar kötüleşiyordu.",
+		"posTr": "zarf"
+	},

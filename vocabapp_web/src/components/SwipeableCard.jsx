@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion';
 import { RotateCcw, Check } from 'lucide-react';
+import { triggerHaptic } from '../utils/haptics';
+import { ImpactStyle } from '@capacitor/haptics';
 
 export const SwipeableCard = ({
     children,
@@ -78,6 +80,8 @@ export const SwipeableCard = ({
         isDragging.current = true;
         isSwipingOut.current = false;
         controls.stop();
+        // Light haptic feedback when the user grabs the card
+        triggerHaptic(ImpactStyle.Light);
     };
 
     const handleDragEnd = (event, info) => {
@@ -95,6 +99,8 @@ export const SwipeableCard = ({
 
         if (offset > swipeThreshold || velocity > velocityThreshold) {
             isSwipingOut.current = true;
+            // Medium impact for successful swipe
+            triggerHaptic(ImpactStyle.Medium);
             controls.start({
                 x: 500,
                 y: -60,
@@ -105,6 +111,8 @@ export const SwipeableCard = ({
             }).then(() => onSwipe('right', true));
         } else if (offset < -swipeThreshold || velocity < -velocityThreshold) {
             isSwipingOut.current = true;
+            // Medium impact for successful swipe
+            triggerHaptic(ImpactStyle.Medium);
             controls.start({
                 x: -500,
                 y: -60,

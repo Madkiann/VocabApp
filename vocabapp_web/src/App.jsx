@@ -20,8 +20,11 @@ import { Mascot } from './components/Mascot';
 import { SwipeableCard } from './components/SwipeableCard';
 import { AdminPanel } from './components/AdminPanel';
 import { LevelTestModal } from './components/LevelTestModal';
+import { ArenaGate } from './components/ArenaGate';
 
 import { Library } from './components/Library';
+import { StreakRunArena } from './components/StreakRunArena';
+import { SpeedBlitzArena } from './components/SpeedBlitzArena';
 
 // Hooks
 import { useAdmin } from './hooks/useAdmin';
@@ -330,13 +333,11 @@ export default function App() {
     const overrideIds = new Set(custom.map(w => w.id));
     const deletedIds = new Set(deletedWords);
 
-    // Show up to 36 words for the vocab tab as requested
-    const dayLimit = 36;
+    // Show all words for the vocab tab
     const baseWords = wordVocab.filter(w => !overrideIds.has(w.id) && !deletedIds.has(w.id));
-    const limitedWords = baseWords.slice(0, dayLimit);
-
-    return [...limitedWords, ...custom].filter(w => !deletedIds.has(w.id));
-  }, [wordVocab, customWords, deletedWords, appDay]);
+    
+    return [...baseWords, ...custom].filter(w => !deletedIds.has(w.id));
+  }, [wordVocab, customWords, deletedWords]);
 
   const computedPhrasals = useMemo(() => {
     const custom = customWords.filter(w => w.targetMode === 'phrasal');
@@ -506,6 +507,9 @@ export default function App() {
   const [showVault, setShowVault] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showLevelTest, setShowLevelTest] = useState(false);
+  const [showArenaGate, setShowArenaGate] = useState(false);
+  const [showStreakRun, setShowStreakRun] = useState(false);
+  const [showSpeedBlitz, setShowSpeedBlitz] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedVaultWord, setSelectedVaultWord] = useState(null);
@@ -1331,35 +1335,9 @@ export default function App() {
   };
 
   // Common UI Wrapper variables
-  const bottomNavigation = (
+  // Common UI components that should be globally accessible and appear on top
+  const globalModals = (
     <>
-      <BottomNav
-        isDark={isDark}
-        showVault={showVault}
-        onVaultClick={() => {
-          sounds.playClick();
-          if (showVault) setActiveVaultFolder(null); // Re-click reset
-          else { setShowVault(true); setShowDashboard(false); setShowSettings(false); }
-        }}
-        showDashboard={showDashboard}
-        onDashboardClick={() => {
-          sounds.playClick();
-          if (showDashboard) setShowQuizHistory(false); // Re-click reset
-          else { setShowDashboard(true); setShowVault(false); setShowSettings(false); }
-        }}
-        onHomeClick={() => {
-          sounds.playClick();
-          if (!showVault && !showDashboard) setAppMode('swipe'); // Re-click reset
-          else { setShowVault(false); setShowDashboard(false); setShowSettings(false); }
-        }}
-        streak={streak}
-        setShowSettings={(val) => { sounds.playClick(); setShowSettings(val); }}
-        t={t}
-        onSecretClick={() => { sounds.playClick(); setShowAdminPanel(true); }}
-        isAdmin={isAdmin}
-        dailyProgress={dailyProgress * 100} // Pass as percentage
-        lastActionStatus={lastActionStatus}
-      />
       <SettingsModal
         t={t}
         isDark={isDark}
@@ -1380,6 +1358,7 @@ export default function App() {
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
       />
+
       <LevelTestModal
         isOpen={showLevelTest}
         onClose={() => setShowLevelTest(false)}
@@ -1387,11 +1366,11 @@ export default function App() {
         isDark={isDark}
         streak={streak}
       />
+
       {showAdminPanel && (
         <AdminPanel
           onResetSystem={() => {
             if (!window.confirm("DİKKAT: Tüm çalışma verilerin, klasörlerin ve özel eklediğin kelimeler silinecek. Sadece sistem kelimeleri kalacak. Emin misin?")) return;
-            // Prefix protected clear
             Object.keys(localStorage).forEach(key => {
               if (key.startsWith('vocabapp_')) {
                 localStorage.removeItem(key);
@@ -1430,6 +1409,7 @@ export default function App() {
           onJumpToCard={jumpToCard}
         />
       )}
+
       {showCommunityHub && (
         <CommunityHub
           isDark={isDark}
@@ -1439,15 +1419,86 @@ export default function App() {
           onClose={() => setShowCommunityHub(false)}
         />
       )}
+
       {showLibrary && (
         <Library
           isDark={isDark}
           t={t}
+          isAdmin={isAdmin}
+          appLang={appLang}
           onClose={() => setShowLibrary(false)}
+          allWords={computedWords}
+          allPhrasals={computedPhrasals}
+          allChill={computedChill}
+          onEditWord={editWord}
+          onDeleteWord={deleteWord}
+          onJumpToCard={jumpToCard}
+        />
+      )}
+
+      {showArenaGate && (
+        <ArenaGate
+          isDark={isDark}
+          t={t}
+          isAdmin={isAdmin}
+          onClose={() => setShowArenaGate(false)}
+          onModeSelect={(mode) => {
+            setShowArenaGate(false);
+            if (mode === 'streak') setShowStreakRun(true);
+            if (mode === 'blitz') setShowSpeedBlitz(true);
+          }}
+        />
+      )}
+
+      {showStreakRun && (
+        <StreakRunArena
+          isDark={isDark}
+          t={t}
+          isAdmin={isAdmin}
+          onClose={() => setShowStreakRun(false)}
+        />
+      )}
+
+      {showSpeedBlitz && (
+        <SpeedBlitzArena
+          isDark={isDark}
+          t={t}
+          onClose={() => setShowSpeedBlitz(false)}
         />
       )}
     </>
   );
+
+  const bottomNavigation = (
+    <BottomNav
+      isDark={isDark}
+      showVault={showVault}
+      onVaultClick={() => {
+        sounds.playClick();
+        if (showVault) setActiveVaultFolder(null);
+        else { setShowVault(true); setShowDashboard(false); setShowSettings(false); }
+      }}
+      showDashboard={showDashboard}
+      onDashboardClick={() => {
+        sounds.playClick();
+        if (showDashboard) setShowQuizHistory(false);
+        else { setShowDashboard(true); setShowVault(false); setShowSettings(false); }
+      }}
+      onHomeClick={() => {
+        sounds.playClick();
+        if (!showVault && !showDashboard) setAppMode('swipe');
+        else { setShowVault(false); setShowDashboard(false); setShowSettings(false); }
+      }}
+      streak={streak}
+      setShowSettings={(val) => { sounds.playClick(); setShowSettings(val); }}
+      t={t}
+      onSecretClick={() => { sounds.playClick(); setShowAdminPanel(true); }}
+      isAdmin={isAdmin}
+      dailyProgress={dailyProgress * 100}
+      lastActionStatus={lastActionStatus}
+    />
+  );
+
 
   const modeSelector = (
     <div className="flex justify-center w-full z-[600] pointer-events-none">
@@ -1502,7 +1553,17 @@ export default function App() {
             Admin Geçişi (Panelden Kapatabilirsin)
           </button>
         ) : (
-          <button onClick={handleVersionClick} className="mt-12 text-[10px] uppercase font-black tracking-widest text-slate-700">Attempt Admin Login</button>
+          <div className="flex flex-col items-center gap-4">
+            <button onClick={() => {
+              const reached = handleVersionClick();
+              if (reached) {
+                const key = window.prompt("Master Key?");
+                if (verifyMasterKey(key)) {
+                  setMaintenanceMode(false);
+                }
+              }
+            }} className="text-[10px] uppercase font-black tracking-widest text-slate-700">Attempt Admin Login</button>
+          </div>
         )}
       </div>
     );
@@ -1560,8 +1621,11 @@ export default function App() {
           advanceTime={advanceTime}
           onJumpToCard={jumpToCard}
           setShowLibrary={setShowLibrary}
+          onArenaClick={() => setShowArenaGate(true)}
+          onStreakRunClick={() => setShowStreakRun(true)}
         />
         {bottomNavigation}
+        {globalModals}
       </>
     );
   }
@@ -1601,6 +1665,7 @@ export default function App() {
           setActiveFolder={setActiveVaultFolder}
         />
         {bottomNavigation}
+        {globalModals}
       </>
     );
   }
@@ -1625,6 +1690,7 @@ export default function App() {
         <div className="relative z-[500] w-full">
           {bottomNavigation}
         </div>
+        {globalModals}
       </div>
     );
   }
@@ -1760,6 +1826,7 @@ export default function App() {
         </footer>
         {bottomNavigation}
       </nav>
+      {globalModals}
     </div>
   );
 }

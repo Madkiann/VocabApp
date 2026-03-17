@@ -77,6 +77,7 @@ export const AdminPanel = ({
     const [gallerySearch, setGallerySearch] = useState('');
     const [galleryMode, setGalleryMode] = useState('words'); // words, phrasal, chill
     const [gallerySort, setGallerySort] = useState('newest'); // a-z, newest
+    const [galleryFilter, setGalleryFilter] = useState('all'); // POS Filter
     const [isSelectMode, setIsSelectMode] = useState(false);
     const [selectedCardIds, setSelectedCardIds] = useState(new Set());
 
@@ -681,7 +682,7 @@ ${handleGenerateTemplate()}`;
             </div>
 
             {/* Scrollable Content */}
-            <div className={`flex-1 overflow-y-auto p-6 pb-32 ${isDark ? 'bg-[#0a0a0c]' : 'bg-[#fcfcfd]'}`}>
+            <div className={`flex-1 overflow-y-auto scroll-y p-6 pb-32 ${isDark ? 'bg-[#0a0a0c]' : 'bg-[#fcfcfd]'}`}>
                 {activeTab === 'insights' && (
                     <div className="space-y-6">
                         {/* DAU & Main Stats */}
@@ -1046,8 +1047,8 @@ ${handleGenerateTemplate()}`;
                                 </div>
                             </div>
 
-                            <div className="flex gap-3 mb-6">
-                                <div className="relative flex-1">
+                            <div className="flex flex-wrap gap-3 mb-6">
+                                <div className="relative flex-1 min-w-[200px]">
                                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                                         <Search size={16} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
                                     </div>
@@ -1059,6 +1060,18 @@ ${handleGenerateTemplate()}`;
                                         className={`w-full pl-10 h-10 rounded-xl border text-sm font-bold outline-none focus:ring-2 ring-teal-500/50 ${isDark ? 'bg-black border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'}`}
                                     />
                                 </div>
+
+                                <select
+                                    value={galleryFilter}
+                                    onChange={e => setGalleryFilter(e.target.value)}
+                                    className={`h-10 px-4 rounded-xl border text-[10px] font-black uppercase tracking-widest outline-none transition-all active:scale-95 ${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-600'}`}
+                                >
+                                    <option value="all">ALL TYPES</option>
+                                    {([...new Set((galleryMode === 'words' ? allWords : galleryMode === 'phrasal' ? allPhrasals : allChill).map(w => w.pos).filter(Boolean).map(p => p.toLowerCase()))]).sort().map(p => (
+                                        <option key={p} value={p}>{p.toUpperCase()}</option>
+                                    ))}
+                                </select>
+
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => setGallerySort(prev => prev === 'a-z' ? 'newest' : 'a-z')}
@@ -1090,6 +1103,10 @@ ${handleGenerateTemplate()}`;
                                         w.eng?.toLowerCase().includes(searchLower) ||
                                         w.tr?.toLowerCase().includes(searchLower)
                                     );
+                                }
+                                // Apply Type Filter
+                                if (galleryFilter !== 'all') {
+                                    items = items.filter(w => (w.pos || "").toLowerCase() === galleryFilter.toLowerCase());
                                 }
                                 // Apply Sort
                                 if (gallerySort === 'a-z') {
@@ -1135,6 +1152,11 @@ ${handleGenerateTemplate()}`;
                                             w.eng?.toLowerCase().includes(searchLower) ||
                                             w.tr?.toLowerCase().includes(searchLower)
                                         );
+                                    }
+
+                                    // Apply Type Filter
+                                    if (galleryFilter !== 'all') {
+                                        items = items.filter(w => (w.pos || "").toLowerCase() === galleryFilter.toLowerCase());
                                     }
 
                                     // Apply Sort

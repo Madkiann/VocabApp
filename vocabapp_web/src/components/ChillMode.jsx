@@ -326,7 +326,7 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                                     <div className={`grid transition-all duration-300 ease-in-out ${isMiniCaseOpen ? 'grid-rows-[1fr] opacity-100 pb-4 px-5' : 'grid-rows-[0fr] opacity-0'}`}>
                                         <div className="overflow-hidden">
                                             <p className={`text-xs font-bold leading-relaxed mb-3 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                                {typeof wordObj.details.miniCase === 'object' ? (wordObj.details.miniCase.en || wordObj.details.miniCase.tr) : (wordObj.details.miniCase || "")}
+                                                {typeof wordObj.details.miniCase === 'object' ? (wordObj.details.miniCase.tr || wordObj.details.miniCase.en) : (wordObj.details.trMiniCase || wordObj.details.miniCase || "")}
                                             </p>
                                             <div className="mt-3">
                                                 {!isMiniCaseTrRevealed ? (
@@ -334,13 +334,13 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                                                         onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrRevealed(true); }}
                                                         className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}
                                                     >
-                                                        <RefreshCw size={12} /> {t.showTranslation || "Çeviriyi Gör"}
+                                                        <RefreshCw size={12} /> {t.showEnglish || "İngilizcesini Gör"}
                                                     </button>
                                                 ) : (
                                                     <div
                                                         onClick={(e) => { e.stopPropagation(); setIsMiniCaseTrRevealed(false); }}
                                                         className={`p-3 rounded-xl italic text-[10px] cursor-pointer animate-fade-in ${isDark ? 'bg-black/30 text-slate-400 border-l-2 border-amber-500/50' : 'bg-white/50 text-slate-600 border-l-2 border-amber-400'}`}>
-                                                        {typeof wordObj.details.trMiniCase === 'object' ? wordObj.details.trMiniCase.tr : (wordObj.details.trMiniCase || wordObj.details.miniCase?.tr || "")}
+                                                        {typeof wordObj.details.miniCase === 'object' ? wordObj.details.miniCase.en : (wordObj.details.miniCase || "")}
                                                     </div>
                                                 )}
                                             </div>
@@ -368,20 +368,20 @@ const ChillCard = ({ wordObj, isDark, appLang, t, handleSpeak, index, total, isA
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer group relative ${isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-amber-100'}`}
                                                 >
                                                     <p className={`text-[13px] font-black leading-tight tracking-tight mb-1 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
-                                                        "{typeof ex === 'string' ? ex : (ex.en || ex.tr)}"
+                                                        "{typeof ex === 'string' ? ex : (ex.tr || ex.en)}"
                                                     </p>
 
                                                     <div className={`grid transition-all duration-300 ease-in-out ${revealedCaseEn[idx] ? 'grid-rows-[1fr] opacity-100 pt-2' : 'grid-rows-[0fr] opacity-0'}`}>
                                                         <div className="overflow-hidden">
                                                             <p className={`text-xs font-bold italic ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                                                                {typeof ex === 'object' ? (ex.tr || ex.en) : ''}
+                                                                {typeof ex === 'object' ? (ex.en || ex.tr) : ''}
                                                             </p>
                                                         </div>
                                                     </div>
 
                                                     {!revealedCaseEn[idx] && typeof ex === 'object' && (
                                                         <div className="flex items-center gap-1.5 mt-1 text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-40 transition-opacity text-amber-500">
-                                                            <RefreshCw size={12} /> {t.toTr || 'TR'}
+                                                            <RefreshCw size={12} /> {t.toEn || 'EN'}
                                                         </div>
                                                     )}
                                                 </div>

@@ -87,7 +87,7 @@ export const Vault = ({
     // Card Detail View
     if (selectedVaultWord) {
         return (
-            <div className={`min-h-[100dvh] transition-colors duration-500 relative flex flex-col items-center justify-center p-4 font-sans overflow-hidden ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => setQuickTx(prev => ({ ...prev, visible: false }))}>
+            <div className={`h-dvh w-full flex flex-col items-center p-4 font-sans transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
                 {quickTx.visible && (
                     <div className="fixed z-50 pointer-events-none" style={{ left: `${quickTx.x}px`, top: `${quickTx.y - 12}px` }}>
                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 px-5 py-3 bg-indigo-600 text-white text-base font-black rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.4)] animate-fade-in whitespace-nowrap">
@@ -133,6 +133,10 @@ export const Vault = ({
             );
         }
 
+        if (filterMode !== 'all') {
+            wordsInFolder = wordsInFolder.filter(w => (w.pos || "").toLowerCase() === filterMode.toLowerCase());
+        }
+
         if (activeFolder === 'Learning') {
             const correctIds = swipeLog?.correctIds || [];
             const wrongIds = swipeLog?.wrongIds || [];
@@ -150,7 +154,7 @@ export const Vault = ({
         }
 
         return (
-            <div className={`min-h-[100dvh] transition-colors duration-500 pb-32 flex flex-col items-center p-4 font-sans ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
+            <div className={`h-dvh w-full transition-colors duration-500 pb-32 flex flex-col items-center p-4 overflow-y-auto scroll-y font-sans ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
                 <div className="w-full max-w-md mt-6 animate-fade-in px-2">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
@@ -159,7 +163,7 @@ export const Vault = ({
                             </h2>
                             {isSystem && <Lock size={16} className="opacity-30" />}
                         </div>
-                        <button onClick={() => { setActiveFolder(null); setInnerSearchQuery(''); setLearningTab('all'); }} className={`p-3 rounded-2xl font-black flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-premium ${isDark ? 'glass-dark text-slate-300' : 'glass text-slate-700'}`}>
+                        <button onClick={() => { setActiveFolder(null); setInnerSearchQuery(''); setFilterMode('all'); setLearningTab('all'); }} className={`p-3 rounded-2xl font-black flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-premium ${isDark ? 'glass-dark text-slate-300' : 'glass text-slate-700'}`}>
                             <X size={20} />
                         </button>
                     </div>
@@ -192,6 +196,16 @@ export const Vault = ({
                             className={`flex-1 bg-transparent border-none outline-none text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}
                         />
                         <div className="flex items-center gap-2 border-l border-slate-700/30 pl-3 ml-1">
+                            <select
+                                value={filterMode}
+                                onChange={e => setFilterMode(e.target.value)}
+                                className={`bg-transparent outline-none text-[10px] font-black uppercase tracking-widest cursor-pointer max-w-[80px] ${filterMode !== 'all' ? 'text-indigo-500' : 'text-slate-500'}`}
+                            >
+                                <option value="all">Tip</option>
+                                {[...new Set(wordsInFolder.map(w => w.pos).filter(Boolean).map(p => p.toLowerCase()))].sort().map(p => (
+                                    <option key={p} value={p}>{p.toUpperCase()}</option>
+                                ))}
+                            </select>
                             <button onClick={() => setInnerSortMode(prev => prev === 'alpha' ? 'retention' : 'alpha')} className={`transition-colors ${innerSortMode === 'alpha' || innerSortMode === 'retention' ? 'text-indigo-500' : 'text-slate-400'}`} title="Sırala">
                                 <ArrowDownUp size={16} />
                             </button>
@@ -340,7 +354,7 @@ export const Vault = ({
     };
 
     return (
-        <div className={`min-h-[100dvh] transition-all duration-500 pb-32 overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
+        <div className={`h-dvh w-full transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`}>
             <div className="fixed inset-0 pointer-events-none -z-0 overflow-hidden">
                 <div className={`absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full blur-[120px] opacity-[0.08] ${isDark ? 'bg-indigo-600' : 'bg-indigo-300'}`}></div>
                 <div className={`absolute bottom-[-5%] left-[-5%] w-[50%] h-[50%] rounded-full blur-[100px] opacity-[0.05] ${isDark ? 'bg-emerald-600' : 'bg-emerald-300'}`}></div>

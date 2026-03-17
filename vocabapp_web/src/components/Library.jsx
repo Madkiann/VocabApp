@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Book, Quote, BookOpen, ChevronRight, X, Languages, Shuffle, Plus, ChevronDown, Feather, LayoutGrid, ArrowLeft } from 'lucide-react';
+import { Book, Quote, BookOpen, ChevronRight, X, Languages, Shuffle, Plus, ChevronDown, Feather, LayoutGrid, ArrowLeft, Layers, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { grammarCases, quotes, readingPassages } from '../data/libraryData';
 
@@ -9,11 +9,31 @@ export const Library = ({ isDark, t, onClose }) => {
     // Drill-down states for Cases
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedTitleId, setSelectedTitleId] = useState(null);
+    const [activeModuleId, setActiveModuleId] = useState('core');
+    const [expandedCategory, setExpandedCategory] = useState(null);
+
+    const modules = [
+        { id: 'core', name: 'İSİMLEŞTİRME & PASİF', description: 'Eylemden kavrama, temel dil sistemi.', color: 'indigo', categories: ['İsimleştirme', 'Pasif & Ettirgen'], icon: LayoutGrid },
+        { id: 'architecture', name: 'CÜMLE MİMARİSİ (CLAUSES)', description: 'Yan cümlecikler ve kompleks yapılar.', color: 'emerald', categories: ['Clauses'], icon: BookOpen },
+        { id: 'advanced', name: 'KISALTMALAR & EDATLAR', description: 'Akademik akıcılık ve Reduction.', color: 'amber', categories: ['Kısaltma (Reduction)', 'Prepositions'], icon: Feather },
+        { id: 'patterns', name: 'MODALLAR & ÖZEL İFADELER', description: 'Duygu tonlamaları ve özel kalıplar.', color: 'rose', categories: ['Modals', 'Özel Kalıplar'], icon: Quote }
+    ];
 
     const [randomQuote, setRandomQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
     const [readingList, setReadingList] = useState(readingPassages);
     const [showAddReading, setShowAddReading] = useState(false);
-    const [newReading, setNewReading] = useState({ title: '', engText: '', trText: '' });
+    const [newReading, setNewReading] = useState({ title: '', engText: '', trText: '', difficulty: 'Beginner' });
+
+    // Reading states
+    const [activeReadingLevel, setActiveReadingLevel] = useState('Beginner');
+
+    const readingLevels = [
+        { id: 'Beginner', label: 'BAŞLANGIÇ', color: 'emerald', description: 'Temel yapılar ve günlük dil.' },
+        { id: 'Intermediate', label: 'ORTA SEVİYE', color: 'indigo', description: 'Akıcı hikayeler ve diyaloglar.' },
+        { id: 'Advanced', label: 'İLERİ SEVİYE', color: 'rose', description: 'Akademik ve karmaşık analizler.' }
+    ];
+
+    const currentModule = modules.find(m => m.id === activeModuleId);
 
     const shuffleQuote = () => {
         let next;
@@ -28,11 +48,10 @@ export const Library = ({ isDark, t, onClose }) => {
         const item = {
             id: Date.now(),
             ...newReading,
-            author: 'Kullanıcı',
-            difficulty: 'Özel'
+            author: 'Kullanıcı'
         };
         setReadingList([item, ...readingList]);
-        setNewReading({ title: '', engText: '', trText: '' });
+        setNewReading({ title: '', engText: '', trText: '', difficulty: 'Beginner' });
         setShowAddReading(false);
     };
 
@@ -45,7 +64,6 @@ export const Library = ({ isDark, t, onClose }) => {
         return cats;
     }, []);
 
-    const categoryList = Object.keys(categories);
     const selectedCaseTitle = useMemo(() => {
         if (!selectedTitleId) return null;
         return grammarCases.find(c => c.id === selectedTitleId);
@@ -54,6 +72,7 @@ export const Library = ({ isDark, t, onClose }) => {
     const resetHierarchy = () => {
         setSelectedCategory(null);
         setSelectedTitleId(null);
+        setExpandedCategory(null);
     };
 
     return (
@@ -66,7 +85,10 @@ export const Library = ({ isDark, t, onClose }) => {
                         <button
                             onClick={() => {
                                 if (selectedTitleId) setSelectedTitleId(null);
-                                else if (selectedCategory) setSelectedCategory(null);
+                                else if (selectedCategory) {
+                                    setSelectedCategory(null);
+                                    setExpandedCategory(null);
+                                }
                                 else setActiveTab('cases');
                             }}
                             className={`p-2 rounded-xl transition-all ${isDark ? 'bg-slate-800 text-indigo-400' : 'bg-slate-100 text-indigo-600'}`}
@@ -79,10 +101,10 @@ export const Library = ({ isDark, t, onClose }) => {
                         </div>
                     )}
                     <div>
-                        <h1 className="text-xl font-black tracking-tighter uppercase italic text-indigo-500 dark:text-indigo-400">
+                        <h1 className={`text-xl font-black tracking-tighter uppercase italic ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>
                             {selectedTitleId ? selectedCaseTitle?.title : (selectedCategory || 'KÜTÜPHANE')}
                         </h1>
-                        <p className="text-[9px] font-black opacity-40 uppercase tracking-[0.2em] -mt-1">
+                        <p className={`text-[9px] font-black uppercase tracking-[0.2em] -mt-1 ${isDark ? 'opacity-40' : 'opacity-60 text-slate-500'}`}>
                             {selectedCategory ? 'Vaka Çalışmaları' : 'Referans & Pasif Öğrenme'}
                         </p>
                     </div>
@@ -122,21 +144,21 @@ export const Library = ({ isDark, t, onClose }) => {
                 <div className="px-6 py-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide shrink-0">
                     <button
                         onClick={() => { setSelectedCategory(null); setSelectedTitleId(null); }}
-                        className="text-[8px] font-black uppercase tracking-widest opacity-40 hover:opacity-100"
+                        className={`text-[8px] font-black uppercase tracking-widest transition-all ${isDark ? 'opacity-40 hover:opacity-100' : 'text-slate-400 hover:text-indigo-600'}`}
                     >
                         CASELER
                     </button>
-                    <ChevronRight size={10} className="opacity-20" />
+                    <ChevronRight size={10} className={isDark ? 'opacity-20' : 'opacity-40'} />
                     <button
                         onClick={() => setSelectedTitleId(null)}
-                        className={`text-[8px] font-black uppercase tracking-widest ${!selectedTitleId ? 'text-indigo-500' : 'opacity-40'}`}
+                        className={`text-[8px] font-black uppercase tracking-widest transition-all ${!selectedTitleId ? (isDark ? 'text-indigo-400' : 'text-indigo-600 font-black') : (isDark ? 'opacity-40' : 'text-slate-400')}`}
                     >
                         {selectedCategory}
                     </button>
                     {selectedTitleId && (
                         <>
-                            <ChevronRight size={10} className="opacity-20" />
-                            <span className="text-[8px] font-black uppercase tracking-widest text-indigo-500">{selectedCaseTitle?.title}</span>
+                            <ChevronRight size={10} className={isDark ? 'opacity-20' : 'opacity-40'} />
+                            <span className={`text-[8px] font-black uppercase tracking-widest ${isDark ? 'text-indigo-400' : 'text-indigo-500'}`}>{selectedCaseTitle?.title}</span>
                         </>
                     )}
                 </div>
@@ -145,30 +167,109 @@ export const Library = ({ isDark, t, onClose }) => {
             {/* Content */}
             <div className="flex-1 overflow-y-auto px-4 py-4 pb-24 scrollbar-hide">
 
-                {/* CASES TAB: 3-Level Hierarchy */}
+                {/* CASES TAB */}
                 {activeTab === 'cases' && (
                     <div className="animate-fade-in h-full">
 
-                        {/* LEVEL 1: Category Selection */}
+                        {/* HORIZONTAL MODULE SWIPER */}
                         {!selectedCategory && (
-                            <div className="grid grid-cols-1 gap-4 mt-2">
-                                {categoryList.map(cat => (
-                                    <button
-                                        key={cat}
-                                        onClick={() => setSelectedCategory(cat)}
-                                        className={`p-6 rounded-[2.5rem] border text-left flex items-center justify-between group transition-all hover:scale-[1.02] active:scale-95 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}
-                                    >
-                                        <div>
-                                            <h4 className="text-xl font-black italic tracking-tighter text-indigo-500 leading-tight">{cat}</h4>
-                                            <p className="text-[10px] font-bold opacity-40 uppercase tracking-widest mt-1">
-                                                {categories[cat].length} KONU BAŞLIĞI
-                                            </p>
-                                        </div>
-                                        <div className="p-3 rounded-2xl bg-slate-500/5 group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                                            <ChevronRight size={20} strokeWidth={3} />
-                                        </div>
-                                    </button>
-                                ))}
+                            <div className="mb-10">
+                                <div className="flex items-center justify-between px-2 mb-6">
+                                    <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] ${isDark ? 'opacity-40' : 'text-slate-400'}`}>ÖĞRENME MODÜLLERİ</h3>
+                                    <div className="flex gap-1.5">
+                                        {modules.map(m => (
+                                            <div key={m.id} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeModuleId === m.id ? 'bg-indigo-500 w-4' : (isDark ? 'bg-slate-800' : 'bg-slate-200')}`} />
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="flex gap-4 overflow-x-auto pb-4 px-1 scrollbar-hide snap-x snap-mandatory">
+                                    {modules.map(module => (
+                                        <button
+                                            key={module.id}
+                                            onClick={() => { setActiveModuleId(module.id); setExpandedCategory(null); }}
+                                            className={`flex-shrink-0 w-[260px] p-8 rounded-[3.5rem] border transition-all snap-center relative overflow-hidden group ${activeModuleId === module.id
+                                                ? (isDark ? `bg-indigo-600 border-transparent shadow-glow-indigo text-white` : `bg-indigo-600 border-transparent shadow-xl text-white`)
+                                                : (isDark ? 'bg-slate-900 border-slate-800 text-slate-400' : 'bg-white border-slate-100 text-slate-500 shadow-sm')}`}
+                                        >
+                                            <div className="absolute -right-6 -bottom-6 opacity-10 group-hover:scale-125 transition-transform duration-500">
+                                                <module.icon size={120} />
+                                            </div>
+                                            <h3 className="text-xl font-black italic tracking-tighter leading-tight mb-2 truncate">{module.name}</h3>
+                                            <p className="text-[10px] font-bold opacity-70 uppercase tracking-tighter">{module.description}</p>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* STACKED ACCORDION CATEGORIES */}
+                        {!selectedCategory && (
+                            <div className="space-y-4">
+                                <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] px-2 mb-2 ${isDark ? 'opacity-40' : 'text-slate-400'}`}>KATEGORİLER</h3>
+                                <div className="relative">
+                                    {currentModule.categories.map((cat, idx) => {
+                                        const isExpanded = expandedCategory === cat;
+                                        return (
+                                            <motion.div
+                                                key={cat}
+                                                layout
+                                                className={`mb-4 overflow-hidden rounded-[3.5rem] border transition-all ${isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-100 shadow-premium'}`}
+                                            >
+                                                <button
+                                                    onClick={() => setExpandedCategory(isExpanded ? null : cat)}
+                                                    className="w-full p-8 flex items-center justify-between text-left group"
+                                                >
+                                                    <div className="flex items-center gap-5">
+                                                        <div className={`p-4 rounded-3xl transition-all duration-300 ${isExpanded ? 'bg-indigo-500 text-white shadow-glow-indigo scale-110 rotate-6' : (isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-50 text-slate-400')}`}>
+                                                            <LayoutGrid size={22} strokeWidth={2.5} />
+                                                        </div>
+                                                        <div>
+                                                            <h4 className={`text-xl font-black italic tracking-tighter transition-colors ${isExpanded ? 'text-indigo-500' : (isDark ? 'text-white' : 'text-slate-900')}`}>{cat}</h4>
+                                                            <p className="text-[9px] font-black opacity-30 uppercase tracking-widest mt-1">
+                                                                {categories[cat]?.length || 0} KONU BAŞLIĞI
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <motion.div
+                                                        animate={{ rotate: isExpanded ? 180 : 0 }}
+                                                        className={`p-2 rounded-xl transition-colors ${isExpanded ? 'text-indigo-500' : 'opacity-20'}`}
+                                                    >
+                                                        <ChevronDown size={22} strokeWidth={3} />
+                                                    </motion.div>
+                                                </button>
+
+                                                <AnimatePresence>
+                                                    {isExpanded && (
+                                                        <motion.div
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: 'auto', opacity: 1 }}
+                                                            exit={{ height: 0, opacity: 0 }}
+                                                            className="px-6 pb-8 space-y-3"
+                                                        >
+                                                            <div className={`h-px w-full mb-6 ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`} />
+                                                            {categories[cat]?.map(item => (
+                                                                <button
+                                                                    key={item.id}
+                                                                    onClick={() => { setSelectedCategory(cat); setSelectedTitleId(item.id); }}
+                                                                    className={`w-full p-6 rounded-[2.5rem] flex items-center justify-between text-left transition-all active:scale-95 border ${isDark ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800' : 'bg-slate-50/50 border-slate-100 hover:bg-slate-100'}`}
+                                                                >
+                                                                    <div className="flex-1 pr-4">
+                                                                        <h5 className={`text-base font-black tracking-tight leading-tight ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{item.title}</h5>
+                                                                        <div className="mt-3 flex items-center gap-2">
+                                                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                                                                            <span className="text-[9px] font-black uppercase tracking-widest text-indigo-500/60">{item.examples.length} VAKA</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <ChevronRight size={18} className="text-indigo-500 opacity-40" />
+                                                                </button>
+                                                            ))}
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         )}
 
@@ -182,8 +283,8 @@ export const Library = ({ isDark, t, onClose }) => {
                                         className={`p-6 rounded-[2.5rem] border text-left flex items-center justify-between group transition-all hover:scale-[1.01] active:scale-95 ${isDark ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}
                                     >
                                         <div className="flex-1">
-                                            <h5 className="text-lg font-black tracking-tight text-white dark:text-white dark:opacity-90 light:text-slate-900 leading-tight">{item.title}</h5>
-                                            <p className="text-[11px] font-bold opacity-60 mt-1">{item.description}</p>
+                                            <h5 className={`text-lg font-black tracking-tight leading-tight transition-colors ${isDark ? 'text-indigo-100/90' : 'text-slate-800'}`}>{item.title}</h5>
+                                            <p className={`text-[11px] font-bold mt-1 ${isDark ? 'opacity-60' : 'text-slate-500'}`}>{item.description}</p>
 
                                             <div className="mt-4 inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
@@ -284,38 +385,91 @@ export const Library = ({ isDark, t, onClose }) => {
 
                 {/* READING TAB */}
                 {activeTab === 'reading' && (
-                    <div className="space-y-8 animate-fade-in">
-                        <button
-                            onClick={() => setShowAddReading(true)}
-                            className={`w-full p-8 rounded-[3.5rem] border-2 border-dashed flex flex-col items-center justify-center gap-3 transition-colors ${isDark ? 'border-slate-800 hover:border-indigo-500/50 hover:bg-indigo-500/5 text-slate-500' : 'border-slate-200 hover:border-indigo-500/50 hover:bg-slate-50 text-slate-400'}`}
-                        >
-                            <div className="p-3 rounded-2xl bg-slate-500/10"><Plus size={24} strokeWidth={3} /></div>
-                            <span className="text-[11px] font-black uppercase tracking-widest">Kendi Metnini Ekle</span>
-                        </button>
+                    <div className="space-y-10 animate-fade-in h-full flex flex-col">
 
-                        {readingList.map(passage => (
-                            <div
-                                key={passage.id}
-                                className={`p-10 rounded-[4rem] border flex flex-col gap-8 relative overflow-hidden transition-all ${isDark ? 'bg-slate-900 border-slate-800 shadow-2xl' : 'bg-white border-slate-100 shadow-premium'}`}
-                            >
-                                <div className="flex justify-between items-start relative z-10">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <BookOpen size={20} className="text-indigo-500" />
-                                            <h5 className="font-black text-2xl tracking-tighter text-indigo-500 leading-tight">{passage.title}</h5>
-                                        </div>
-                                        <div className="flex gap-3">
-                                            <div className="px-3 py-1.5 rounded-full bg-indigo-500/10 text-indigo-500 text-[9px] font-black tracking-widest shadow-sm">BY {passage.author}</div>
-                                            <div className="px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[9px] font-black tracking-widest shadow-sm">{passage.difficulty}</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-6 relative z-10">
-                                    <ExampleToggle eng={passage.engText} tr={passage.trText} isDark={isDark} italic={false} longText={true} />
+                        {/* 1. SEVİYE SEÇİMİ (Horizontal Carousel) */}
+                        <div className="shrink-0 mb-4 px-1">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] ${isDark ? 'opacity-40' : 'text-slate-400'}`}>ZORLUK SEVİYESİ</h3>
+                                <div className="flex gap-1.5">
+                                    {readingLevels.map(rl => (
+                                        <div key={rl.id} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeReadingLevel === rl.id ? 'bg-indigo-500 w-4' : (isDark ? 'bg-slate-800' : 'bg-slate-200')}`} />
+                                    ))}
                                 </div>
                             </div>
-                        ))}
+                            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                                {readingLevels.map(level => (
+                                    <button
+                                        key={level.id}
+                                        onClick={() => setActiveReadingLevel(level.id)}
+                                        className={`flex-shrink-0 w-[240px] p-6 rounded-[3rem] border transition-all snap-center relative overflow-hidden group ${activeReadingLevel === level.id
+                                            ? (isDark ? `bg-indigo-600 border-transparent shadow-glow-indigo text-white` : `bg-indigo-600 border-transparent shadow-xl text-white`)
+                                            : (isDark ? 'bg-slate-900 border-slate-800 text-slate-400' : 'bg-white border-slate-100 text-slate-500 shadow-sm')}`}
+                                    >
+                                        <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-125 transition-transform duration-500">
+                                            <Layers size={80} />
+                                        </div>
+                                        <h3 className="text-lg font-black italic tracking-tighter leading-tight mb-1">{level.label}</h3>
+                                        <p className="text-[10px] font-bold opacity-70 uppercase tracking-tighter leading-tight">{level.description}</p>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 2. OKUMA LİSTESİ */}
+                        <div className="space-y-6 flex-1">
+                            <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] ${isDark ? 'opacity-40' : 'text-slate-400'} px-2`}>PARÇALAR</h3>
+
+                            {/* ADD NEW BUTTON */}
+                            <button
+                                onClick={() => setShowAddReading(true)}
+                                className={`w-full p-8 rounded-[3.5rem] border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95 mb-8 ${isDark ? 'border-indigo-500/20 bg-indigo-500/5 text-indigo-400' : 'border-indigo-100 bg-indigo-50/30 text-indigo-600'}`}
+                            >
+                                <Plus size={24} strokeWidth={3} />
+                                <span className="text-[11px] font-black uppercase tracking-widest">KENDİ METNİNİ EKLE</span>
+                            </button>
+
+                            {readingList.filter(p => p.difficulty === activeReadingLevel).map(passage => (
+                                <motion.div
+                                    key={passage.id}
+                                    layout
+                                    className={`p-10 rounded-[4rem] border flex flex-col gap-8 relative overflow-hidden transition-all duration-500 ${isDark ? 'bg-slate-900/40 border-slate-800 shadow-2xl' : 'bg-white border-slate-100 shadow-premium'}`}
+                                >
+                                    <div className="flex justify-between items-start relative z-10">
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-4 mb-3">
+                                                <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-500">
+                                                    <BookOpen size={20} strokeWidth={2.5} />
+                                                </div>
+                                                <h5 className={`font-black text-2xl tracking-tighter leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>{passage.title}</h5>
+                                            </div>
+                                            <div className="flex gap-2 ml-14">
+                                                <div className={`px-4 py-1.5 rounded-full text-[9px] font-black tracking-widest ${isDark ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
+                                                    BY {passage.author.toUpperCase()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-6 relative z-10 leading-relaxed font-medium">
+                                        <ExampleToggle
+                                            eng={passage.engText}
+                                            tr={passage.trText}
+                                            isDark={isDark}
+                                            italic={false}
+                                            longText={true}
+                                        />
+                                    </div>
+                                </motion.div>
+                            ))}
+
+                            {readingList.filter(p => p.difficulty === activeReadingLevel).length === 0 && (
+                                <div className="py-20 flex flex-col items-center justify-center opacity-40 italic font-bold">
+                                    <Sparkles size={40} className="mb-4 text-indigo-500" />
+                                    <p className="text-sm">Bu seviyede henüz parça yok.</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
@@ -328,7 +482,7 @@ export const Library = ({ isDark, t, onClose }) => {
                             initial={{ y: '100%', borderRadius: '4rem 4rem 0 0' }}
                             animate={{ y: 0 }}
                             exit={{ y: '100%' }}
-                            className={`w-full max-w-md p-10 rounded-[4rem] shadow-2xl ${isDark ? 'bg-slate-900 border border-slate-800' : 'bg-white'}`}
+                            className={`w-full max-w-md p-10 rounded-[4rem] shadow-2xl ${isDark ? 'bg-slate-900 border border-slate-800 text-white' : 'bg-white text-slate-900'}`}
                             onClick={e => e.stopPropagation()}
                         >
                             <div className="flex justify-between items-center mb-8">
@@ -337,6 +491,20 @@ export const Library = ({ isDark, t, onClose }) => {
                             </div>
 
                             <div className="space-y-6 mb-10">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Zorluk Seviyesi</label>
+                                    <div className="flex gap-2">
+                                        {['Beginner', 'Intermediate', 'Advanced'].map(lvl => (
+                                            <button
+                                                key={lvl}
+                                                onClick={() => setNewReading({ ...newReading, difficulty: lvl })}
+                                                className={`flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${newReading.difficulty === lvl ? 'bg-indigo-600 text-white shadow-lg' : (isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400')}`}
+                                            >
+                                                {lvl === 'Beginner' ? 'BAŞLANGIÇ' : lvl === 'Intermediate' ? 'ORTA' : 'İLERİ'}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Başlık</label>
                                     <input

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { BarChart3, Moon, Clock, Brain, RefreshCw, Zap, Hourglass, Share2, MoreHorizontal, Target, TrendingUp, Copy, ArrowRight, Trophy, Lock, ChevronDown, Award, FileText, Check, X, Languages, ChevronRight, Feather, RotateCcw } from 'lucide-react';
 import { Mascot } from './Mascot';
 import AbstractIcon from './AchievementIcons';
@@ -33,7 +33,9 @@ export const Dashboard = ({
     dailyStats = {},
     isAdmin = false,
     advanceTime,
-    setShowLibrary
+    setShowLibrary,
+    onArenaClick,
+    onStreakRunClick
 }) => {
     const [sortMode, setSortMode] = useState('name');
     const [achievementsExpanded, setAchievementsExpanded] = useState(false);
@@ -80,7 +82,7 @@ export const Dashboard = ({
     };
 
     return (
-        <div className={`min-h-[100dvh] flex flex-col items-center p-4 font-sans transition-all duration-500 pb-32 overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
+        <div className={`h-dvh w-full flex flex-col items-center p-4 font-sans transition-all duration-500 pb-32 overflow-y-auto scroll-y overflow-x-hidden relative ${isDark ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-[#fcfcfd] text-slate-900'}`} onClick={() => { setShowStreakMenu(false); if (setQuickTx) setQuickTx(prev => ({ ...prev, visible: false })); }}>
 
             <div className="fixed inset-0 pointer-events-none -z-0 overflow-hidden">
                 <div className={`absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] opacity-[0.15] ${isDark ? 'bg-indigo-600' : 'bg-indigo-400'}`}></div>
@@ -348,14 +350,20 @@ export const Dashboard = ({
                                         <div className="text-[10px] font-black text-indigo-500 uppercase tracking-tighter">SPEED BLITZ</div>
                                         <div className="text-[7px] font-bold opacity-30 mt-0.5">ZAMANA KARŞI</div>
                                     </div>
-                                    <div className={`p-4 rounded-[1.8rem] flex flex-col items-center justify-center border transition-all hover:bg-emerald-500/10 ${isDark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-white/80 border-emerald-100'}`}>
+                                    <div
+                                        onClick={(e) => { e.stopPropagation(); onStreakRunClick && onStreakRunClick(); }}
+                                        className={`p-4 rounded-[1.8rem] flex flex-col items-center justify-center border transition-all cursor-pointer hover:scale-[1.05] hover:bg-emerald-500/10 ${isDark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-white/80 border-emerald-100'}`}
+                                    >
                                         <Trophy size={16} className="text-emerald-500 mb-2" />
                                         <div className="text-[10px] font-black text-emerald-500 uppercase tracking-tighter">STREAK RUN</div>
-                                        <div className="text-[7px] font-bold opacity-30 mt-0.5">HATASIZ SERİ</div>
+                                        <div className="text-[7px] font-bold opacity-30 mt-0.5">CASE RUN MODE</div>
                                     </div>
                                 </div>
 
-                                <button className={`w-full py-4 rounded-[1.8rem] text-[11px] font-black uppercase tracking-widest transition-all ${isDark ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'}`}>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onArenaClick && onArenaClick(); }}
+                                    className={`w-full py-4 rounded-[1.8rem] text-[11px] font-black uppercase tracking-widest transition-all ${isDark ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'}`}
+                                >
                                     ARENAYA GİRİŞ YAP <ArrowRight size={14} className="inline ml-1" />
                                 </button>
                             </div>
