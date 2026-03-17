@@ -21,6 +21,10 @@
         overscroll-behavior: none;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
+
+        /* Dynamic Island için güvenli tampon alanı */
+        --ios-top-buffer: env(safe-area-inset-top, 20px);
+        --ios-bottom-buffer: env(safe-area-inset-bottom, 20px);
     }
 
     @keyframes fade-in {
@@ -263,6 +267,15 @@
 
     .mb-safe {
         margin-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .pt-safe-island {
+        /* Hem güvenli alanı al hem de 12px ekstra nefes payı bırak */
+        padding-top: calc(var(--ios-top-buffer) + 12px);
+    }
+
+    .pb-safe-nav {
+        padding-bottom: calc(var(--ios-bottom-buffer) + 4px);
     }
 
     .custom-scrollbar::-webkit-scrollbar {

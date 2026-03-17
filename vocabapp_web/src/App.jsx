@@ -1713,122 +1713,118 @@ export default function App() {
         </div>
       )}
 
-      {/* ÜST BÖLÜM: Minimalist & Sabit Header */}
-      <header className="fixed top-0 left-0 right-0 flex flex-col items-center z-[600] pointer-events-none">
-        <div className="w-full pt-safe" /> 
-        <div className="w-full flex flex-col items-center pointer-events-auto pt-4">
-          <AchievementPopup queue={achievementQueue} onComplete={handleAchievementComplete} isDark={isDark} t={t} isAdmin={isAdmin} />
-
-          <div className="scale-90 opacity-80 hover:opacity-100 transition-all duration-300 transform origin-top">
-            {modeSelector}
-          </div>
+      {/* ÜST: Siyah adadan kaçan başlık */}
+      <header className="w-full pt-safe-island px-4 z-[600] flex flex-col items-center">
+        <AchievementPopup queue={achievementQueue} onComplete={handleAchievementComplete} isDark={isDark} t={t} isAdmin={isAdmin} />
+        <div className="scale-90 transform origin-top pointer-events-auto">
+          {modeSelector}
         </div>
       </header>
 
-      {/* ORTA BÖLÜM: Kart Arenası (Yukarı Çapa) */}
-      <main className={`flex-grow w-full flex flex-col items-center justify-start ${appMode.startsWith('quiz_') ? 'pt-4' : 'pt-24'} pt-safe px-4 relative overflow-hidden min-h-0`}>
-
-        {isLogoVisible ? (
-          <div
-            className="flex flex-col items-center animate-fade-out"
-            style={{ animationDelay: '2s' }}
-          >
-            <BrandLogo isDark={isDark} isAdmin={isAdmin} />
-            {isAdmin && <div className="mt-2 px-3 py-1 bg-amber-400 text-black text-[8px] font-black rounded-full shadow-lg shadow-amber-400/20 animate-pulse">ADMIN OVERDRIVE</div>}
-          </div>
-        ) : (
-          <div className="animate-fade-in w-full h-full flex flex-col items-center justify-center">
-
-            {/* Global Announcement Banner (Space-efficient) */}
-            {globalAnnouncement && (
-              <div className="w-full max-w-sm mb-4 animate-slide-up group shrink-0">
-                <div className="relative p-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 text-black shadow-lg overflow-hidden">
-                  <div className="relative z-10 flex items-center gap-3">
-                    <Sparkles size={14} className="text-amber-600 animate-pulse" />
-                    <p className="text-[10px] font-black tracking-tight leading-tight">{globalAnnouncement}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-            <div className={`relative w-full max-w-[400px] ${appMode.startsWith('quiz_') ? 'h-[75vh]' : 'aspect-[3/4] max-h-[70vh]'} mb-20`}>
-              {appMode.startsWith('quiz_') ? (
-                <Quiz
-                  t={t}
-                  isDark={isDark}
-                  isAdmin={isAdmin}
-                  appMode={appMode}
-                  quizQuestion={quizQuestion}
-                  isTranslated={isTranslated}
-                  setIsTranslated={setIsTranslated}
-                  quizFeedback={quizFeedback}
-                  handleQuizAction={handleQuizAction}
-                  selectedTokens={selectedTokens}
-                  availableTokens={availableTokens}
-                  toggleToken={toggleToken}
-                  handleSentenceCheck={handleSentenceCheck}
-                  onDragStart={onDragStart}
-                  onDragEnter={onDragEnter}
-                  onDragEnd={onDragEnd}
-                  quizExplanation={quizExplanation}
-                  explainMistake={explainMistake}
-                  isExplaining={isExplaining}
-                  setAppMode={setAppMode}
-                  deck={deck}
-                  currentWordIndex={currentWordIndex}
-                  setIsRevealed={setIsRevealed}
-                  cardBg={cardBg}
-                  bgMain={bgMain}
-                  textMain={textMain}
-                  isQuizReview={isQuizReview}
-                />
-              ) : isDeckFinished ? (
-                <div className={`text-center w-full h-full ${cardBg} p-8 pt-16 rounded-[3.5rem] shadow-premium border animate-fade-in relative overflow-visible flex flex-col items-center justify-center`}>
-                  <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 z-0 pointer-events-none drop-shadow-2xl opacity-90 scale-110">
-                    <Mascot look="happy" size="xl" isDark={isDark} />
-                  </div>
-                  <h2 className={`text-4xl font-black mb-4 tracking-tighter relative z-10 drop-shadow-md ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{t.congrats}</h2>
-                  <p className="mb-6 font-bold opacity-60 uppercase tracking-widest text-[10px]">{t.deckFinished}</p>
-                  <div className={`w-full mb-8 p-5 rounded-2xl border-2 border-dashed ${isDark ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
-                    <input type="hidden" value="reassurance" />
-                    <div className="flex items-center justify-center gap-2 mb-3 text-indigo-500">
-                      <Brain size={24} />
-                      <p className="font-black uppercase tracking-widest text-xs">SM-2 Motoru Aktif</p>
-                    </div>
-                    <p className="font-bold text-lg">{t.dueTomorrowMins.replace('{words}', dueTomorrowCount).replace('{mins}', dueTomorrowMins)}</p>
-                  </div>
-                  <button onClick={() => refreshDeck(true)} className="w-full py-4 rounded-2xl font-black text-slate-900 bg-amber-400 hover:bg-amber-500 transition-transform active:scale-95 shadow-lg">
-                    <RefreshCw size={20} className="inline mr-2" /> {t.continueTraining}
-                  </button>
-                </div>
-              ) : (
-                <SwipeableCard
-                  key={currentWordIndex}
-                  isDark={isDark}
-                  appMode={appMode}
-                  onSwipe={handleSwipe}
-                  swipeDirection={swipeDirection}
-                  isRevealed={isRevealed}
-                >
-                  {renderCardContentWrapper(currentWord, isSaved)}
-                </SwipeableCard>
-              )}
+      {/* ORTA: Kart alanı (Boşluğu kapatan esnek yapı) */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pb-24 md:pb-28 relative overflow-hidden min-h-0">
+        <div className="relative w-full max-w-[420px] h-full max-h-[620px] flex flex-col items-center justify-center">
+          {isLogoVisible ? (
+            <div
+              className="flex flex-col items-center animate-fade-out"
+              style={{ animationDelay: '2s' }}
+            >
+              <BrandLogo isDark={isDark} isAdmin={isAdmin} />
+              {isAdmin && <div className="mt-2 px-3 py-1 bg-amber-400 text-black text-[8px] font-black rounded-full shadow-lg shadow-amber-400/20 animate-pulse">ADMIN OVERDRIVE</div>}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="animate-fade-in w-full h-full flex flex-col items-center justify-center">
+
+              {/* Global Announcement Banner (Space-efficient) */}
+              {globalAnnouncement && (
+                <div className="w-full max-w-sm mb-4 animate-slide-up group shrink-0">
+                  <div className="relative p-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 text-black shadow-lg overflow-hidden">
+                    <div className="relative z-10 flex items-center gap-3">
+                      <Sparkles size={14} className="text-amber-600 animate-pulse" />
+                      <p className="text-[10px] font-black tracking-tight leading-tight">{globalAnnouncement}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="relative w-full h-full">
+                {appMode.startsWith('quiz_') ? (
+                  <Quiz
+                    t={t}
+                    isDark={isDark}
+                    isAdmin={isAdmin}
+                    appMode={appMode}
+                    quizQuestion={quizQuestion}
+                    isTranslated={isTranslated}
+                    setIsTranslated={setIsTranslated}
+                    quizFeedback={quizFeedback}
+                    handleQuizAction={handleQuizAction}
+                    selectedTokens={selectedTokens}
+                    availableTokens={availableTokens}
+                    toggleToken={toggleToken}
+                    handleSentenceCheck={handleSentenceCheck}
+                    onDragStart={onDragStart}
+                    onDragEnter={onDragEnter}
+                    onDragEnd={onDragEnd}
+                    quizExplanation={quizExplanation}
+                    explainMistake={explainMistake}
+                    isExplaining={isExplaining}
+                    setAppMode={setAppMode}
+                    deck={deck}
+                    currentWordIndex={currentWordIndex}
+                    setIsRevealed={setIsRevealed}
+                    cardBg={cardBg}
+                    bgMain={bgMain}
+                    textMain={textMain}
+                    isQuizReview={isQuizReview}
+                  />
+                ) : isDeckFinished ? (
+                  <div className={`text-center w-full h-full ${cardBg} p-8 pt-16 rounded-[3.5rem] shadow-premium border animate-fade-in relative overflow-visible flex flex-col items-center justify-center`}>
+                    <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 z-0 pointer-events-none drop-shadow-2xl opacity-90 scale-110">
+                      <Mascot look="happy" size="xl" isDark={isDark} />
+                    </div>
+                    <h2 className={`text-4xl font-black mb-4 tracking-tighter relative z-10 drop-shadow-md ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{t.congrats}</h2>
+                    <p className="mb-6 font-bold opacity-60 uppercase tracking-widest text-[10px]">{t.deckFinished}</p>
+                    <div className={`w-full mb-8 p-5 rounded-2xl border-2 border-dashed ${isDark ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                      <input type="hidden" value="reassurance" />
+                      <div className="flex items-center justify-center gap-2 mb-3 text-indigo-500">
+                        <Brain size={24} />
+                        <p className="font-black uppercase tracking-widest text-xs">SM-2 Motoru Aktif</p>
+                      </div>
+                      <p className="font-bold text-lg">{t.dueTomorrowMins.replace('{words}', dueTomorrowCount).replace('{mins}', dueTomorrowMins)}</p>
+                    </div>
+                    <button onClick={() => refreshDeck(true)} className="w-full py-4 rounded-2xl font-black text-slate-900 bg-amber-400 hover:bg-amber-500 transition-transform active:scale-95 shadow-lg">
+                      <RefreshCw size={20} className="inline mr-2" /> {t.continueTraining}
+                    </button>
+                  </div>
+                ) : (
+                  <SwipeableCard
+                    key={currentWordIndex}
+                    isDark={isDark}
+                    appMode={appMode}
+                    onSwipe={handleSwipe}
+                    swipeDirection={swipeDirection}
+                    isRevealed={isRevealed}
+                  >
+                    {renderCardContentWrapper(currentWord, isSaved)}
+                  </SwipeableCard>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </main>
 
-      {/* ALT BÖLÜM: Sabit Navbar */}
-      <div className="fixed bottom-0 left-0 right-0 z-[500] pointer-events-none">
-        <footer className="w-full flex-col items-center gap-2 opacity-60 hidden md:flex mb-4">
-          <div className="flex gap-6">
-            <a href="https://www.instagram.com/ferhat_hoca_ingilizce/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Instagram size={12} /> instagram</a>
-            <a href="https://ferhathocaingilizce.com" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Globe size={12} /> ferhathocaingilizce.com</a>
-          </div>
-        </footer>
-        <div className="pointer-events-auto relative">
-          {bottomNavigation}
+      {/* ALT: Navbar (Safe area ile uyumlu) */}
+      <footer className="w-full flex-col items-center gap-2 opacity-60 hidden md:flex mb-4">
+        <div className="flex gap-6">
+          <a href="https://www.instagram.com/ferhat_hoca_ingilizce/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Instagram size={12} /> instagram</a>
+          <a href="https://ferhathocaingilizce.com" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all"><Globe size={12} /> ferhathocaingilizce.com</a>
         </div>
-      </div>
+      </footer>
+      <nav className={`fixed bottom-0 left-0 right-0 z-[500] pb-safe-nav backdrop-blur-xl ${isDark ? 'bg-slate-900/80' : 'bg-white/80'}`}>
+        {bottomNavigation}
+      </nav>
       {globalModals}
     </div>
   );
