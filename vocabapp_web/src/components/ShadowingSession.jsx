@@ -120,33 +120,9 @@ export const ShadowingSession = () => {
         return sentenceRanges[0]?.tr || '';
     }, [showSubtitle, sentenceRanges, matchedWordsCount, passageWords.length]);
 
-    // Setup MediaRecorder
-    useEffect(() => {
-        const initAudio = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorderRef.current = new MediaRecorder(stream);
-                mediaRecorderRef.current.ondataavailable = (e) => {
-                    if (e.data.size > 0) audioChunksRef.current.push(e.data);
-                };
-                mediaRecorderRef.current.onstop = () => {
-                    if (audioChunksRef.current.length > 0) {
-                        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-                        setAudioUrl(URL.createObjectURL(blob));
-                        audioChunksRef.current = [];
-                    }
-                };
-            } catch (err) {
-                console.warn("Mikrofon kayıt izni alınamadı:", err);
-            }
-        };
-        initAudio();
-        
-        return () => {
-            if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-                mediaRecorderRef.current.stop();
-            }
-        };
+    const isMobile = useMemo(() => {
+        if (typeof window === 'undefined') return false;
+        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     }, []);
 
     // Setup Speech Recognition
@@ -170,11 +146,7 @@ export const ShadowingSession = () => {
                 if (!prev) return Date.now();
                 return prev;
             });
-            // Start Audio Recorder if inactive
-            if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'inactive') {
-                audioChunksRef.current = [];
-                mediaRecorderRef.current.start();
-            }
+            
             if (isPlayingTTS) {
                 window.speechSynthesis.cancel();
                 setIsPlayingTTS(false);
@@ -218,10 +190,13 @@ export const ShadowingSession = () => {
         };
 
         recognition.onend = () => {
-            if (isListening && !isFinished) {
+            if (isFinished) return;
+            if (isListening) {
                 try {
-                    recognition.start(); // Restart engine to clear buffers silently
-                } catch(e) { /* ignore */ }
+                    recognition.start();
+                } catch(e) {
+                    setIsListening(false);
+                }
             } else {
                 setIsListening(false);
             }
@@ -374,9 +349,10 @@ export const ShadowingSession = () => {
     }, [matchedWordsCount, passageWords.length, isFinished, startTime, setTotalSecondsSpent, setDailyStats]);
 
     // Handlers
-    const toggleListening = () => {
+    const toggleListening = async () => {
         if (!recognitionRef.current) return;
         setDictWord(null);
+        
         if (isListening) {
             recognitionRef.current.stop();
             if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
@@ -384,11 +360,35 @@ export const ShadowingSession = () => {
             }
             setIsListening(false);
         } else {
-            if (isPlayingTTS) {
-                window.speechSynthesis.cancel();
-            }
+            if (isPlayingTTS) window.speechSynthesis.cancel();
             setTranscript('');
-            try { recognitionRef.current.start(); } catch (e) { console.error(e); }
+            
+            try { recognitionRef.current.start(); } catch (e) { console.error("Speech Recog Start Error", e); }
+            
+            if (!isMobile) {
+                try {
+                    if (!mediaRecorderRef.current) {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        mediaRecorderRef.current = new MediaRecorder(stream);
+                        mediaRecorderRef.current.ondataavailable = (e) => {
+                            if (e.data.size > 0) audioChunksRef.current.push(e.data);
+                        };
+                        mediaRecorderRef.current.onstop = () => {
+                            if (audioChunksRef.current.length > 0) {
+                                const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                                setAudioUrl(URL.createObjectURL(blob));
+                                audioChunksRef.current = [];
+                            }
+                        };
+                    }
+                    if (mediaRecorderRef.current.state === 'inactive') {
+                        audioChunksRef.current = [];
+                        mediaRecorderRef.current.start();
+                    }
+                } catch (err) {
+                    console.warn("Mobile / Mic constraint warning for recorder:", err);
+                }
+            }
         }
     };
 
