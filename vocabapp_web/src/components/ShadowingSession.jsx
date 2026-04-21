@@ -345,8 +345,14 @@ export const ShadowingSession = () => {
                 if (activeEl) {
                     if (isMobile) {
                         const container = containerRef.current;
-                        const scrollPos = activeEl.offsetTop - (container.clientHeight * 0.3) - container.offsetTop;
-                        container.scrollTo({ top: scrollPos, behavior: 'smooth' });
+                        let offsetTop = 0;
+                        let node = activeEl;
+                        while (node && node !== container) {
+                            offsetTop += node.offsetTop;
+                            node = node.offsetParent;
+                        }
+                        const scrollPos = offsetTop - (container.clientHeight * 0.2);
+                        container.scrollTo({ top: scrollPos > 0 ? scrollPos : 0, behavior: 'smooth' });
                     } else {
                         activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
