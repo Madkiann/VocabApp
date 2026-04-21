@@ -21,14 +21,14 @@ export const ShadowingSession = () => {
     // State Tracking Refs for Event Closures
     const isListeningRef = useRef(false);
     const isFinishedRef = useRef(false);
+    const matchedWordsCountRef = useRef(0);
+    const wordStatusesRef = useRef({});
+    const sessionStartIdxRef = useRef(0);
 
-    useEffect(() => {
-        isListeningRef.current = isListening;
-    }, [isListening]);
-
-    useEffect(() => {
-        isFinishedRef.current = isFinished;
-    }, [isFinished]);
+    useEffect(() => { isListeningRef.current = isListening; }, [isListening]);
+    useEffect(() => { isFinishedRef.current = isFinished; }, [isFinished]);
+    useEffect(() => { matchedWordsCountRef.current = matchedWordsCount; }, [matchedWordsCount]);
+    useEffect(() => { wordStatusesRef.current = wordStatuses; }, [wordStatuses]);
     
     // Feature States
     const [isPlayingTTS, setIsPlayingTTS] = useState(false);
@@ -168,10 +168,9 @@ export const ShadowingSession = () => {
 
         recognition.onstart = () => {
             setIsListening(true);
-            setStartTime(prev => {
-                if (!prev) return Date.now();
-                return prev;
-            });
+            setTranscript('');
+            sessionStartIdxRef.current = matchedWordsCountRef.current;
+            setStartTime(prev => prev || Date.now());
             
             if (isPlayingTTS) {
                 window.speechSynthesis.cancel();
@@ -269,76 +268,54 @@ export const ShadowingSession = () => {
         window.speechSynthesis.speak(utterance);
     };
 
-    // Tracking & Word Matching Logic
+    // Tracking & Word Matching Logic (Holistic Session Engine)
     useEffect(() => {
         if (!transcript || isFinished) return;
 
         const spokenWords = normalize(transcript).split(/\s+/).filter(w => w);
-        let diffIdx = 0;
-        while (diffIdx < lastSpokenWordsRef.current.length && diffIdx < spokenWords.length) {
-            if (lastSpokenWordsRef.current[diffIdx] === spokenWords[diffIdx]) diffIdx++;
-            else break;
-        }
+        let pointer = sessionStartIdxRef.current;
+        let tempStatuses = { ...wordStatusesRef.current };
 
-        const newWords = spokenWords.slice(diffIdx);
-        lastSpokenWordsRef.current = spokenWords;
-
-        let newMatched = matchedWordsCount;
-        let didMatch = false;
-        let newlyCorrect = 0;
-        let didSkip = false;
-        const newStatuses = {};
-        
         const checkMatch = (targetClean, spokenWord) => {
             if (targetClean === spokenWord) return true;
             if (isMobile) {
-                if (targetClean.length <= 3) {
-                    if (targetClean.includes(spokenWord) || spokenWord.includes(targetClean)) return true;
-                    return targetClean === spokenWord;
+                if (targetClean.length <= 3 && spokenWord.length <= 3) return targetClean === spokenWord;
+                if (targetClean.length > 3) {
+                    if (targetClean.includes(spokenWord) && spokenWord.length >= targetClean.length - 2) return true;
+                    if (spokenWord.includes(targetClean)) return true;
+                    const prefixLen = Math.floor(targetClean.length / 2);
+                    if (targetClean.substring(0, prefixLen) === spokenWord.substring(0, prefixLen) &&
+                        Math.abs(targetClean.length - spokenWord.length) <= 3) return true;
                 }
-                
-                if (targetClean.substring(0, 2) === spokenWord.substring(0, 2)) {
-                    if (Math.abs(targetClean.length - spokenWord.length) <= 4) return true;
-                }
-                
-                if (targetClean.includes(spokenWord) && spokenWord.length >= targetClean.length - 3) return true;
-                if (spokenWord.includes(targetClean)) return true;
             }
             return false;
         };
-        
-        for (let i = 0; i < newWords.length; i++) {
-            const word = newWords[i];
-            for (let j = 0; j < 5; j++) { // Increased lookahead to 5 to jump over missed words immediately
-                const targetIdx = newMatched + j;
+
+        for (let i = 0; i < spokenWords.length; i++) {
+            const word = spokenWords[i];
+            for (let j = 0; j <= 2; j++) {
+                const targetIdx = pointer + j;
                 if (targetIdx < passageWords.length && checkMatch(passageWords[targetIdx].clean, word)) {
-                    for (let k = newMatched; k < targetIdx; k++) {
-                        newStatuses[k] = 'skipped';
-                        didSkip = true;
-                    }
-                    newStatuses[targetIdx] = 'correct';
-                    newlyCorrect++;
-                    newMatched = targetIdx + 1;
-                    didMatch = true;
-                    setDictWord(null); // auto close dictionary if open
+                    for (let k = pointer; k < targetIdx; k++) tempStatuses[k] = 'skipped';
+                    tempStatuses[targetIdx] = 'correct';
+                    pointer = targetIdx + 1;
+                    setDictWord(null);
                     break;
                 }
             }
         }
 
-        if (didMatch) {
-            setWordStatuses(prev => ({ ...prev, ...newStatuses }));
-            setMatchedWordsCount(newMatched);
+        if (pointer > matchedWordsCountRef.current) {
+            setWordStatuses(tempStatuses);
+            setMatchedWordsCount(pointer);
             
-            if (didSkip) {
-                setComboCount(newlyCorrect);
-            } else {
-                setComboCount(prev => {
-                    const next = prev + newlyCorrect;
-                    setMaxCombo(m => Math.max(m, next));
-                    return next;
-                });
+            let currCombo = 0;
+            for (let p = pointer - 1; p >= 0; p--) {
+                if (tempStatuses[p] === 'correct') currCombo++;
+                else break;
             }
+            setComboCount(currCombo);
+            setMaxCombo(m => Math.max(m, currCombo));
 
             if (containerRef.current) {
                 const activeEl = containerRef.current.querySelector('.word-active');
@@ -347,10 +324,7 @@ export const ShadowingSession = () => {
                         const container = containerRef.current;
                         let offsetTop = 0;
                         let node = activeEl;
-                        while (node && node !== container) {
-                            offsetTop += node.offsetTop;
-                            node = node.offsetParent;
-                        }
+                        while (node && node !== container) { offsetTop += node.offsetTop; node = node.offsetParent; }
                         const scrollPos = offsetTop - (container.clientHeight * 0.2);
                         container.scrollTo({ top: scrollPos > 0 ? scrollPos : 0, behavior: 'smooth' });
                     } else {
@@ -359,7 +333,7 @@ export const ShadowingSession = () => {
                 }
             }
         }
-    }, [transcript, passageWords, matchedWordsCount, isFinished]);
+    }, [transcript, passageWords, isFinished, isMobile]);
 
     // Finish Condition & Analytics
     useEffect(() => {
@@ -472,6 +446,7 @@ export const ShadowingSession = () => {
         setPerfectHit(null);
         lastSpokenWordsRef.current = [];
         lastPerfectTimeRef.current = 0;
+        sessionStartIdxRef.current = 0;
     };
 
     const handleClose = () => {
