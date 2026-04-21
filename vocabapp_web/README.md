@@ -75,6 +75,30 @@ Splash Ekranı ayarları `capacitor.config.json` dosyasında tanımlanmıştır.
 
 ---
 
+## 🎙️ Shadowing (Pratik Yap / Gölgeleme) Modülü
+
+**Erişim Yolu:** Gösterge Paneli -> Kütüphane -> (Herhangi bir okuma parçasına giriş) -> Alt menüden "🎙️ Pratik Yap" Butonu.
+
+Shadowing özelliği, kullanıcının gerçek zamanlı okuma yeteneğini analiz etmek, kelime başarım oranını WPM (Kelime/Dakika) ve anadil yüzdesi ile ölçmek için tasarlanmış bir **oyunlaştırılmış telaffuz modülüdür**. Yalnızca yerel tarayıcı (Web Speech API ve MediaRecorder API) donanımları kullanılarak çalışır, dışarıdan backend veya sunucu tarafı ses işleme istemez.
+
+### Akıllı Karşılaştırma Motoru (Holistic Anchor Engine)
+Daha çok mobil (iOS Safari, Android Chrome) tarayıcıların "parçalı (chunk)" ve "geriye dönük düzeltmeli (retroactive)" konuşma çıktılarını stabilce yönetebilmek için özel olarak yazılmış kompleks bir motordur (`src/components/ShadowingSession.jsx`):
+* Geleneksel yan yana (differansiyel) kelime takibi, mobil tarayıcıların algıladıkları kısmı silip baştan yapılandırma şeklindeki API doğası yüzünden devasa "kelime atlamalarına" yol açıyordu.
+* Çözüm olarak **Sabit Çıpa (Anchor) Algoritması** uygulanır: Ses motoru her mikrofon takıldığında (`onend` sonrası sessiz auto-restart) veya kelimeler silindiğinde, durulan güncel indeksi referans alır (`sessionStartIdxRef`). Her yeni veri saniyesinde, kelimeleri önceki ilerlemeyle toplamak yerine bağlandığı çıpadan *(anchor)* itibaren sıfırdan simüle ederek hatalı algılama veya hayali atlamaları imkansızlaştırır.
+* Kesin İleri Atlama Sınırı (`j <= 2`), sistemin benzer sese sahip çok ilerideki bir cümleye ışınlanarak metni kaybetmesini (jump-skip) engeller.
+
+### Mobil Konfor Düzeltmeleri
+1. **Fuzzy Matching Algoritması:** Mobilde oluşan arka plan gürültüleri ve düşük performans, katı birebir kelime eşleşmesini sekteye uğratır. Sözcüklerin köküne veya harf benzerliğine (prefix/substring) toleranslı esnek bir analiz (`checkMatch`) sistemi aktiftir.
+2. **WakeLock API Güvenliği:** Pratik yaparken okumaya odaklanan kullanıcının ekranı otomatik kapanıp kararmasın diye mikrofonla birlikte eşzamanlı `navigator.wakeLock` devreye alınır.
+3. **Dinamik Kaydırma (Scroll Offset):** Kullanıcının sayfayı manuel kaydırmasına gerek kalmadan cümlenin akışını okuyabilmesi adına, okunmakta olan nesnenin DOM offsetleri manipüle edilmiş ve aktif satır ekranın daima üst%20 (`container.clientHeight * 0.2`) sınırına sabitlenerek mükemmel bir görüş alanı yaratılmıştır.
+
+### ⚠️ İnceleyecek Geliştirici İçin Önemli Not (Kontrol ve Geliştirme)
+> [!WARNING]  
+> Modül şu an yerel tarayıcılardaki kısıtlı **Web Speech API** mimarisini son sınırına kadar zorlayarak (hackleyerek) kusursuza yakın bir noktada çalışmaktadır. Ancak Apple ve Google'ın kendi mobil asistan algoritmalarındaki güncellemeler, API'nin `interimResults` esnekliği üzerinden uygulamaya sapmalar olarak yansıyabilir. İlerleyen süreçlerde **arayüzü test ederken ses algılama motorundaki Fuzzy Match (tolerans katsayılarını) monitor etmek ve gerekiyorsa güncellemek** kritik önem taşır. Uygulama ileri düzey bir projeye dönüşüyorsa, `SpeechRecognition`'ı tamamen çöpe atıp cihazdan bağımsız bulut tabanlı profesyonel bir transkripsiyon motoruna (örn: OpenAI Whisper API veya Azure Speech-to-Text) geçiş yapılması planlanmalıdır.
+
+---
+
 ## 👨‍💻 Gelecek Geliştirmeler İçin Notlar
 - `syncStorage` sistemi oldukça sağlam çalışıyor ancak büyük veri setlerinde indexedDB yapısına geçiş düşünülebilir.
 - Admin Panel içerisindeki grafik yapısı şu an localStorage istatistikleri üzerinden anlık okuma yapıyor.
+- Shadowing modülünde anadil benzerliği eşiği (Guitar Hero tipi Perfect! göstergesi) için duyarlılık testleri farklı donanımlarla artırılmalı ve izlenmelidir.
