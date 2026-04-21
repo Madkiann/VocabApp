@@ -137,6 +137,20 @@ export const ShadowingSession = () => {
         return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     }, []);
 
+    const wakeLockRef = useRef(null);
+    const requestWakeLock = async () => {
+        try { if ('wakeLock' in navigator) wakeLockRef.current = await navigator.wakeLock.request('screen'); }
+        catch (err) { console.warn("WakeLock request denied/failed:", err); }
+    };
+    const releaseWakeLock = () => {
+        if (wakeLockRef.current) { wakeLockRef.current.release().catch(()=>{}); wakeLockRef.current = null; }
+    };
+    useEffect(() => {
+        const handleVisChange = () => { if (document.visibilityState === 'visible' && isListeningRef.current) requestWakeLock(); };
+        document.addEventListener('visibilitychange', handleVisChange);
+        return () => { document.removeEventListener('visibilitychange', handleVisChange); releaseWakeLock(); };
+    }, []);
+
     // Setup Speech Recognition
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -275,11 +289,29 @@ export const ShadowingSession = () => {
         let didSkip = false;
         const newStatuses = {};
         
+        const checkMatch = (targetClean, spokenWord) => {
+            if (targetClean === spokenWord) return true;
+            if (isMobile) {
+                if (targetClean.length <= 3 && spokenWord.length <= 3) return targetClean === spokenWord;
+                if (targetClean.length > 3) {
+                    if (targetClean.includes(spokenWord) && spokenWord.length >= targetClean.length - 2) return true;
+                    if (spokenWord.includes(targetClean)) return true;
+                    // Prefix check for similar length words
+                    const prefixLen = Math.floor(targetClean.length / 2);
+                    if (targetClean.substring(0, prefixLen) === spokenWord.substring(0, prefixLen) &&
+                        Math.abs(targetClean.length - spokenWord.length) <= 3) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        
         for (let i = 0; i < newWords.length; i++) {
             const word = newWords[i];
             for (let j = 0; j < 3; j++) {
                 const targetIdx = newMatched + j;
-                if (targetIdx < passageWords.length && passageWords[targetIdx].clean === word) {
+                if (targetIdx < passageWords.length && checkMatch(passageWords[targetIdx].clean, word)) {
                     for (let k = newMatched; k < targetIdx; k++) {
                         newStatuses[k] = 'skipped';
                         didSkip = true;
@@ -310,7 +342,15 @@ export const ShadowingSession = () => {
 
             if (containerRef.current) {
                 const activeEl = containerRef.current.querySelector('.word-active');
-                if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (activeEl) {
+                    if (isMobile) {
+                        const container = containerRef.current;
+                        const scrollPos = activeEl.offsetTop - (container.clientHeight * 0.3) - container.offsetTop;
+                        container.scrollTo({ top: scrollPos, behavior: 'smooth' });
+                    } else {
+                        activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
             }
         }
     }, [transcript, passageWords, matchedWordsCount, isFinished]);
@@ -366,12 +406,14 @@ export const ShadowingSession = () => {
         setDictWord(null);
         
         if (isListening) {
+            releaseWakeLock();
             recognitionRef.current.stop();
             if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
                 mediaRecorderRef.current.stop();
             }
             setIsListening(false);
         } else {
+            requestWakeLock();
             if (isPlayingTTS) window.speechSynthesis.cancel();
             setTranscript('');
             
@@ -405,6 +447,7 @@ export const ShadowingSession = () => {
     };
 
     const handleReset = () => {
+        releaseWakeLock();
         if (recognitionRef.current && isListening) recognitionRef.current.stop();
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') mediaRecorderRef.current.stop();
         window.speechSynthesis.cancel();
