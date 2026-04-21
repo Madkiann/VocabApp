@@ -1,11 +1,34 @@
-# VocabApp (v1.0.2 - Beta)
+# VocabApp (v1.0.3 - Beta)
 
-VocabApp, dil öğrenimini oyunlaştıran, kişiselleştirilmiş bir kelime kartı (flashcard) uygulamasıdır. SM-2 aralıklı tekrarlama algoritmasını kullanır ve entegre Gemini AI sayesinde kullanıcının cümle kurma becerilerini puanlar.
+VocabApp, dil öğrenimini oyunlaştıran, kişiselleştirilmiş bir kelime kartı (flashcard) uygulamasıdır. SM-2 aralıklı tekrarlama algoritmasını kullanır ve entegre Gemini AI sayesinde kullanıcının cümle kurma becerilerini puanlar. İleri seviye konuşma/pratik becerileri için ise entegre bir **Gölgeleme (Shadowing)** motoru barındırır.
 
 Bu proje **React + Vite** altyapısıyla geliştirilmiş ve **Capacitor** ile hem Android hem de iOS platformlarında yerel (native) uygulama olarak çalışmak üzere tasarlanmıştır.
 
 > [!NOTE]
-> **Klasör Yapısı Hakkında:** Ana ve aktif proje `vocabapp_web` klasöründe yer almaktadır. Üst dizindeki ihtimal dahilinde görebileceğiniz `vocabapp_mobile` klasörü, uygulamanın eski ve yarım kalmış tarihi bir Flutter versiyonudur. Geliştirme yaparken tamamen `vocabapp_web` klasörünü dikkate alınız.
+> **Klasör Yapısı Hakkında:** Ana ve aktif proje `vocabapp_web` klasöründe yer almaktadır. Üst dizindeki ihtimal dahilinde görebileceğiniz `vocabapp_mobile` klasörü uygulamanın eski varyasyonudur. Geliştirme yaparken tamamen ve sadece `vocabapp_web` klasörünü dikkate alınız.
+
+---
+
+## 🎙️ Shadowing (Pratik Yap) Özelliği ve Mimari Analizi
+
+**Sisteme Erişim:** `Panel -> Kütüphane -> Okuma (Texts) -> Herhangi bir metin seçin -> Pratik Yap (Shadowing)` menü yoluyla erişilir.
+
+Shadowing modülü, kullanıcıların telaffuzlarını anadil seviyesine çıkarmak için gelişmiş, oyunlaştırılmış ve tam kontrollü bir dijital okuma motoru sağlar.
+
+### Temel Fonksiyonlar & Özellikler:
+1. **Dinamik Ses Takibi (Holistic Anchor Motoru):** Kullanıcının sesini gerçek zamanlı okuyup metin üzerindeki kelimeleri yakalar. Yanlış söylenen veya atlanılan kısımlar tolere edilirken, karaoke tarzı akıllı bir ilerleyiş sunulur.
+2. **"Perfect!" Gitar Hero Modu:** Kullanıcı bir cümlede 3'ten fazla kelime öbeğini çok net ve yüksek güvenilirlikle (>%96) telaffuz etiğinde tatmin edici bir görsel geri bildirim alır (spam olmaması için 4 saniyelik limitlere bağlanmıştır). 
+3. **Ghost Mode (Hayalet Modu):** Kognitif yük oluşturup kısa süreli hafızayı geliştirmek için, halihazırda okuduğun geçmiş kelimeleri siler/gizler, seni hep önündeki cümleye mecbur kılar.
+4. **Dinamik Netflix Altyazısı:** Sabit çeviri metni yerine kelime kelime neredeysen sadece o anki geçerli cümlenin çevirisini göstererek odak kaybını engeller.
+5. **Kıyaslama Panosu (Grid Layout):** Oturum sonrası; telaffuz hızını (WPM), Başarı oranını (%) gösterirken, kullanıcının kendi ses kaydını yerel TTS (Text-to-Speech) aksanıyla alt alta play/pause yapıp kıyaslamasına izin verir. Tökezlenen tüm kelimeler tek tıkla Kasaya (Vocab Vault) yollanabilir.
+
+### ⚠️ Geliştirici Tarafı & Uyarılar (Developer Notes)
+Benden sonra projeyi devralacak veya kodları inceleyecek kişi için kritik notlar ve sorun giderici referanslar:
+
+- **Dosya Kontrolü:** Bütün Gölgeleme modülü `src/components/ShadowingSession.jsx` içindedir.
+- **Mobilde Sınırlamalar (Ciddi Kısıtlama):** Bu panel masaüstünde devasa bir verimlilik ve stabilitede çalışır. Ancak özelikle mobil cihazlarda (iOS Safari ve Android Chrome) native ses tanıma donanımı, donanıma iki kere kilit atmasına (aynı anda hem Web Speech hem de MediaRecorder) izin vermez, sistemi kilitler. Bu sebeple **mobilde ses kayıt donanımı bilinçli olarak kapatılmıştır**, mikrofon gücü %100 konuşma tanımaya (Speech Recognition) verilmiştir.
+- **Kopukluklar ve "Holistic Anchor Framework":** Yine mobilde ses tanıma API'leri kesik kesik (chunk) çalışıp kendi kendi yeniden bağlandığı için ve daha kötüsü _cümledeki ilk sözcükleri sonradan duyup geriye dönük değiştirdiği için (retroactive patching)_, kelime eşleştirme döngüsü kafayı yiyor / atlıyordu. Bunu engellemek için kodun içinde `sessionStartIdxRef` adında mutlak bir çıpa noktası oluşturuldu. Geçmiş unutularak sadece güncel dinleme parçası simüle edilerek sistem ehlileştirildi. Algılamalar yine de bazen sapıtabilir, referans modül olarak kabul edilmelidir. Çok daha keskin mobil tecrübeleri için gelecekte native Capacitor mikrofon veya ML kit pluginleri gerekebilir. 
+- **Mobilde Scroll ve Ekran Uyanıklığı:** Telefon uykuya girmesin diye `navigator.wakeLock` API eklendi. Ayrıca telefon ekranında okunan metin hep en altta ezilmesin, okunacak devasa alan kalsın diye `.scrollIntoView` kaldırılarak elle DOM Offset'i (%20 kaydırma) yazıldı.
 
 ---
 
@@ -15,7 +38,7 @@ Proje genel olarak modern React pratiklerini (Hooks ve Context API) kullanır. K
 
 ```text
 src/
-├── components/       # Tekrar kullanılabilir UI parçaları (Kartlar, Modallar vb.)
+├── components/       # Tekrar kullanılabilir UI parçaları (Kartlar, Modallar vb., ShadowingSession)
 ├── context/          # Global State Yönetimi (AppContext, VocabContext, SettingsContext)
 ├── hooks/            # Özel Custom Hooks (useVocabEngine, useAppStorage vs.)
 ├── data/             # Başlangıç kelime ve phrasal verb setleri
@@ -46,7 +69,7 @@ Capacitor Preferences `await` gerektiren asenkron bir kütüphanedir. Ancak Reac
 
 ## 🤖 Yapay Zeka Entegrasyonu (Gemini)
 
-Uygulamanın `App.jsx` içerisindeki cümle oluşturma bölümünde doğrudan Google Gemini API kullanılmaktadır.  
+Uygulamanın `App.jsx` içerisindeki cümle oluşturma bölümünde ve Admin Panel kelime kazıma işlemlerinde Google Gemini API kullanılmaktadır.  
 
 **Güvenlik (BYOK - Bring Your Own Key):**
 API anahtarının çalınmaması için kaynak koda doğrudan gizlenmemiş (hardcode edilmemiş) aksine kullanıcının Ayarlar -> "Gemini API Key" sekmesinden kendi anahtarını girmesine dayalı bir yapı kurulmuştur.
@@ -75,30 +98,7 @@ Splash Ekranı ayarları `capacitor.config.json` dosyasında tanımlanmıştır.
 
 ---
 
-## 🎙️ Shadowing (Pratik Yap / Gölgeleme) Modülü
-
-**Erişim Yolu:** Gösterge Paneli -> Kütüphane -> (Herhangi bir okuma parçasına giriş) -> Alt menüden "🎙️ Pratik Yap" Butonu.
-
-Shadowing özelliği, kullanıcının gerçek zamanlı okuma yeteneğini analiz etmek, kelime başarım oranını WPM (Kelime/Dakika) ve anadil yüzdesi ile ölçmek için tasarlanmış bir **oyunlaştırılmış telaffuz modülüdür**. Yalnızca yerel tarayıcı (Web Speech API ve MediaRecorder API) donanımları kullanılarak çalışır, dışarıdan backend veya sunucu tarafı ses işleme istemez.
-
-### Akıllı Karşılaştırma Motoru (Holistic Anchor Engine)
-Daha çok mobil (iOS Safari, Android Chrome) tarayıcıların "parçalı (chunk)" ve "geriye dönük düzeltmeli (retroactive)" konuşma çıktılarını stabilce yönetebilmek için özel olarak yazılmış kompleks bir motordur (`src/components/ShadowingSession.jsx`):
-* Geleneksel yan yana (differansiyel) kelime takibi, mobil tarayıcıların algıladıkları kısmı silip baştan yapılandırma şeklindeki API doğası yüzünden devasa "kelime atlamalarına" yol açıyordu.
-* Çözüm olarak **Sabit Çıpa (Anchor) Algoritması** uygulanır: Ses motoru her mikrofon takıldığında (`onend` sonrası sessiz auto-restart) veya kelimeler silindiğinde, durulan güncel indeksi referans alır (`sessionStartIdxRef`). Her yeni veri saniyesinde, kelimeleri önceki ilerlemeyle toplamak yerine bağlandığı çıpadan *(anchor)* itibaren sıfırdan simüle ederek hatalı algılama veya hayali atlamaları imkansızlaştırır.
-* Kesin İleri Atlama Sınırı (`j <= 2`), sistemin benzer sese sahip çok ilerideki bir cümleye ışınlanarak metni kaybetmesini (jump-skip) engeller.
-
-### Mobil Konfor Düzeltmeleri
-1. **Fuzzy Matching Algoritması:** Mobilde oluşan arka plan gürültüleri ve düşük performans, katı birebir kelime eşleşmesini sekteye uğratır. Sözcüklerin köküne veya harf benzerliğine (prefix/substring) toleranslı esnek bir analiz (`checkMatch`) sistemi aktiftir.
-2. **WakeLock API Güvenliği:** Pratik yaparken okumaya odaklanan kullanıcının ekranı otomatik kapanıp kararmasın diye mikrofonla birlikte eşzamanlı `navigator.wakeLock` devreye alınır.
-3. **Dinamik Kaydırma (Scroll Offset):** Kullanıcının sayfayı manuel kaydırmasına gerek kalmadan cümlenin akışını okuyabilmesi adına, okunmakta olan nesnenin DOM offsetleri manipüle edilmiş ve aktif satır ekranın daima üst%20 (`container.clientHeight * 0.2`) sınırına sabitlenerek mükemmel bir görüş alanı yaratılmıştır.
-
-### ⚠️ İnceleyecek Geliştirici İçin Önemli Not (Kontrol ve Geliştirme)
-> [!WARNING]  
-> Modül şu an yerel tarayıcılardaki kısıtlı **Web Speech API** mimarisini son sınırına kadar zorlayarak (hackleyerek) kusursuza yakın bir noktada çalışmaktadır. Ancak Apple ve Google'ın kendi mobil asistan algoritmalarındaki güncellemeler, API'nin `interimResults` esnekliği üzerinden uygulamaya sapmalar olarak yansıyabilir. İlerleyen süreçlerde **arayüzü test ederken ses algılama motorundaki Fuzzy Match (tolerans katsayılarını) monitor etmek ve gerekiyorsa güncellemek** kritik önem taşır. Uygulama ileri düzey bir projeye dönüşüyorsa, `SpeechRecognition`'ı tamamen çöpe atıp cihazdan bağımsız bulut tabanlı profesyonel bir transkripsiyon motoruna (örn: OpenAI Whisper API veya Azure Speech-to-Text) geçiş yapılması planlanmalıdır.
-
----
-
 ## 👨‍💻 Gelecek Geliştirmeler İçin Notlar
 - `syncStorage` sistemi oldukça sağlam çalışıyor ancak büyük veri setlerinde indexedDB yapısına geçiş düşünülebilir.
 - Admin Panel içerisindeki grafik yapısı şu an localStorage istatistikleri üzerinden anlık okuma yapıyor.
-- Shadowing modülünde anadil benzerliği eşiği (Guitar Hero tipi Perfect! göstergesi) için duyarlılık testleri farklı donanımlarla artırılmalı ve izlenmelidir.
+- ShadowingSession mobil deneyimi iyileştirilmesi veya refactor edilmesi (Bkz: Shadowing Mimarisi).
