@@ -18,6 +18,18 @@ export const ShadowingSession = () => {
     const [isFinished, setIsFinished] = useState(false);
     const [finalAccuracy, setFinalAccuracy] = useState(100);
     
+    // State Tracking Refs for Event Closures
+    const isListeningRef = useRef(false);
+    const isFinishedRef = useRef(false);
+
+    useEffect(() => {
+        isListeningRef.current = isListening;
+    }, [isListening]);
+
+    useEffect(() => {
+        isFinishedRef.current = isFinished;
+    }, [isFinished]);
+    
     // Feature States
     const [isPlayingTTS, setIsPlayingTTS] = useState(false);
     const [startTime, setStartTime] = useState(null);
@@ -190,8 +202,8 @@ export const ShadowingSession = () => {
         };
 
         recognition.onend = () => {
-            if (isFinished) return;
-            if (isListening) {
+            if (isFinishedRef.current) return;
+            if (isListeningRef.current) {
                 try {
                     recognition.start();
                 } catch(e) {
