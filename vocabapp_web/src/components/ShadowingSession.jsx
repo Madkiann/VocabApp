@@ -292,24 +292,24 @@ export const ShadowingSession = () => {
         const checkMatch = (targetClean, spokenWord) => {
             if (targetClean === spokenWord) return true;
             if (isMobile) {
-                if (targetClean.length <= 3 && spokenWord.length <= 3) return targetClean === spokenWord;
-                if (targetClean.length > 3) {
-                    if (targetClean.includes(spokenWord) && spokenWord.length >= targetClean.length - 2) return true;
-                    if (spokenWord.includes(targetClean)) return true;
-                    // Prefix check for similar length words
-                    const prefixLen = Math.floor(targetClean.length / 2);
-                    if (targetClean.substring(0, prefixLen) === spokenWord.substring(0, prefixLen) &&
-                        Math.abs(targetClean.length - spokenWord.length) <= 3) {
-                        return true;
-                    }
+                if (targetClean.length <= 3) {
+                    if (targetClean.includes(spokenWord) || spokenWord.includes(targetClean)) return true;
+                    return targetClean === spokenWord;
                 }
+                
+                if (targetClean.substring(0, 2) === spokenWord.substring(0, 2)) {
+                    if (Math.abs(targetClean.length - spokenWord.length) <= 4) return true;
+                }
+                
+                if (targetClean.includes(spokenWord) && spokenWord.length >= targetClean.length - 3) return true;
+                if (spokenWord.includes(targetClean)) return true;
             }
             return false;
         };
         
         for (let i = 0; i < newWords.length; i++) {
             const word = newWords[i];
-            for (let j = 0; j < 3; j++) {
+            for (let j = 0; j < 5; j++) { // Increased lookahead to 5 to jump over missed words immediately
                 const targetIdx = newMatched + j;
                 if (targetIdx < passageWords.length && checkMatch(passageWords[targetIdx].clean, word)) {
                     for (let k = newMatched; k < targetIdx; k++) {
