@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, Settings, X, Languages, Moon, Sun, Hourglass, Share, Instagram, Globe, Heart, Sparkles, MessageSquare, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Settings, X, Languages, Moon, Sun, Hourglass, Share, Instagram, Globe, Heart, Sparkles, MessageSquare, ChevronRight, ShieldCheck, Power } from 'lucide-react';
 import { Mascot } from './Mascot';
 import FlamingooImg from '../assets/Mascot/Flamingoo.png';
 import { useSettings } from '../context/SettingsContext';
@@ -9,9 +9,10 @@ import { useApp } from '../context/AppContext';
 export const SettingsModal = () => {
     const { 
         t, isDark, themePref, cycleTheme, getThemeText, appLang, setAppLang, 
-        setThemePref, soundEnabled, setSoundEnabled, handleVersionClick, verifyMasterKey 
+        setThemePref, soundEnabled, setSoundEnabled, handleVersionClick, verifyMasterKey,
+        geminiApiKey, setGeminiApiKey, isAdmin
     } = useSettings();
-    const { advanceTime, isAdmin, showSettings, setShowSettings, setShowCommunityHub, setShowAdminPanel } = useApp();
+    const { advanceTime, showSettings, setShowSettings, setShowCommunityHub, setShowAdminPanel } = useApp();
 
     const [themeDragStartX, setThemeDragStartX] = React.useState(0);
     const [isDraggingTheme, setIsDraggingTheme] = React.useState(false);
@@ -103,7 +104,7 @@ export const SettingsModal = () => {
 
     return (
         <>
-            <div className={`fixed inset-0 z-[120] flex flex-col justify-end bg-black/70 animate-fade-in`} onClick={() => setShowSettings(false)}>
+            <div className={`fixed inset-0 z-[600] flex flex-col justify-end bg-black/70 animate-fade-in`} onClick={() => setShowSettings(false)}>
                 <div
                     className={`w-full h-[90vh] p-4 pt-4 rounded-t-[2.5rem] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] ${isDark ? 'bg-[#121212] border-t border-slate-800' : 'bg-[#f4f4f5] border-t border-slate-200'} transform transition-transform flex flex-col`}
                     onClick={e => e.stopPropagation()}
@@ -174,6 +175,23 @@ export const SettingsModal = () => {
                                         <div className={`w-4 h-4 rounded-full bg-white shadow-md absolute top-1 transition-all duration-300 ${soundEnabled ? 'left-[calc(100%-1.25rem)]' : 'left-1'}`}></div>
                                     </div>
                                 </button>
+
+                                <div className={`w-full flex-col p-4 px-5 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-100`}>
+                                    <div className="flex items-center gap-4 mb-3">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDark ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}><Sparkles size={22} /></div>
+                                        <div className="text-left py-1 w-full">
+                                            <h4 className={`text-base font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Gemini API Key</h4>
+                                            <p className={`text-[10px] font-semibold tracking-[0.15em] uppercase opacity-70 mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{appLang === 'tr' ? 'Yapay Zeka Özellikleri İçin' : 'Required for AI Features'}</p>
+                                        </div>
+                                    </div>
+                                    <input
+                                        type="password"
+                                        placeholder="AIzaSy..."
+                                        value={geminiApiKey}
+                                        onChange={(e) => setGeminiApiKey(e.target.value)}
+                                        className={`w-full p-3 rounded-xl border outline-none text-sm font-mono tracking-widest ${isDark ? 'bg-black/50 border-slate-700 text-white focus:border-indigo-500' : 'bg-slate-50 border-slate-200 text-slate-800 focus:border-indigo-500'} transition-colors`}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -200,31 +218,46 @@ export const SettingsModal = () => {
                                         {isAdmin ? 'ADMIN' : 'BETA'}
                                     </div>
                                 </div>
-
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
                             </button>
+                        </div>
 
-                            {isAdmin && (
-                                <button
-                                    onClick={() => { setShowAdminPanel(true); setShowSettings(false); }}
-                                    className={`group relative overflow-hidden rounded-[2rem] border p-6 transition-all active:scale-[0.98] ${isDark ? 'bg-amber-950/20 border-amber-500/30' : 'bg-amber-50/50 border-amber-200 shadow-sm'}`}
-                                >
-                                    <div className="relative z-10 flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center relative ${isDark ? 'bg-amber-500/20' : 'bg-white shadow-md'}`}>
-                                                <Settings size={26} className="text-amber-500 animate-spin-slow" />
+                        {/* Group: Developer System (Visible only when isAdmin is true) */}
+                        {isAdmin && (
+                            <div className="flex flex-col gap-2 mb-6">
+                                <div className={`relative overflow-hidden rounded-[2rem] border p-6 transition-all bg-gradient-to-br from-amber-500/10 to-transparent ${isDark ? 'border-amber-500/30' : 'border-amber-200 shadow-sm'}`}>
+                                    <div className="relative z-10 space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDark ? 'bg-amber-500/20' : 'bg-white shadow-sm'}`}>
+                                                    <ShieldCheck size={24} className="text-amber-500" />
+                                                </div>
+                                                <div>
+                                                    <h4 className={`text-base font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Geliştirici Sistemi</h4>
+                                                    <p className="text-[9px] font-bold opacity-40 uppercase tracking-widest">DevMode Aktif</p>
+                                                </div>
                                             </div>
-                                            <div className="text-left">
-                                                <h4 className={`text-lg font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Admin Panel</h4>
-                                                <p className={`text-[10px] font-black uppercase tracking-[0.2em] opacity-60 ${isDark ? 'text-amber-300' : 'text-amber-600'}`}>Insights & Configuration</p>
-                                            </div>
+                                            <button 
+                                                onClick={() => verifyMasterKey('00741')} 
+                                                className="p-3 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all"
+                                                title="Çıkış Yap"
+                                            >
+                                                <Power size={18} />
+                                            </button>
                                         </div>
-                                        <ChevronRight size={20} className="text-amber-500" />
+                                        
+                                        <button
+                                            onClick={() => { setShowAdminPanel(true); setShowSettings(false); }}
+                                            className="w-full py-4 rounded-2xl bg-amber-500 text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 transform active:scale-95 transition-all flex items-center justify-center gap-2"
+                                        >
+                                            <Settings size={16} className="animate-spin-slow" />
+                                            Admin Paneline Gir
+                                        </button>
                                     </div>
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-                                </button>
-                            )}
-                        </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Group 2: Social & Web */}
                         <div className="flex flex-col gap-2 mb-6">
@@ -257,7 +290,7 @@ export const SettingsModal = () => {
                         <div className="mt-8 flex flex-col items-center gap-2 opacity-50 pb-10">
                             <button
                                 onClick={onVersionClick}
-                                className={`text-[11px] font-bold tracking-widest uppercase transition-all active:scale-95 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}
+                                className={`p-4 text-[11px] font-bold tracking-widest uppercase transition-all active:scale-95 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}
                             >
                                 v1.0.2 (Beta) {isAdmin && '✨'}
                             </button>
@@ -269,7 +302,7 @@ export const SettingsModal = () => {
 
             {/* Master Key Modal */}
             {showKeyModal && (
-                <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-fade-in">
+                <div className="fixed inset-0 z-[700] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-fade-in">
                     <div className={`w-full max-w-sm p-8 rounded-[3rem] border transition-all ${keyError ? 'animate-shake' : ''} ${isDark ? 'bg-[#1a1a1a] border-slate-800 shadow-[0_0_50px_rgba(0,0,0,0.5)]' : 'bg-white border-slate-100 shadow-2xl'}`}>
                         <div className="flex flex-col items-center text-center gap-4 mb-8">
                             <div className={`w-20 h-20 rounded-full flex items-center justify-center ${isDark ? 'bg-indigo-500/10' : 'bg-indigo-50'}`}>
@@ -300,13 +333,13 @@ export const SettingsModal = () => {
                                     onClick={() => setShowKeyModal(false)}
                                     className={`flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}
                                 >
-                                    Cancel
+                                    İptal
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.02] active:scale-95"
+                                    className="flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-amber-500 text-black shadow-lg shadow-amber-500/30 transition-all hover:scale-[1.02] active:scale-95"
                                 >
-                                    Unlock
+                                    Doğrula
                                 </button>
                             </div>
                         </form>

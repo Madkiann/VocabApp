@@ -4,6 +4,7 @@ import { initialVocabulary, initialPhrasalVerbs } from '../data/vocabulary';
 import { safeJsonParse, shuffleArray } from '../utils/helpers';
 import { useApp } from './AppContext';
 import { useSettings } from './SettingsContext';
+import { syncStorage } from '../utils/storage';
 
 export const VocabContext = createContext();
 
@@ -25,12 +26,12 @@ export const VocabProvider = ({ children }) => {
     const { isAdmin } = useSettings();
 
     // 1. Core Vocabulary States
-    const [wordVocab, setWordVocab] = useState([...initialVocabulary]);
-    const [phrasalVocab, setPhrasalVocab] = useState([...initialPhrasalVerbs]);
-    const [chillVocab, setChillVocab] = useState([...initialVocabulary].map(w => ({ ...w, sm2: { ...w.sm2, ef: 3.0 } })));
+    const [wordVocab, setWordVocab] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_word_vocab')) || [...initialVocabulary]);
+    const [phrasalVocab, setPhrasalVocab] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_phrasal_vocab')) || [...initialPhrasalVerbs]);
+    const [chillVocab, setChillVocab] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_chill_vocab')) || [...initialVocabulary].map(w => ({ ...w, sm2: { ...w.sm2, ef: 3.0 } })));
     
     const [customWords, setCustomWords] = useState(() => {
-        const stored = safeJsonParse(localStorage.getItem('vocabapp_custom_words'));
+        const stored = safeJsonParse(syncStorage.getItem('vocabapp_custom_words'));
         if (!stored) return [];
         return stored.map(w => {
             if (w.eng && !w.word) {
@@ -48,18 +49,18 @@ export const VocabProvider = ({ children }) => {
         });
     });
 
-    const [deletedWords, setDeletedWords] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_deleted_words')) || []);
+    const [deletedWords, setDeletedWords] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_deleted_words')) || []);
     const [vocabMode, setVocabMode] = useState('words'); // words, phrasal, chill
     const [chillSortMode, setChillSortMode] = useState('random');
-    const [savedWords, setSavedWords] = useState([]);
-    const [vaultFolders, setVaultFolders] = useState(['General']);
+    const [savedWords, setSavedWords] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_saved_words')) || []);
+    const [vaultFolders, setVaultFolders] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_vault_folders')) || ['General']);
     const [deck, setDeck] = useState([]);
     const [currentWordIndex, setCurrentWordIndex] = useState(() => {
-        const saved = localStorage.getItem('vocabapp_current_index');
+        const saved = syncStorage.getItem('vocabapp_current_index');
         return saved ? parseInt(saved, 10) : 0;
     });
-    const [learningWords, setLearningWords] = useState([]);
-    const [history, setHistory] = useState([]);
+    const [learningWords, setLearningWords] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_learning_words')) || []);
+    const [history, setHistory] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_history')) || []);
 
     // 2. Computed (Derived) State
     const computedWords = useMemo(() => {
@@ -110,9 +111,16 @@ export const VocabProvider = ({ children }) => {
     }, [vocabMode]);
 
     // 3. Persistence Effects
-    useEffect(() => localStorage.setItem('vocabapp_custom_words', JSON.stringify(customWords)), [customWords]);
-    useEffect(() => localStorage.setItem('vocabapp_deleted_words', JSON.stringify(deletedWords)), [deletedWords]);
-    useEffect(() => localStorage.setItem('vocabapp_current_index', currentWordIndex.toString()), [currentWordIndex]);
+    useEffect(() => syncStorage.setItem('vocabapp_word_vocab', JSON.stringify(wordVocab)), [wordVocab]);
+    useEffect(() => syncStorage.setItem('vocabapp_phrasal_vocab', JSON.stringify(phrasalVocab)), [phrasalVocab]);
+    useEffect(() => syncStorage.setItem('vocabapp_chill_vocab', JSON.stringify(chillVocab)), [chillVocab]);
+    useEffect(() => syncStorage.setItem('vocabapp_custom_words', JSON.stringify(customWords)), [customWords]);
+    useEffect(() => syncStorage.setItem('vocabapp_deleted_words', JSON.stringify(deletedWords)), [deletedWords]);
+    useEffect(() => syncStorage.setItem('vocabapp_current_index', currentWordIndex.toString()), [currentWordIndex]);
+    useEffect(() => syncStorage.setItem('vocabapp_saved_words', JSON.stringify(savedWords)), [savedWords]);
+    useEffect(() => syncStorage.setItem('vocabapp_vault_folders', JSON.stringify(vaultFolders)), [vaultFolders]);
+    useEffect(() => syncStorage.setItem('vocabapp_learning_words', JSON.stringify(learningWords)), [learningWords]);
+    useEffect(() => syncStorage.setItem('vocabapp_history', JSON.stringify(history)), [history]);
 
     // 4. Shared Logic (Functions)
     const deleteWord = useCallback((wordId) => {
@@ -234,14 +242,14 @@ export const VocabProvider = ({ children }) => {
             };
         });
 
-        localStorage.setItem('vocabapp_last_active_date', new Date(currentDate).toDateString());
+        syncStorage.setItem('vocabapp_last_active_date', new Date(currentDate).toDateString());
     }, [currentDate, isRetryMode, phrasalVocab, wordVocab, chillVocab, customWords, setTotalSwipes, setModeSwipes, setRightSwipes, setLeftSwipes, setHourlySwipes, setLastActionStatus, setDailyStats, setDifficultWords]);
 
     const refreshDeck = useCallback((isRetry = false) => {
         let newDeck = [];
         if (isRetry) {
             const todayStr = new Date(currentDate).toDateString();
-            const storedStats = safeJsonParse(localStorage.getItem('vocabapp_daily_stats')) || {};
+            const storedStats = safeJsonParse(syncStorage.getItem('vocabapp_daily_stats')) || {};
             const stats = storedStats[todayStr] || { swipedIds: [] };
             const swipedTodayIds = new Set(stats.swipedIds || []);
 
@@ -254,7 +262,7 @@ export const VocabProvider = ({ children }) => {
             setIsRetryMode(true);
         } else if (vocabMode !== 'chill') {
             const todayStr = new Date(currentDate).toDateString();
-            const storedStats = safeJsonParse(localStorage.getItem('vocabapp_daily_stats')) || {};
+            const storedStats = safeJsonParse(syncStorage.getItem('vocabapp_daily_stats')) || {};
             const stats = storedStats[todayStr] || { swiped: 0, swipedIds: [] };
 
             const dueCards = vocab.filter(w => w.sm2.nextDate <= currentDate && w.sm2.rep > 0);
@@ -285,6 +293,12 @@ export const VocabProvider = ({ children }) => {
         }
     }, [currentDate, vocab, vocabMode, phrasalVocab, wordVocab, setIsRetryMode, setAppMode, setCardsSwipedSinceQuiz, setIsRevealed]);
 
+    // Uygulama ilk açıldığında veya kelime modu değiştiğinde desteyi yenile
+    useEffect(() => {
+        refreshDeck();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [vocabMode]);
+
     const jumpToCard = useCallback((cardId, targetMode) => {
         setVocabMode(targetMode);
         setAppMode('swipe');
@@ -305,16 +319,16 @@ export const VocabProvider = ({ children }) => {
         if (!isAdmin) return;
         const updateFn = w => {
             if (String(w.id) === String(wordId)) {
-                let currentXp = w.sm2.bondXP || 0;
+                let currentXp = w.sm2?.bondXP || 0;
                 let nextXp, nextInt;
                 if (currentXp === 0) { nextXp = 50; nextInt = 1; }
                 else if (currentXp < 100) { nextXp = 100; nextInt = 7; }
                 else if (currentXp < 250) { nextXp = 250; nextInt = 21; }
-                else { nextXp = currentXp + 100; nextInt = Math.max(w.sm2.int || 0, 30); }
+                else { nextXp = currentXp + 100; nextInt = Math.max(w.sm2?.int || 0, 30); }
 
                 return {
                     ...w,
-                    sm2: { ...w.sm2, bondXP: nextXp, int: nextInt, rep: Math.max(w.sm2.rep, 1) }
+                    sm2: { ...(w.sm2 || {}), bondXP: nextXp, int: nextInt, rep: Math.max((w.sm2?.rep || 0), 1) }
                 };
             }
             return w;
@@ -322,6 +336,7 @@ export const VocabProvider = ({ children }) => {
         setWordVocab(prev => prev.map(updateFn));
         setPhrasalVocab(prev => prev.map(updateFn));
         setChillVocab(prev => prev.map(updateFn));
+        setDeck(prev => prev.map(updateFn)); // Update the current view
     }, [isAdmin]);
 
     const value = {

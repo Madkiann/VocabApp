@@ -1,6 +1,7 @@
 
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { safeJsonParse } from '../utils/helpers';
+import { syncStorage } from '../utils/storage';
 
 export const AppContext = createContext();
 
@@ -18,30 +19,30 @@ export const AppProvider = ({ children }) => {
     const [isLogoVisible, setIsLogoVisible] = useState(true);
     const [currentDate, setCurrentDate] = useState(Date.now());
     const [appStartDate] = useState(() => {
-        const stored = localStorage.getItem('vocabapp_start_date');
+        const stored = syncStorage.getItem('vocabapp_start_date');
         if (stored) return parseInt(stored, 10);
         const now = Date.now();
-        localStorage.setItem('vocabapp_start_date', now.toString());
+        syncStorage.setItem('vocabapp_start_date', now.toString());
         return now;
     });
 
     // 2. Global Stats States
-    const [totalSwipes, setTotalSwipes] = useState(() => parseInt(localStorage.getItem('vocabapp_total_swipes') || '0', 10));
+    const [totalSwipes, setTotalSwipes] = useState(() => parseInt(syncStorage.getItem('vocabapp_total_swipes') || '0', 10));
     const [streak, setStreak] = useState(1);
-    const [maxStreak, setMaxStreak] = useState(() => parseInt(localStorage.getItem('vocabapp_max_streak') || '0', 10));
-    const [totalSecondsSpent, setTotalSecondsSpent] = useState(() => parseInt(localStorage.getItem('vocabapp_total_time') || '0', 10));
+    const [maxStreak, setMaxStreak] = useState(() => parseInt(syncStorage.getItem('vocabapp_max_streak') || '0', 10));
+    const [totalSecondsSpent, setTotalSecondsSpent] = useState(() => parseInt(syncStorage.getItem('vocabapp_total_time') || '0', 10));
     
-    const [modeSwipes, setModeSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_mode_swipes')) }));
-    const [rightSwipes, setRightSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_right_swipes')) }));
-    const [leftSwipes, setLeftSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_left_swipes')) }));
-    const [modeTime, setModeTime] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(localStorage.getItem('vocabapp_mode_time')) }));
-    const [hourlySwipes, setHourlySwipes] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_hourly_swipes')) || new Array(24).fill(0));
-    const [dailyStats, setDailyStats] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_daily_stats')) || {});
-    const [difficultWords, setDifficultWords] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_difficult_words')) || []);
-    const [systemLogs, setSystemLogs] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_system_logs')) || []);
+    const [modeSwipes, setModeSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(syncStorage.getItem('vocabapp_mode_swipes')) }));
+    const [rightSwipes, setRightSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(syncStorage.getItem('vocabapp_right_swipes')) }));
+    const [leftSwipes, setLeftSwipes] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(syncStorage.getItem('vocabapp_left_swipes')) }));
+    const [modeTime, setModeTime] = useState(() => ({ words: 0, chill: 0, phrasal: 0, quiz: 0, ...safeJsonParse(syncStorage.getItem('vocabapp_mode_time')) }));
+    const [hourlySwipes, setHourlySwipes] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_hourly_swipes')) || new Array(24).fill(0));
+    const [dailyStats, setDailyStats] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_daily_stats')) || {});
+    const [difficultWords, setDifficultWords] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_difficult_words')) || []);
+    const [systemLogs, setSystemLogs] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_system_logs')) || []);
 
     // 3. Achievements States
-    const [unlockedAchievements, setUnlockedAchievements] = useState(() => safeJsonParse(localStorage.getItem('vocabapp_achievements')) || []);
+    const [unlockedAchievements, setUnlockedAchievements] = useState(() => safeJsonParse(syncStorage.getItem('vocabapp_achievements')) || []);
     const [achievementQueue, setAchievementQueue] = useState([]);
 
     // 4. UI Temporary States
@@ -52,11 +53,11 @@ export const AppProvider = ({ children }) => {
     const [isQuizReview, setIsQuizReview] = useState(false);
     const [reviewingEntryId, setReviewingEntryId] = useState(null);
     const [quizLog, setQuizLog] = useState(() => {
-        const stored = safeJsonParse(localStorage.getItem('vocabapp_quiz_log'));
+        const stored = safeJsonParse(syncStorage.getItem('vocabapp_quiz_log'));
         return { total: 0, correct: 0, history: [], ...(stored || {}) };
     });
     const [swipeLog, setSwipeLog] = useState(() => {
-        const stored = safeJsonParse(localStorage.getItem('vocabapp_swipe_log'));
+        const stored = safeJsonParse(syncStorage.getItem('vocabapp_swipe_log'));
         return { correctIds: [], wrongIds: [], ...(stored || {}) };
     });
 
@@ -75,6 +76,8 @@ export const AppProvider = ({ children }) => {
     const [activeVaultFolder, setActiveVaultFolder] = useState(null);
     const [selectedVaultWord, setSelectedVaultWord] = useState(null);
     const [editingWord, setEditingWord] = useState(null);
+    const [showShadowing, setShowShadowing] = useState(false);
+    const [activeShadowingPassage, setActiveShadowingPassage] = useState(null);
 
     // 6. Quiz States
     const [quizQuestion, setQuizQuestion] = useState(null);
@@ -85,20 +88,20 @@ export const AppProvider = ({ children }) => {
     const [lastQuizType, setLastQuizType] = useState(null);
 
     // 5. Persistence Effects
-    useEffect(() => localStorage.setItem('vocabapp_total_swipes', totalSwipes.toString()), [totalSwipes]);
-    useEffect(() => localStorage.setItem('vocabapp_max_streak', maxStreak.toString()), [maxStreak]);
-    useEffect(() => localStorage.setItem('vocabapp_total_time', totalSecondsSpent.toString()), [totalSecondsSpent]);
-    useEffect(() => localStorage.setItem('vocabapp_mode_swipes', JSON.stringify(modeSwipes)), [modeSwipes]);
-    useEffect(() => localStorage.setItem('vocabapp_right_swipes', JSON.stringify(rightSwipes)), [rightSwipes]);
-    useEffect(() => localStorage.setItem('vocabapp_left_swipes', JSON.stringify(leftSwipes)), [leftSwipes]);
-    useEffect(() => localStorage.setItem('vocabapp_mode_time', JSON.stringify(modeTime)), [modeTime]);
-    useEffect(() => localStorage.setItem('vocabapp_hourly_swipes', JSON.stringify(hourlySwipes)), [hourlySwipes]);
-    useEffect(() => localStorage.setItem('vocabapp_daily_stats', JSON.stringify(dailyStats)), [dailyStats]);
-    useEffect(() => localStorage.setItem('vocabapp_difficult_words', JSON.stringify(difficultWords)), [difficultWords]);
-    useEffect(() => localStorage.setItem('vocabapp_system_logs', JSON.stringify(systemLogs)), [systemLogs]);
-    useEffect(() => localStorage.setItem('vocabapp_achievements', JSON.stringify(unlockedAchievements)), [unlockedAchievements]);
-    useEffect(() => localStorage.setItem('vocabapp_quiz_log', JSON.stringify(quizLog)), [quizLog]);
-    useEffect(() => localStorage.setItem('vocabapp_swipe_log', JSON.stringify(swipeLog)), [swipeLog]);
+    useEffect(() => syncStorage.setItem('vocabapp_total_swipes', totalSwipes.toString()), [totalSwipes]);
+    useEffect(() => syncStorage.setItem('vocabapp_max_streak', maxStreak.toString()), [maxStreak]);
+    useEffect(() => syncStorage.setItem('vocabapp_total_time', totalSecondsSpent.toString()), [totalSecondsSpent]);
+    useEffect(() => syncStorage.setItem('vocabapp_mode_swipes', JSON.stringify(modeSwipes)), [modeSwipes]);
+    useEffect(() => syncStorage.setItem('vocabapp_right_swipes', JSON.stringify(rightSwipes)), [rightSwipes]);
+    useEffect(() => syncStorage.setItem('vocabapp_left_swipes', JSON.stringify(leftSwipes)), [leftSwipes]);
+    useEffect(() => syncStorage.setItem('vocabapp_mode_time', JSON.stringify(modeTime)), [modeTime]);
+    useEffect(() => syncStorage.setItem('vocabapp_hourly_swipes', JSON.stringify(hourlySwipes)), [hourlySwipes]);
+    useEffect(() => syncStorage.setItem('vocabapp_daily_stats', JSON.stringify(dailyStats)), [dailyStats]);
+    useEffect(() => syncStorage.setItem('vocabapp_difficult_words', JSON.stringify(difficultWords)), [difficultWords]);
+    useEffect(() => syncStorage.setItem('vocabapp_system_logs', JSON.stringify(systemLogs)), [systemLogs]);
+    useEffect(() => syncStorage.setItem('vocabapp_achievements', JSON.stringify(unlockedAchievements)), [unlockedAchievements]);
+    useEffect(() => syncStorage.setItem('vocabapp_quiz_log', JSON.stringify(quizLog)), [quizLog]);
+    useEffect(() => syncStorage.setItem('vocabapp_swipe_log', JSON.stringify(swipeLog)), [swipeLog]);
 
     const advanceTime = useCallback(() => {
         setCurrentDate(prev => prev + 24 * 60 * 60 * 1000);
@@ -149,6 +152,8 @@ export const AppProvider = ({ children }) => {
         activeVaultFolder, setActiveVaultFolder,
         selectedVaultWord, setSelectedVaultWord,
         editingWord, setEditingWord,
+        showShadowing, setShowShadowing,
+        activeShadowingPassage, setActiveShadowingPassage,
         quizQuestion, setQuizQuestion,
         quizFeedback, setQuizFeedback,
         quizExplanation, setQuizExplanation,

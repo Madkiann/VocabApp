@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Book, Quote, BookOpen, ChevronRight, X, Languages, Shuffle, Plus, ChevronDown, Feather, LayoutGrid, ArrowLeft, Layers, Sparkles } from 'lucide-react';
+import { Book, Quote, BookOpen, ChevronRight, X, Languages, Shuffle, Plus, ChevronDown, Feather, LayoutGrid, ArrowLeft, Layers, Sparkles, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { grammarCases, quotes, readingPassages } from '../data/libraryData';
 import { useSettings } from '../context/SettingsContext';
@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 
 export const Library = () => {
     const { isDark, t } = useSettings();
-    const { setShowLibrary } = useApp();
+    const { setShowLibrary, setShowShadowing, setActiveShadowingPassage } = useApp();
     const [activeTab, setActiveTab] = useState('cases'); // cases, quotes, reading
 
     // Drill-down states for Cases
@@ -456,6 +456,14 @@ export const Library = () => {
                                                 </div>
                                             </div>
                                         </div>
+                                        <button
+                                            onClick={() => { setActiveShadowingPassage(passage); setShowShadowing(true); }}
+                                            className={`p-4 rounded-[2rem] flex flex-col items-center justify-center gap-1.5 transition-all shadow-md active:scale-95 ${isDark ? 'bg-indigo-600 text-white shadow-glow-indigo' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+                                            title="Shadowing Pratiği Yap"
+                                        >
+                                            <Mic size={20} strokeWidth={2.5} />
+                                            <span className="text-[8px] font-black uppercase tracking-widest text-center mt-1">PRATİK<br/>YAP</span>
+                                        </button>
                                     </div>
 
                                     <div className="space-y-6 relative z-10 leading-relaxed font-medium">

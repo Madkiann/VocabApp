@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
+import { syncStorage } from '../utils/storage';
 
 export const useAdmin = (userEmail) => {
     const [isAdmin, setIsAdmin] = useState(() => {
-        const stored = sessionStorage.getItem('vocabapp_isAdmin');
+        const stored = syncStorage.getItem('vocabapp_isAdmin');
         if (stored !== null) return stored === 'true';
         return false;
     });
@@ -14,7 +15,7 @@ export const useAdmin = (userEmail) => {
         const now = Date.now();
         let newCount;
 
-        if (now - lastClickTime < 1000) {
+        if (now - lastClickTime < 2000) {
             newCount = versionClickCount + 1;
         } else {
             newCount = 1;
@@ -35,9 +36,9 @@ export const useAdmin = (userEmail) => {
             const newState = !isAdmin;
             setIsAdmin(newState);
             if (newState) {
-                sessionStorage.setItem('vocabapp_isAdmin', 'true');
+                syncStorage.setItem('vocabapp_isAdmin', 'true');
             } else {
-                sessionStorage.removeItem('vocabapp_isAdmin');
+                syncStorage.removeItem('vocabapp_isAdmin');
             }
             return true;
         }
@@ -46,7 +47,7 @@ export const useAdmin = (userEmail) => {
 
     const logoutAdmin = () => {
         setIsAdmin(false);
-        sessionStorage.removeItem('vocabapp_isAdmin');
+        syncStorage.removeItem('vocabapp_isAdmin');
     };
 
     return { isAdmin, handleVersionClick, verifyMasterKey, resetClickCount: () => setVersionClickCount(0), logoutAdmin };

@@ -9,27 +9,13 @@ export const BottomNav = ({
     streak,
     setShowSettings,
     t,
-    onSecretClick,
-    isAdmin,
     dailyProgress = 0,
     lastActionStatus = null
 }) => {
     const [isFlameBlue, setIsFlameBlue] = useState(false);
-    const [logoClicks, setLogoClicks] = useState(0);
 
     const handleFlameClick = () => {
         setIsFlameBlue(true);
-
-        // Secret Admin Access (3 Clicks) - Restricted to Admins
-        if (isAdmin) {
-            const nextClicks = logoClicks + 1;
-            if (nextClicks >= 3) {
-                onSecretClick && onSecretClick();
-                setLogoClicks(0);
-            } else {
-                setLogoClicks(nextClicks);
-            }
-        }
 
         // Reset secret clicks after 2 seconds
         const timer = setTimeout(() => setLogoClicks(0), 2000);

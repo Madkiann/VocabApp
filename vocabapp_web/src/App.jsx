@@ -29,6 +29,7 @@ import { ArenaGate } from './components/ArenaGate';
 import { Library } from './components/Library';
 import { StreakRunArena } from './components/StreakRunArena';
 import { SpeedBlitzArena } from './components/SpeedBlitzArena';
+import { ShadowingSession } from './components/ShadowingSession';
 
 // Hooks
 import { useVocabStats } from './hooks/useVocabStats';
@@ -45,7 +46,8 @@ export default function App() {
     soundEnabled, setSoundEnabled,
     maintenanceMode, setMaintenanceMode,
     sm2Multiplier, setSm2Multiplier,
-    globalAnnouncement, setGlobalAnnouncement
+    globalAnnouncement, setGlobalAnnouncement,
+    geminiApiKey
   } = useSettings();
 
   const {
@@ -87,6 +89,7 @@ export default function App() {
     showStreakRun, setShowStreakRun,
     showSpeedBlitz, setShowSpeedBlitz,
     showLibrary, setShowLibrary,
+    showShadowing, setShowShadowing,
     showSettings, setShowSettings,
     showCommunityHub, setShowCommunityHub,
     showQuizHistory, setShowQuizHistory,
@@ -190,7 +193,7 @@ export default function App() {
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
   const minSwipeDistance = 100;
-  const apiKey = "";
+  const apiKey = geminiApiKey;
 
 
   useEffect(() => {
@@ -824,13 +827,13 @@ export default function App() {
 
       {showAdminPanel && (
         <AdminPanel
-          onResetSystem={() => {
+          onResetSystem={async () => {
             if (!window.confirm("DİKKAT: Tüm çalışma verilerin, klasörlerin ve özel eklediğin kelimeler silinecek. Sadece sistem kelimeleri kalacak. Emin misin?")) return;
-            Object.keys(localStorage).forEach(key => {
-              if (key.startsWith('vocabapp_')) {
-                localStorage.removeItem(key);
-              }
-            });
+            try {
+                await syncStorage.clear();
+            } catch (e) {
+                console.error("Factory Reset Error", e);
+            }
             window.location.reload();
           }}
           onClose={() => { setShowAdminPanel(false); setEditingWord(null); }}
@@ -850,6 +853,7 @@ export default function App() {
       )}
 
       {showLibrary && <Library />}
+      {showShadowing && <ShadowingSession />}
 
       {showArenaGate && (
         <ArenaGate
@@ -907,8 +911,6 @@ export default function App() {
       streak={streak}
       setShowSettings={(val) => { sounds.playClick(); setShowSettings(val); }}
       t={t}
-      onSecretClick={() => { sounds.playClick(); setShowAdminPanel(true); }}
-      isAdmin={isAdmin}
       dailyProgress={dailyProgress * 100}
       lastActionStatus={lastActionStatus}
     />

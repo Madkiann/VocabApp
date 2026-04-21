@@ -3,6 +3,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { sounds } from '../utils/sounds';
 import { useAdmin } from '../hooks/useAdmin';
 import { translations } from '../data/translations';
+import { syncStorage } from '../utils/storage';
 
 export const SettingsContext = createContext();
 
@@ -23,18 +24,19 @@ export const SettingsProvider = ({ children }) => {
     const { isAdmin, handleVersionClick, verifyMasterKey } = useAdmin(userEmail);
 
     // Theme State
-    const [themePref, setThemePref] = useState(() => localStorage.getItem('vocabapp_theme') || 'system');
+    const [themePref, setThemePref] = useState(() => syncStorage.getItem('vocabapp_theme') || 'system');
     const [systemIsDark, setSystemIsDark] = useState(window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : false);
     
     // UI Persistence
-    const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('vocabapp_sound_enabled') !== 'false');
-    const [maintenanceMode, setMaintenanceMode] = useState(() => localStorage.getItem('vocabapp_maintenance') === 'true');
-    const [sm2Multiplier, setSm2Multiplier] = useState(() => parseFloat(localStorage.getItem('vocabapp_sm2_multiplier') || '1.0'));
-    const [globalAnnouncement, setGlobalAnnouncement] = useState(() => localStorage.getItem('vocabapp_announcement') || '');
+    const [soundEnabled, setSoundEnabled] = useState(() => syncStorage.getItem('vocabapp_sound_enabled') !== 'false');
+    const [maintenanceMode, setMaintenanceMode] = useState(() => syncStorage.getItem('vocabapp_maintenance') === 'true');
+    const [sm2Multiplier, setSm2Multiplier] = useState(() => parseFloat(syncStorage.getItem('vocabapp_sm2_multiplier') || '1.0'));
+    const [globalAnnouncement, setGlobalAnnouncement] = useState(() => syncStorage.getItem('vocabapp_announcement') || '');
+    const [geminiApiKey, setGeminiApiKey] = useState(() => syncStorage.getItem('vocabapp_gemini_api_key') || '');
 
     // Theme Effect
     useEffect(() => {
-        localStorage.setItem('vocabapp_theme', themePref);
+        syncStorage.setItem('vocabapp_theme', themePref);
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         setSystemIsDark(mediaQuery.matches);
 
@@ -72,12 +74,13 @@ export const SettingsProvider = ({ children }) => {
     // Sound & Sub-states Persistence
     useEffect(() => {
         sounds.enabled = soundEnabled;
-        localStorage.setItem('vocabapp_sound_enabled', soundEnabled);
+        syncStorage.setItem('vocabapp_sound_enabled', soundEnabled);
     }, [soundEnabled]);
 
-    useEffect(() => localStorage.setItem('vocabapp_maintenance', String(maintenanceMode)), [maintenanceMode]);
-    useEffect(() => localStorage.setItem('vocabapp_sm2_multiplier', sm2Multiplier.toString()), [sm2Multiplier]);
-    useEffect(() => localStorage.setItem('vocabapp_announcement', globalAnnouncement), [globalAnnouncement]);
+    useEffect(() => syncStorage.setItem('vocabapp_maintenance', String(maintenanceMode)), [maintenanceMode]);
+    useEffect(() => syncStorage.setItem('vocabapp_sm2_multiplier', sm2Multiplier.toString()), [sm2Multiplier]);
+    useEffect(() => syncStorage.setItem('vocabapp_announcement', globalAnnouncement), [globalAnnouncement]);
+    useEffect(() => syncStorage.setItem('vocabapp_gemini_api_key', geminiApiKey), [geminiApiKey]);
 
     const cycleTheme = () => {
         if (themePref === 'system') setThemePref('light');
@@ -97,7 +100,8 @@ export const SettingsProvider = ({ children }) => {
         soundEnabled, setSoundEnabled,
         maintenanceMode, setMaintenanceMode,
         sm2Multiplier, setSm2Multiplier,
-        globalAnnouncement, setGlobalAnnouncement
+        globalAnnouncement, setGlobalAnnouncement,
+        geminiApiKey, setGeminiApiKey
     };
 
     return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;

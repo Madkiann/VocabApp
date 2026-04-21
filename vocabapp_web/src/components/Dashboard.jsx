@@ -534,6 +534,30 @@ export const Dashboard = ({
                                     </div>
                                 </div>
                             </div>
+
+                            {selectedDayStats.stats.shadowing && selectedDayStats.stats.shadowing.length > 0 && (
+                                <div className="flex flex-col gap-2 mt-2">
+                                    <div className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40 ml-1">Sesli Okuma (Shadowing)</div>
+                                    <div className="flex flex-col gap-2">
+                                        {selectedDayStats.stats.shadowing.map((sh, idx) => (
+                                            <div key={idx} className={`p-4 rounded-2xl flex justify-between items-center border ${isDark ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}>
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-bold truncate max-w-[100px]" title={sh.title}>{sh.title || 'Pratik'}</span>
+                                                    <span className="text-[8px] opacity-60 font-black">{sh.time}</span>
+                                                </div>
+                                                <div className="flex gap-3 text-right">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-black text-emerald-500 cursor-default" title="Doğruluk">%{sh.accuracy || 0}</span>
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-black text-indigo-500 cursor-default" title="Hız">{sh.wpm || 0} wpm</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="mb-6">
